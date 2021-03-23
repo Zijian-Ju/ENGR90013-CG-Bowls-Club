@@ -4,8 +4,8 @@ Encompassed in that is the selection of players into teams on a weekly basis. Th
 The client is expecting a software which could readily access all the information required(For example, which aspects are the player’s strengths and which are the weaknesses), in relation to players and teams, they require in order to have an informed view of player selection.  Making the process of selection more efficient at the same time. Software to help schedule bowls teams taking into account bowlers' performance preferences. In addition, the software may also need to record previous game results.
 
 ## Branch Pattern:
-- main: main branch, updated with latest stable build
-- dev: develop branch, updated with latest stable devlopment
-- releast/\*: release branch, realse version after each sprint
+- main(protected): main branch, updated with latest stable build
+- dev(protected): develop branch, updated with latest stable devlopment
+- release/\*: release branch, release branch for each sprint
 - dev/{feature_name}: development branch for each feature
 - dev/{feature_name}/{(front|back)\_developer's name}: personal development branch for front/back end
