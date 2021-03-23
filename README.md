@@ -9,3 +9,5 @@ The client is expecting a software which could readily access all the informatio
 - release/\*: release branch, release branch for each sprint
 - dev/{feature_name}: development branch for each feature
 - dev/{feature_name}/{(front|back)\_developer's name}: personal development branch for front/back end
+
+Merging to protected branches must be achieved by pull request with at least 1 reviewer. 
