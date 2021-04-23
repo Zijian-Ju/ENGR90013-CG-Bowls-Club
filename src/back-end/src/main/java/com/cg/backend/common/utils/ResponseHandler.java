@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 
-@ControllerAdvice(basePackages = "org.mengsoft.webbackend")
+@ControllerAdvice(basePackages = "com.cg.backend")
 public class ResponseHandler implements ResponseBodyAdvice<Object> {
 
 

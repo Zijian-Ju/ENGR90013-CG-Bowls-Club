@@ -22,8 +22,8 @@ public class SwaggerConfig {
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
                 .title("API Documentation")
-                .description("Mengsoft General WebSite")
-                .termsOfServiceUrl("https://www.mengsoft.com")
+                .description("cg General WebSite")
+                .termsOfServiceUrl("https://www.cg.com")
                 .version("1.0")
                 .build();
     }
@@ -34,7 +34,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .enable(swaggerEnabled)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.mengsoft.webbackend"))
+                .apis(RequestHandlerSelectors.basePackage("com.cg.backend"))
                 .paths(PathSelectors.any())
                 .build();
 

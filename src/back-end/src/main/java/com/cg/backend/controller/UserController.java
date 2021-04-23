@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class UserController {
 
     // private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @Value("${org.mengsoft.helloworld}")
+    @Value("${com.cg.helloworld}")
     private String hello;
 
     @Resource
@@ -56,8 +57,8 @@ public class UserController {
         return this.userService.GetUserByUsername(username);
     }
 
-    @RequestMapping(value="/user/getAllUser", method= RequestMethod.GET, produces="application/json")
-    public List<User> getAllUser(){
+    @RequestMapping(value="/user/getAllUser", method= RequestMethod.POST, produces="application/json")
+    public List<User> getAllUser(@RequestBody String username){
 
         return this.userService.getAllUser();
     }
