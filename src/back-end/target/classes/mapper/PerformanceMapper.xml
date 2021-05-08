@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cg.backend.dao.PerformanceMapper">
+  <resultMap id="BaseResultMap" type="com.cg.backend.model.Performance">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="player_id" jdbcType="BIGINT" property="playerId" />
+    <result column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="performance_score" jdbcType="INTEGER" property="performanceScore" />
+    <result column="match_time" jdbcType="TIMESTAMP" property="matchTime" />
+  </resultMap>
+</mapper>

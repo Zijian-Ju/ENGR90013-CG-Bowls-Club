@@ -2,6 +2,8 @@ package com.cg.backend.controller;
 
 import com.cg.backend.common.enums.ResponseCode;
 import com.cg.backend.common.exceptions.BusinessException;
+import com.cg.backend.common.utils.Paging;
+import com.cg.backend.common.utils.Result;
 import com.cg.backend.service.EmailService;
 import com.cg.backend.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +35,7 @@ public class UserController {
 
     @Resource
     private UserService userService;
+    
 
     @Resource
     private EmailService emailService;
@@ -58,9 +61,12 @@ public class UserController {
     }
 
     @RequestMapping(value="/user/getAllUser", method= RequestMethod.POST, produces="application/json")
-    public List<User> getAllUser(@RequestBody String username){
-
-        return this.userService.getAllUser();
+    public Result<List<User>> getAllUser(@RequestBody String username){
+        Result<List<User>> result = new Result<List<User>>();
+        result.setData(this.userService.getAllUser());
+        Paging paging = new Paging();
+        result.setPaging(paging);
+        return result;
     }
 
     @RequestMapping(value="/user/error", method= RequestMethod.GET, produces="application/json")

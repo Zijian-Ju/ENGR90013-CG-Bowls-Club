@@ -49,7 +49,13 @@
         <!-- 配置表信息 -->
         <!-- schema即为数据库名 tableName为对应的数据库表 domainObjectName是要生成的实体类 enable*ByExample, 是否生成 example类   -->
         <!-- 不同的表，修改tableName和domainObjectName就可以 -->
-        <table tableName="BASE_USER_INFO" domainObjectName="User">
+        <table tableName="t_bowl_player" domainObjectName="Player">
+        </table>
+        <table tableName="t_bowl_team" domainObjectName="Team">
+        </table>
+        <table tableName="t_bowl_match" domainObjectName="Match">
+        </table>
+        <table tableName="t_bowl_game_player_performance" domainObjectName="Performance">
         </table>
     </context>
 </generatorConfiguration>

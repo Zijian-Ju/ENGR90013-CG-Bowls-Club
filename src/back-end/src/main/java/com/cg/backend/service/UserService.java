@@ -26,9 +26,12 @@ public class UserService {
         User username = new User();
         username.setUserName(name);
         emailService.SendEmail(id);
+
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("userName", name);
+
+
         log.info("-------------------Criteria   where查询--------------------------");
         log.info(String.valueOf(this.userMapper.selectByExample(example)));
 
@@ -36,6 +39,7 @@ public class UserService {
         example = new Example(User.class);
         example.setOrderByClause("USER_ID desc");
         criteria = example.createCriteria();
+        
         criteria.andLike("userName", "%abc%");
 //        IN查询
 //        List idList = new ArrayList();
@@ -58,6 +62,7 @@ public class UserService {
         log.info("Total: {}", count);
         userList1 = this.userMapper.selectByExampleAndRowBounds(new User(), new RowBounds(0, 10));
         log.info("Page 1: {}", userList1);
+
         return userMapper.select(username);
     }
 
@@ -66,5 +71,6 @@ public class UserService {
     }
 
 
-
+    public void addUser() {
+    }
 }

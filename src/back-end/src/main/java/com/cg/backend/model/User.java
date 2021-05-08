@@ -1,6 +1,8 @@
 package com.cg.backend.model;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 
 @Table(name = "BASE_USER_INFO")
 public class User {
@@ -14,6 +16,7 @@ public class User {
     /**
      * nickname
      */
+    @NotBlank(message = "用户名不为空")
     @Column(name = "USER_NAME")
     private String userName;
 
