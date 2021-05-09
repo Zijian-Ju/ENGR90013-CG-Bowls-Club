@@ -5,15 +5,15 @@ import lombok.Data;
 
 @Data
 public class SearchRequest<T> {
-  private Player player;
+  private T searching;
   private Paging paging;
 
-  public Player getPlayer() {
-    return player;
+  public T getSearching() {
+    return searching;
   }
 
-  public void setPlayer(Player player) {
-    this.player = player;
+  public void setSearching(T searching) {
+    this.searching = (T) searching;
   }
 
   public Paging getPaging() {
