@@ -18,4 +18,8 @@ public class PlayerService {
   public List<Player> selectAll() {
     return this.playerMapper.selectAll();
   }
+
+  public void updatePlayer(Player player) {
+    this.playerMapper.updateByPrimaryKey(player);
+  }
 }
