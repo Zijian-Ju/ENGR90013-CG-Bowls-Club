@@ -40,4 +40,13 @@ public class PlayerController {
     return true;
   }
 
+  @RequestMapping(value="/player/deletePlayerById", method= RequestMethod.POST, produces="application/json")
+  public boolean deletePlayerById(@RequestBody Long playerId){
+    Player player=new Player();
+    player.setId(playerId);
+    this.playerService.deletePlayerById(player);
+    return true;
+  }
+
+
 }

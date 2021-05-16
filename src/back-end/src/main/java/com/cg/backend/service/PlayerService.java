@@ -22,4 +22,8 @@ public class PlayerService {
   public void updatePlayer(Player player) {
     this.playerMapper.updateByPrimaryKey(player);
   }
+
+  public void deletePlayerById(Player player) {
+    this.playerMapper.deleteByPrimaryKey(player);
+  }
 }
