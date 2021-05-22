@@ -24,8 +24,8 @@
 hs_err_pid*
 
 
-./src/back-end/.idea
-./src/back-end/target
+src/back-end/.idea
+src/back-end/target
 
 *.iws
 *.iml
@@ -33,6 +33,7 @@ hs_err_pid*
 ./src/back-end/out
 ./src/back-end/.gradle
 ./src/back-end/jars
+./src/back-end/target/
 .apt_generated
 .classpath
 .factorypath

@@ -10,5 +10,5 @@
     <result column="performance_score" jdbcType="INTEGER" property="performanceScore" />
     <result column="match_time" jdbcType="TIMESTAMP" property="matchTime" />
   </resultMap>
-
 </mapper>
+

@@ -45,7 +45,7 @@ public class PerformanceController {
     }
 
     @RequestMapping(value="/player/updateMatchPerformance", method= RequestMethod.POST, produces="application/json")
-    public Map<String, Object> updateUserPerformance(@RequestBody UpdateUserPerformanceRequest request){
+    public Map<String, Object> updateUserPerformance(@RequestBody Performance performance){
         Map<String, Object> resultMap = new HashMap<>();
 //        List<Player> performanceList = this.performanceService;
 //        resultMap.put("performanceList", performanceList);

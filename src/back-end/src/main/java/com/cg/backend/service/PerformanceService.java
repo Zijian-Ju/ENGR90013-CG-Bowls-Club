@@ -1,13 +1,19 @@
 package com.cg.backend.service;
 
+import com.cg.backend.common.enums.ResponseCode;
+import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.common.utils.Paging;
 import com.cg.backend.dao.PerformanceMapper;
 import com.cg.backend.model.Performance;
+import com.cg.backend.model.Player;
+import com.cg.backend.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import tk.mybatis.mapper.entity.Example;
 
 @Service("performanceService")
 @Slf4j
@@ -39,7 +45,13 @@ public class PerformanceService {
             }
         }
 
-        List<Performance> performancesList = performanceMapper.getPerformanceByPlayerId(id, limit, offset);
+        Example example = new Example(Performance.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("playerId", id);
+        example.setOrderByClause("match_time desc");
+        List<Performance> performancesList = performanceMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, limit));
+
+//        List<Performance> performancesList = performanceMapper.getPerformanceByPlayerId(id, limit, offset);
         return performancesList;
     }
 
@@ -50,7 +62,7 @@ public class PerformanceService {
         performance.setMatchId(Long.parseLong(matchId));
         performance.setPerformanceScore(score);
 
-        performanceMapper.updatePerformance(performance);
+        performanceMapper.updateByPrimaryKey(performance);
     }
 
 }
