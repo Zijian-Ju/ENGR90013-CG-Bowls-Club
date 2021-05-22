@@ -27,20 +27,19 @@ public class PerformanceController {
     @RequestMapping(value="/player/getUserPerformances", method= RequestMethod.POST, produces="application/json")
     public Map<String, Object> getUserPerformances(@RequestBody SearchRequest<Map<String, String>> searching){
         Map<String, Object> resultMap = new HashMap<>();
-        List<Performance> performanceList = new ArrayList<>();
 
-        Performance temp = new Performance();
+        Paging paging = searching.getPaging();
+        Map<String, String> params = searching.getSearching();
+        String playerId = params.get("playerId");
 
-
-        temp.setPlayerId(Long.parseLong(searching.getSearching().get("player_id")));
-        temp.setMatchId(new Long(1));
-        temp.setPerformanceScore(new Integer(10));
-        temp.setMatchTime(new Date());
-
-        performanceList.add(temp);
+        // TODO handle invalid playerId situation
+//        if (playerId == null ) {
+//
+//        }
+        List<Performance> performanceList  = performanceService.getAllUserPerformance(playerId, paging);
 
         resultMap.put("performanceList", performanceList);
-        resultMap.put("Paging", searching.getPaging());
+        resultMap.put("Paging", paging);
 
         return resultMap;
     }

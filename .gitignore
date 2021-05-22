@@ -22,3 +22,21 @@
 .DS_Store
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+./src/back-end/.idea
+./src/back-end/target
+
+*.iws
+*.iml
+*.ipr
+./src/back-end/out
+./src/back-end/.gradle
+./src/back-end/jars
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
