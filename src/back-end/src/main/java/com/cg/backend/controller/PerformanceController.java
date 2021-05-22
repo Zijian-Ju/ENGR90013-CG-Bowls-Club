@@ -30,6 +30,11 @@ public class PerformanceController {
 
         Paging paging = searching.getPaging();
         Map<String, String> params = searching.getSearching();
+
+        if (params == null || paging == null) {
+            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
+        }
+
         String playerId = params.get("playerId");
 
         if (playerId == null ) {
@@ -46,8 +51,6 @@ public class PerformanceController {
 
     @RequestMapping(value="/player/updateMatchPerformance", method= RequestMethod.POST, produces="application/json")
     public void updateUserPerformance(@RequestBody Performance performance){
-        Map<String, Object> resultMap = new HashMap<>();
-
         if (performance.getMatchId() == null || performance.getPlayerId() == null || performance.getPerformanceScore() == null) {
             throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
         }
