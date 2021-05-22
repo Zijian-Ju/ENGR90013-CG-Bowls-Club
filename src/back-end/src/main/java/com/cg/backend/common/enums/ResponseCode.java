@@ -7,7 +7,8 @@ public enum ResponseCode {
     SUCCESS(200, "Success"),
     EMAIL_HAS_EXSITED(20001, "Email is already exsited!"),
     PARAM_IS_INVALID(20002, "Param is invalid."),
-    SYSTEM_ERROR(10000, "System Error, Please Contact Admin.");
+    SYSTEM_ERROR(10000, "System Error, Please Contact Admin."),
+    PERFORMANCE_RECORD_NOT_FOUND(20003, "Performance record not found");
 
 
     private Integer code;

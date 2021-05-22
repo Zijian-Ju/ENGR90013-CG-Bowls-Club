@@ -1,12 +1,8 @@
 package com.cg.backend.service;
 
-import com.cg.backend.common.enums.ResponseCode;
-import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.common.utils.Paging;
 import com.cg.backend.dao.PerformanceMapper;
 import com.cg.backend.model.Performance;
-import com.cg.backend.model.Player;
-import com.cg.backend.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
@@ -27,7 +23,10 @@ public class PerformanceService {
     public List<Performance> getAllUserPerformance(String playerId, Paging paging) {
         long id = Long.parseLong(playerId);
         // Get total number of user performances for paging usage
-        int total = performanceMapper.getPlayerPerformanceCount(id);
+        Example example = new Example(Performance.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("playerId", id);
+        int total = performanceMapper.selectCountByExample(example);
 
         paging.setTotal(total);
 
@@ -45,24 +44,34 @@ public class PerformanceService {
             }
         }
 
-        Example example = new Example(Performance.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("playerId", id);
+
         example.setOrderByClause("match_time desc");
         List<Performance> performancesList = performanceMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, limit));
 
-//        List<Performance> performancesList = performanceMapper.getPerformanceByPlayerId(id, limit, offset);
         return performancesList;
     }
 
-    public void updateUserPerformance(String playerId, String matchId, int score) {
+    public void updateUserPerformance(Performance performance) {
+        Performance updatingPerformance = new Performance();
+        updatingPerformance.setMatchId(performance.getMatchId());
+        updatingPerformance.setPlayerId(performance.getPlayerId());
 
-        Performance performance = new Performance();
-        performance.setPlayerId(Long.parseLong(playerId));
-        performance.setMatchId(Long.parseLong(matchId));
-        performance.setPerformanceScore(score);
+        updatingPerformance.setPerformanceScore(performance.getPerformanceScore());
 
-        performanceMapper.updateByPrimaryKey(performance);
+        performanceMapper.updatePerformance(performance);
     }
 
+    // Check whether this performance record exists
+    public boolean isPerformanceExist(Performance performance) {
+        Example example = new Example(Performance.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("playerId", performance.getPlayerId());
+        criteria.andEqualTo("matchId", performance.getMatchId());
+
+        Performance savedPerformance = performanceMapper.selectOneByExample(example);
+        if (savedPerformance == null) {
+            return false;
+        }
+        return true;
+    }
 }

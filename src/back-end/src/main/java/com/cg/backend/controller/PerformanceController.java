@@ -1,12 +1,12 @@
 package com.cg.backend.controller;
 
 
+import com.cg.backend.common.enums.ResponseCode;
+import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.common.utils.Paging;
 import com.cg.backend.common.utils.SearchRequest;
 import com.cg.backend.model.Performance;
-import com.cg.backend.model.Player;
 import com.cg.backend.service.PerformanceService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,33 +32,31 @@ public class PerformanceController {
         Map<String, String> params = searching.getSearching();
         String playerId = params.get("playerId");
 
-        // TODO handle invalid playerId situation
-//        if (playerId == null ) {
-//
-//        }
+        if (playerId == null ) {
+            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
+        }
         List<Performance> performanceList  = performanceService.getAllUserPerformance(playerId, paging);
 
         resultMap.put("performanceList", performanceList);
         resultMap.put("Paging", paging);
 
+
         return resultMap;
     }
 
     @RequestMapping(value="/player/updateMatchPerformance", method= RequestMethod.POST, produces="application/json")
-    public Map<String, Object> updateUserPerformance(@RequestBody Performance performance){
+    public void updateUserPerformance(@RequestBody Performance performance){
         Map<String, Object> resultMap = new HashMap<>();
-//        List<Player> performanceList = this.performanceService;
-//        resultMap.put("performanceList", performanceList);
-//        resultMap.put("Paging", paging);
 
-        return resultMap;
-    }
+        if (performance.getMatchId() == null || performance.getPlayerId() == null || performance.getPerformanceScore() == null) {
+            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
+        }
 
-    @Data
-    class UpdateUserPerformanceRequest {
-        String playerId;
-        String matchId;
-        Integer score;
+        if (!performanceService.isPerformanceExist(performance)) {
+            throw new BusinessException(ResponseCode.PERFORMANCE_RECORD_NOT_FOUND);
+        }
+
+        performanceService.updateUserPerformance(performance);
     }
 }
 
