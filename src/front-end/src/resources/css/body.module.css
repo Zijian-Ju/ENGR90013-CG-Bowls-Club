@@ -1,0 +1,18 @@
+.allUsersContainer {
+    margin: 5%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+}
+
+.allUsersContainerRow {
+    display:flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.allUsersContainerRowElement {
+    width: 20%;
+    text-align: center;
+    align-self: center;
+}
