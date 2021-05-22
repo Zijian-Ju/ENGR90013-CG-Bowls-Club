@@ -20,11 +20,28 @@ function Profile({match}) {
     //         })
     // });
 
+    function placeholderAlert() {
+        return alert("Unsupported");
+    }
+
     return (
+        <>
+            <div className={styles.body}>
+                <div className={styles.logotext} >
+                    <img className={styles.mcclogo} src={mcclogo} alt="Logo" />
+                </div>
+                <div className={styles.linktabs}>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
+                </div>
+            </div>
       
-        <div>
-            {"Profile page of user: " + JSON.stringify(id)}
-        </div>
+            <div>
+                {"Profile page of user: " + JSON.stringify(id)}
+            </div>
+        </>
     )
 }
 
