@@ -13,6 +13,11 @@
   justify-content: left;
   display:flex;
   width: 40%;
+  height: 100%;
+}
+
+.mcclogo {
+  height: 120%;
 }
 
 .linktabs {
