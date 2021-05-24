@@ -4,6 +4,8 @@ import bodyStyles from './css/body.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
@@ -124,7 +126,12 @@ function Profile() {
                   {ProfileTest()}
                 </div>
                 <div className = {bodyStyles.profilePageColumnContainer}>
-                  Preferences
+                  <div style={{margin: '10px'}}>
+                    <TextField style={{width:'100%'}} id="filled-basic" label="Preference" variant="outlined" onChange={(e) => this.handleTextFieldChange(e)} />
+                  </div>
+                  <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <Button>Save Preference</Button>
+                  </div>
                 </div>
               </div>
               <div className = {bodyStyles.profilePageColumn}>
