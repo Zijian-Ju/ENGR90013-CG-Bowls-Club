@@ -39,14 +39,19 @@
       "last 1 safari version"
     ]
   },
-  "babel":{
-    "presets":[
+  "babel": {
+    "presets": [
       "react-app"
-      
-  ],
-  "plugins":[
-    ["import",{"libraryName":"antd","style":true}]
-  ]
+    ],
+    "plugins": [
+      [
+        "import",
+        {
+          "libraryName": "antd",
+          "style": true
+        }
+      ]
+    ]
   },
   "devDependencies": {
     "babel-plugin-import": "^1.13.3"

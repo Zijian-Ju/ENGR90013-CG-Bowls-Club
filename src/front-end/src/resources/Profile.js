@@ -3,20 +3,18 @@ import styles from './css/navbar.module.css';
 import bodyStyles from './css/body.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
-//import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
 
-
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import { Form, Input, InputNumber, Button } from 'antd';
+import { Form, Input, InputNumber } from 'antd';
 
 
 
 
-function Profile({match}) {
+function Profile() {
     const [response, setResponse] = useState({});
     const history = useHistory();
     const { id } = useParams();
@@ -82,7 +80,7 @@ function Profile({match}) {
               <Input.TextArea />
             </Form.Item>
             <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-              <Button type="primary" htmlType="submit">
+              <Button  type="primary" htmlType="submit">
                 Submit
               </Button>
             </Form.Item>
@@ -90,7 +88,7 @@ function Profile({match}) {
         );
       };
       
-      ReactDOM.render(<ProfileTest />, document.getElementById('root'));
+      // ReactDOM.render(<ProfileTest />, document.getElementById('root'));
    
     return (
         <>
@@ -106,10 +104,37 @@ function Profile({match}) {
                 </div>
             </div>
       
-            <div>
-                {/* {"Profile page of user: " + JSON.stringify(id)} */}
-                
-                
+            <div className = {bodyStyles.profilePage}>
+              <div className = {bodyStyles.profilePageColumn}>
+                <div className = {bodyStyles.profilePageColumnContainer}>
+                  <div>
+                  Overview of user goes here
+                  </div>
+                  <div>
+                    {"Profile page of user: " + JSON.stringify(id)}
+                  </div>
+                </div>
+                <div>
+                  <Button onClick= {placeholderAlert}>Delete User</Button>
+                </div>
+              </div>
+              <div className = {bodyStyles.profilePageColumn}>
+                <div className = {bodyStyles.profilePageColumnContainer}>
+                  Update Profile Section
+                  {ProfileTest()}
+                </div>
+                <div className = {bodyStyles.profilePageColumnContainer}>
+                  Preferences
+                </div>
+              </div>
+              <div className = {bodyStyles.profilePageColumn}>
+                <div className = {bodyStyles.profilePageColumnContainer}>
+                  Free container
+                </div>
+                <div className = {bodyStyles.profilePageColumnContainer}>
+                  Free container
+                </div>
+              </div>
             </div>
         </>
     )
