@@ -50,10 +50,11 @@ function Profile() {
         return alert("Unsupported");
     }; 
 
-    function deleteUser(id) {
-      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, id)
+    function deleteUser(Id) {
+      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {Id: id})
       .then(res => {
-        console.log(res)
+        console.log(res);
+        alert("User deleted");
       })
     }
 
