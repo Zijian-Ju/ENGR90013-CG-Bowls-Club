@@ -184,4 +184,22 @@ public class Player {
     public void setPlayerNotPreferTeammates(String playerNotPreferTeammates) {
         this.playerNotPreferTeammates = playerNotPreferTeammates;
     }
+
+    public Player(){
+
+    }
+
+    public Player(Long id, String playerName, String playerEmail, String playerGender,
+        String playerPhone, String playerAvailability, String playerPosPreference,
+        String playerPreferTeammates, String playerNotPreferTeammates) {
+        this.id = id;
+        this.playerName = playerName;
+        this.playerEmail = playerEmail;
+        this.playerGender = playerGender;
+        this.playerPhone = playerPhone;
+        this.playerAvailability = playerAvailability;
+        this.playerPosPreference = playerPosPreference;
+        this.playerPreferTeammates = playerPreferTeammates;
+        this.playerNotPreferTeammates = playerNotPreferTeammates;
+    }
 }

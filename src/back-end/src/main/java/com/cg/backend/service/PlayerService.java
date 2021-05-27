@@ -26,4 +26,8 @@ public class PlayerService {
   public void deletePlayerById(Player player) {
     this.playerMapper.deleteByPrimaryKey(player);
   }
+
+  public void addPlayer(Player player) {
+    this.playerMapper.insert(player);
+  }
 }

@@ -34,6 +34,12 @@ public class PlayerController {
     return resultMap;
   }
 
+  @RequestMapping(value="/player/addPlayer", method= RequestMethod.POST, produces="application/json")
+  public boolean addPlayer(@RequestBody Player player){
+    this.playerService.addPlayer(player);
+    return true;
+  }
+
   @RequestMapping(value="/player/updatePlayer", method= RequestMethod.POST, produces="application/json")
   public boolean updatePlayer(@RequestBody Player player){
     this.playerService.updatePlayer(player);
