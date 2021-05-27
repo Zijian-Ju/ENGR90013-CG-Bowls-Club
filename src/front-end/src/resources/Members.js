@@ -14,36 +14,37 @@ function Members() {
     const [response, setResponse] = useState({});
     const history = useHistory();
 
-    function handleUserClick(Id) {
-        history.push("/members/" + Id);
+    function handleUserClick(id) {
+        history.push("/members/" + id);
     }
 
     useEffect(() => {
 
-        axios.post(`http://128.199.253.108:8082/user/getAllUser`, {username: "string"})
+        axios.post(`http://128.199.253.108:8082/player/getAllUser`, {username: "string"})
             .then(res => {
                 setResponse(res);
+                console.log(res);
             })
     });
 
     function renderUsers(data) {
-        const userArray = data.data.data.data;
+        const userArray = data.data.data.playerList;
         return (
             <div className={bodyStyles.allUsersContainer}>
                 <div className={bodyStyles.allUsersContainerRow} style={{marginBottom: '10px', backgroundColor: 'black', color: 'white'}}>
                     <div className={bodyStyles.allUsersContainerRowElement}>User ID</div>
-                    <div className={bodyStyles.allUsersContainerRowElement}>Nickname</div>
+                    <div className={bodyStyles.allUsersContainerRowElement}>Name</div>
                     <div className={bodyStyles.allUsersContainerRowElement}>Email</div>
                     <div className={bodyStyles.allUsersContainerRowElement}>Mobile</div>
                     <div className={bodyStyles.allUsersContainerRowElement}>Profile Link</div>
                 </div>
                 {userArray.map(user => (
                     <div className={bodyStyles.allUsersContainerRow}>
-                            <div className={bodyStyles.allUsersContainerRowElement}>{user.userId}</div>
-                            <div className={bodyStyles.allUsersContainerRowElement}>{user.nickname}</div>
-                            <div className={bodyStyles.allUsersContainerRowElement}>{user.email}</div>
-                            <div className={bodyStyles.allUsersContainerRowElement}>{user.mobile}</div>
-                            <Button className={bodyStyles.allUsersContainerRowElement} onClick={() => {handleUserClick(user.userId)}}>Click to open</Button>
+                            <div className={bodyStyles.allUsersContainerRowElement}>{user.id}</div>
+                            <div className={bodyStyles.allUsersContainerRowElement}>{user.playerName}</div>
+                            <div className={bodyStyles.allUsersContainerRowElement}>{user.playerEmail}</div>
+                            <div className={bodyStyles.allUsersContainerRowElement}>{user.playerPhone}</div>
+                            <Button className={bodyStyles.allUsersContainerRowElement} onClick={() => {handleUserClick(user.id)}}>Click to open</Button>
                     </div>
                 ))}
             </div>

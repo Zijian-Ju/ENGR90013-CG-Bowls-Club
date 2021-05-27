@@ -9,89 +9,48 @@ import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
-
 import 'antd/dist/antd.css';
 import { Form, Input, InputNumber } from 'antd';
 
-
-
-
 function Profile() {
     const [response, setResponse] = useState({});
+    const [loaded, setLoaded] = useState(false);
+    const [playerName, setPlayerName] = useState("");
+    const [playerEmail, setPlayerEmail] = useState("");
+    const [playerPhone, setPlayerPhone] = useState("");
+    const [playerPreference, setPlayerPreference] = useState("");
+    const [playerAvailability, setPlayerAvailability] = useState("");
+    const [playerGender, setPlayerGender] = useState("");
+    const [playerNotPreferredTM, setPlayerNotPreferredTM] = useState("");
+    const [playerPreferredTM, setPlayerPreferredTM] = useState("");
     const history = useHistory();
     const { id } = useParams();
 
    
     useEffect(() => {
-
-        axios.post(`http://128.199.253.108:8082/user/getAllUser`, {username: "string"})
-            .then(res => {
-                setResponse(res);
-            })
+      axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id})
+      .then(res => {
+          setResponse(res); 
+          console.log(res); 
+          setLoaded(true);
+      })
+      if (response !== {} && response.data !== undefined) {
+        setPlayerName(response.data.data.playerName);
+        setPlayerEmail(response.data.data.playerEmail);
+        setPlayerPhone(response.data.data.playerPhone);
+        setPlayerAvailability(response.data.data.playerAvailability);
+        setPlayerPreference(response.data.data.playerPosPreference);
+        setPlayerPreferredTM(response.data.data.playerPreferTeammates);
+        setPlayerNotPreferredTM(response.data.data.playerNotPreferTeammates);
+        setPlayerGender(response.data.data.playerGender);
+      }
     });
 
     function placeholderAlert() {
         return alert("Unsupported");
-    };
-    const ProfileTest = () => {
-        const onFinish = (values) => {
-          console.log(values);
-        };
-      
-        return (
-          <Form {...layout} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages}>
-            <Form.Item
-              name={['user', 'name']}
-              label="Name"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name={['user', 'email']}
-              label="Email"
-              rules={[
-                {
-                  type: 'email',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name={['user', 'age']}
-              label="Age"
-              rules={[
-                {
-                  type: 'number',
-                  min: 0,
-                  max: 99,
-                },
-              ]}
-            >
-              <InputNumber />
-            </Form.Item>
-            <Form.Item name={['user', 'preference']} label="Preference">
-              <Input />
-            </Form.Item>
-            <Form.Item name={['user', 'introduction']} label="Introduction">
-              <Input.TextArea />
-            </Form.Item>
-            <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-              <Button  type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </Form.Item>
-          </Form>
-        );
-      };
-      
-      // ReactDOM.render(<ProfileTest />, document.getElementById('root'));
-   
+    }; 
+
+    if (loaded) {
     return (
         <>
             <div className={styles.body}>
@@ -109,28 +68,87 @@ function Profile() {
             <div className = {bodyStyles.profilePage}>
               <div className = {bodyStyles.profilePageColumn}>
                 <div className = {bodyStyles.profilePageColumnContainer}>
-                  <div>
-                  Overview of user goes here
-                  </div>
-                  <div>
-                    {"Profile page of user: " + JSON.stringify(id)}
+                  <div className = {bodyStyles.profilePageTitle}>
+                  Profile Overview
                   </div>
                 </div>
-                <div>
-                  <Button onClick= {placeholderAlert}>Delete User</Button>
+                <div style = {{height: '10%', display: 'flex', justifyContent: 'center'}} className = {bodyStyles.profilePageColumnContainer}>
+                  <Button color='secondary' onClick= {placeholderAlert}>Delete User</Button>
                 </div>
               </div>
               <div className = {bodyStyles.profilePageColumn}>
-                <div className = {bodyStyles.profilePageColumnContainer}>
-                  Update Profile Section
-                  {ProfileTest()}
-                </div>
-                <div className = {bodyStyles.profilePageColumnContainer}>
-                  <div style={{margin: '10px'}}>
-                    <TextField style={{width:'100%'}} id="filled-basic" label="Preference" variant="outlined" onChange={(e) => this.handleTextFieldChange(e)} />
+                <div style ={{height: '93.5%'}} className = {bodyStyles.profilePageColumnContainer}>
+                  <div className = {bodyStyles.profilePageContainerTitle}>
+                    Basic Information
                   </div>
-                  <div style={{display: 'flex', justifyContent: 'center'}}>
-                    <Button>Save Preference</Button>
+                  <div className = {bodyStyles.profilePageBasicInfoContainer}>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Name
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Name" variant="outlined" defaultValue={playerName} />
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Email
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Email" variant="outlined" defaultValue={playerEmail} />
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Phone
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Phone Number" variant="outlined" defaultValue={playerPhone} />
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Availability
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Availability" variant="outlined" defaultValue={playerAvailability} />
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Preference Position
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preference" variant="outlined" defaultValue={playerPreference} />
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Preferred Teammate
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preferred Teammate" variant="outlined" defaultValue={playerPreferredTM} />
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Unpreferred Teammate
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Unpreferred Teammate" variant="outlined" defaultValue={playerNotPreferredTM}/>
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Gender
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Gender" variant="outlined" defaultValue={playerGender} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className = {bodyStyles.profilePageBasicInfoSubmit}>
+                    <Button>Save Information</Button>
                   </div>
                 </div>
               </div>
@@ -145,6 +163,7 @@ function Profile() {
             </div>
         </>
     )
+    } return (null);
 };
 
 const layout = {
