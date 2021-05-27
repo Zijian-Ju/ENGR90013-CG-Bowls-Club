@@ -1,5 +1,7 @@
 package com.cg.backend.controller;
 
+import com.cg.backend.common.enums.ResponseCode;
+import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.common.utils.Paging;
 import com.cg.backend.common.utils.SearchRequest;
 import com.cg.backend.model.Player;
@@ -34,9 +36,20 @@ public class PlayerController {
     return resultMap;
   }
 
+  @RequestMapping(value="/player/getPlayerById", method= RequestMethod.POST, produces="application/json")
+  public Player getPlayerById(@RequestBody long id){
+    Player player = new Player();
+    player.setId(id);
+    Player p = this.playerService.selectPlayerById(player);
+    if(p == null)
+      throw new BusinessException(ResponseCode.PLAYER_NOT_EXIST);
+
+    return p;
+  }
+
   @RequestMapping(value="/player/addPlayer", method= RequestMethod.POST, produces="application/json")
   public boolean addPlayer(@RequestBody Player player){
-    this.playerService.addPlayer(player);
+    this.playerService.insertPlayer(player);
     return true;
   }
 

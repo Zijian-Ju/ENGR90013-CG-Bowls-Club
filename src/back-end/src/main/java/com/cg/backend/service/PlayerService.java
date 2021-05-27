@@ -1,5 +1,7 @@
 package com.cg.backend.service;
 
+import com.cg.backend.common.enums.ResponseCode;
+import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.dao.PlayerMapper;
 import com.cg.backend.model.Player;
 import java.util.List;
@@ -20,6 +22,10 @@ public class PlayerService {
   }
 
   public void updatePlayer(Player player) {
+    Player p = this.playerMapper.selectByPrimaryKey(player);
+    if(p == null){
+      throw new BusinessException(ResponseCode.PLAYER_NOT_EXIST);
+    }
     this.playerMapper.updateByPrimaryKey(player);
   }
 
@@ -31,7 +37,7 @@ public class PlayerService {
     this.playerMapper.deleteByPrimaryKey(player);
   }
 
-  public void addPlayer(Player player) {
-    this.playerMapper.insert(player);
+  public Player selectPlayerById(Player player) {
+    return this.playerMapper.selectByPrimaryKey(player);
   }
 }

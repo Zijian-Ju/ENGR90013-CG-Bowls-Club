@@ -1,11 +1,13 @@
 package com.cg.backend;
 
+import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.controller.PlayerController;
 import com.cg.backend.dao.PlayerMapper;
 import com.cg.backend.model.Player;
 import com.cg.backend.service.PlayerService;
 import java.util.List;
 import javax.annotation.Resource;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.Test;
@@ -24,23 +26,31 @@ public class PlayerControllerTest {
   PlayerController playerController;
 
   @Test
-  public void updatePlayer(){
+  public void testUpdatePlayer(){
     Player player = new Player((long) 1, "James Rumbold", "jamesR@gmail.com",
         "male", "0412345678", "Mon,Sun",
         "lead", "John", "");
     playerController.updatePlayer(player);
   }
 
-  @Test
-  public void addPlayer(){
-    Player player = new Player((long) 6, "James Rumbold", "jamesR@gmail.com",
+  @Test(expected = BusinessException.class)
+  public void testUpdatePlayerNotExist(){
+    Player player = new Player((long) 101, "James Rumbold", "jamesR@gmail.com",
         "male", "0412345678", "Mon,Sun",
         "lead", "John", "");
     playerController.updatePlayer(player);
   }
 
   @Test
-  public void getAllPlayer(){
+  public void testAddPlayer(){
+    Player player = new Player((long) 100, "James Rumbold", "jamesR@gmail.com",
+        "male", "0412345678", "Mon,Sun",
+        "lead", "John", "");
+    playerController.insertPlayer(player);
+  }
+
+  @Test
+  public void testGetAllPlayer(){
     this.playerService.selectAll();
   }
 
