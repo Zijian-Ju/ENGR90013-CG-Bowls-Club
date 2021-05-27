@@ -53,6 +53,11 @@ public class PlayerController {
     this.playerService.deletePlayerById(player);
     return true;
   }
+  @RequestMapping(value="/player/insertPlayer", method= RequestMethod.POST, produces="application/json")
+  public boolean insertPlayer(@RequestBody Player player){
+    this.playerService.insertPlayer(player);
+    return true;
+  }
 
 
 }

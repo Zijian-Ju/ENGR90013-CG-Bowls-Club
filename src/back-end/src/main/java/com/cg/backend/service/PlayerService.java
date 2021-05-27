@@ -23,6 +23,10 @@ public class PlayerService {
     this.playerMapper.updateByPrimaryKey(player);
   }
 
+  public void insertPlayer(Player player) {
+    this.playerMapper.insert(player);
+  }
+
   public void deletePlayerById(Player player) {
     this.playerMapper.deleteByPrimaryKey(player);
   }

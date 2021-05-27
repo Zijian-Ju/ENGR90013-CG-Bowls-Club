@@ -16,3 +16,24 @@
     text-align: center;
     align-self: center;
 }
+
+.profilePage {
+    display: flex; 
+    margin: 10px;
+    flex-direction: row;
+}
+
+.profilePageColumn {
+    flex: flex;
+    flex-direction: column;
+    width: 33%;
+    height: 90vh
+}
+
+.profilePageColumnContainer {
+    height: 46%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin: 2%;
+    align-items: top;
+
+}
