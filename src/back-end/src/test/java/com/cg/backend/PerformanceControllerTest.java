@@ -102,4 +102,40 @@ public class PerformanceControllerTest {
         assertEquals(performance.getPerformanceScore(), Integer.valueOf(3));
     }
 
+
+    // Test check whether performance record existing -- exist
+    @Test
+    public void TestIsPerformanceExist_TRUE() {
+        // Player has played in match 1
+        String matchId = "1";
+        String playerId = "1";
+        Performance performance = new Performance();
+        performance.setPerformanceScore(3);
+        performance.setMatchId(Long.parseLong(matchId));
+        performance.setPlayerId(Long.parseLong(playerId));
+
+
+        boolean result = performanceService.isPerformanceExist(performance);
+
+        assertTrue(result);
+    }
+
+    // Test check whether performance record existing -- not exist
+    @Test
+    public void TestIsPerformanceExist_FALSE() {
+        // Player has played in match 1
+        String matchId = "2";
+        String playerId = "1";
+        Performance performance = new Performance();
+        performance.setPerformanceScore(3);
+        performance.setMatchId(Long.parseLong(matchId));
+        performance.setPlayerId(Long.parseLong(playerId));
+
+
+        boolean result = performanceService.isPerformanceExist(performance);
+
+        assertFalse(result);
+    }
+
+
 }
