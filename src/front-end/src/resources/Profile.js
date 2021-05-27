@@ -50,6 +50,13 @@ function Profile() {
         return alert("Unsupported");
     }; 
 
+    function deleteUser(id) {
+      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, id)
+      .then(res => {
+        console.log(res)
+      })
+    }
+
     if (loaded) {
     return (
         <>
@@ -73,7 +80,7 @@ function Profile() {
                   </div>
                 </div>
                 <div style = {{height: '10%', display: 'flex', justifyContent: 'center'}} className = {bodyStyles.profilePageColumnContainer}>
-                  <Button color='secondary' onClick= {placeholderAlert}>Delete User</Button>
+                  <Button color='secondary' onClick= {deleteUser(id)}>Delete User</Button>
                 </div>
               </div>
               <div className = {bodyStyles.profilePageColumn}>
