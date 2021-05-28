@@ -54,7 +54,7 @@ function Profile() {
       axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {Id: id})
       .then(res => {
         console.log(res);
-        alert("User deleted");
+        alert("User deleted"); history.push("/members");
       })
     }
 
@@ -81,7 +81,7 @@ function Profile() {
                   </div>
                 </div>
                 <div style = {{height: '10%', display: 'flex', justifyContent: 'center'}} className = {bodyStyles.profilePageColumnContainer}>
-                  <Button color='secondary' onClick= {deleteUser(id)}>Delete User</Button>
+                  <Button color='secondary' onClick = {() => {deleteUser(id)}}>Delete User</Button>
                 </div>
               </div>
               <div className = {bodyStyles.profilePageColumn}>
