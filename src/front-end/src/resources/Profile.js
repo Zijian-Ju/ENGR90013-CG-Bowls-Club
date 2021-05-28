@@ -31,10 +31,10 @@ function Profile() {
       axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id})
       .then(res => {
           setResponse(res); 
-          console.log(res); 
+          // console.log(res); 
           setLoaded(true);
       })
-      if (response !== {} && response.data !== undefined) {
+      if (response !== {} && response.data !== undefined && response.data.statusCode === 200) {
         setPlayerName(response.data.data.playerName);
         setPlayerEmail(response.data.data.playerEmail);
         setPlayerPhone(response.data.data.playerPhone);
@@ -51,10 +51,10 @@ function Profile() {
     }; 
 
     function deleteUser(Id) {
-      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {Id: id})
+      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
       .then(res => {
-        console.log(res);
-        alert("User deleted"); history.push("/members");
+        alert("Player deleted"); 
+        history.push("/members");
       })
     }
 
@@ -174,23 +174,5 @@ function Profile() {
     } return (null);
 };
 
-const layout = {
-    labelCol: {
-      span: 8,
-    },
-    wrapperCol: {
-      span: 16,
-    },
-  };
-const validateMessages = {
-    required: '${label} is required!',
-    types: {
-      email: '${label} is not a valid email!',
-      number: '${label} is not a valid number!',
-    },
-    number: {
-      range: '${label} must be between ${min} and ${max}',
-    },
-  };
 
 export default Profile;
