@@ -9,9 +9,6 @@ import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
-import 'antd/dist/antd.css';
-import { Form, Input, InputNumber } from 'antd';
-
 function Profile() {
     const [response, setResponse] = useState({});
     const [loaded, setLoaded] = useState(false);
@@ -25,16 +22,17 @@ function Profile() {
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
     const history = useHistory();
     const { id } = useParams();
-
+    
+   
    
     useEffect(() => {
       axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id})
       .then(res => {
           setResponse(res); 
           // console.log(res); 
-          setLoaded(true);
       })
-      if (response !== {} && response.data !== undefined && response.data.statusCode === 200) {
+      if (!loaded && response !== {} && response.data !== undefined && response.data.statusCode === 200) {
+        setLoaded(true);
         setPlayerName(response.data.data.playerName);
         setPlayerEmail(response.data.data.playerEmail);
         setPlayerPhone(response.data.data.playerPhone);
@@ -49,6 +47,14 @@ function Profile() {
     function placeholderAlert() {
         return alert("Unsupported");
     }; 
+
+    function onSubmit() {
+      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM})
+      .then(res => {
+        alert("Player updated"); 
+        history.go(0);
+      })
+    }
 
     function deleteUser(Id) {
       axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
@@ -95,7 +101,7 @@ function Profile() {
                         Name
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Name" variant="outlined" defaultValue={playerName} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Name" variant="outlined" defaultValue={playerName} onChange={(e) => {setPlayerName(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -103,7 +109,7 @@ function Profile() {
                         Email
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Email" variant="outlined" defaultValue={playerEmail} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Email" variant="outlined" defaultValue={playerEmail} onChange={(e) => {setPlayerEmail(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -111,7 +117,7 @@ function Profile() {
                         Phone
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Phone Number" variant="outlined" defaultValue={playerPhone} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Phone Number" variant="outlined" defaultValue={playerPhone} onChange={(e) => {setPlayerPhone(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -119,7 +125,7 @@ function Profile() {
                         Availability
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Availability" variant="outlined" defaultValue={playerAvailability} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Availability" variant="outlined" defaultValue={playerAvailability} onChange={(e) => {setPlayerAvailability(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -127,7 +133,7 @@ function Profile() {
                         Preference Position
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preference" variant="outlined" defaultValue={playerPreference} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preference" variant="outlined" defaultValue={playerPreference} onChange={(e) => {setPlayerPreference(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -135,7 +141,7 @@ function Profile() {
                         Preferred Teammate
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preferred Teammate" variant="outlined" defaultValue={playerPreferredTM} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preferred Teammate" variant="outlined" defaultValue={playerPreferredTM} onChange={(e) => {setPlayerPreferredTM(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -143,7 +149,7 @@ function Profile() {
                         Unpreferred Teammate
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Unpreferred Teammate" variant="outlined" defaultValue={playerNotPreferredTM}/>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Unpreferred Teammate" variant="outlined" defaultValue={playerNotPreferredTM} onChange={(e) => {setPlayerNotPreferredTM(e.target.value)}}/>
                       </div>
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
@@ -151,12 +157,12 @@ function Profile() {
                         Gender
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
-                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Gender" variant="outlined" defaultValue={playerGender} />
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Gender" variant="outlined" defaultValue={playerGender} onChange={(e) => {setPlayerGender(e.target.value)}}/>
                       </div>
                     </div>
                   </div>
                   <div className = {bodyStyles.profilePageBasicInfoSubmit}>
-                    <Button>Save Information</Button>
+                    <Button onClick={onSubmit}>Save Information</Button>
                   </div>
                 </div>
               </div>
@@ -171,7 +177,7 @@ function Profile() {
             </div>
         </>
     )
-    } return (null);
+    } return (<div>...Loading</div>);
 };
 
 
