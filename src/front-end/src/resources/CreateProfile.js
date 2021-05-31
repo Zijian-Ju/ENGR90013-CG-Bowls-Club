@@ -9,7 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
-function Profile() {
+function CreateProfile() {
     const [response, setResponse] = useState({});
     const [loaded, setLoaded] = useState(false);
     const [playerName, setPlayerName] = useState("");
@@ -21,48 +21,21 @@ function Profile() {
     const [playerNotPreferredTM, setPlayerNotPreferredTM] = useState("");
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
     const history = useHistory();
-    const { id } = useParams();
-   
-    useEffect(() => {
-      axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id})
-      .then(res => {
-          setResponse(res); 
-          // console.log(res); 
-      })
-      if (!loaded && response !== {} && response.data !== undefined && response.data.statusCode === 200) {
-        setLoaded(true);
-        setPlayerName(response.data.data.playerName);
-        setPlayerEmail(response.data.data.playerEmail);
-        setPlayerPhone(response.data.data.playerPhone);
-        setPlayerAvailability(response.data.data.playerAvailability);
-        setPlayerPreference(response.data.data.playerPosPreference);
-        setPlayerPreferredTM(response.data.data.playerPreferTeammates);
-        setPlayerNotPreferredTM(response.data.data.playerNotPreferTeammates);
-        setPlayerGender(response.data.data.playerGender);
-      }
-    });
 
     function placeholderAlert() {
         return alert("Unsupported");
     }; 
 
     function onSubmit() {
-      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM})
+      axios.post(`http://128.199.253.108:8082/player/insertPlayer`, {playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM})
       .then(res => {
-        alert("Player updated"); 
-        history.go(0);
-      })
-    }
-
-    function deleteUser(Id) {
-      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
-      .then(res => {
-        alert("Player deleted"); 
+        alert("Player Created"); 
         history.push("/members");
       })
     }
 
-    if (loaded) {
+
+
     return (
         <>
             <div className={styles.body}>
@@ -81,12 +54,10 @@ function Profile() {
               <div className = {bodyStyles.profilePageColumn}>
                 <div className = {bodyStyles.profilePageColumnContainer}>
                   <div className = {bodyStyles.profilePageTitle}>
-                  Profile Overview
+                  Create Profile
                   </div>
                 </div>
-                <div style = {{height: '10%', display: 'flex', justifyContent: 'center'}} className = {bodyStyles.profilePageColumnContainer}>
-                  <Button color='secondary' onClick = {() => {deleteUser(id)}}>Delete User</Button>
-                </div>
+      
               </div>
               <div className = {bodyStyles.profilePageColumn}>
                 <div style ={{height: '93.5%'}} className = {bodyStyles.profilePageColumnContainer}>
@@ -160,7 +131,7 @@ function Profile() {
                     </div>
                   </div>
                   <div className = {bodyStyles.profilePageBasicInfoSubmit}>
-                    <Button onClick={onSubmit}>Save Information</Button>
+                    <Button variant="contained" onClick={onSubmit}>Create Profile</Button>
                   </div>
                 </div>
               </div>
@@ -175,8 +146,7 @@ function Profile() {
             </div>
         </>
     )
-    } return (<div>...Loading</div>);
 };
 
 
-export default Profile;
+export default CreateProfile;

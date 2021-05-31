@@ -14,8 +14,12 @@ function Members() {
     const [response, setResponse] = useState({});
     const history = useHistory();
 
-    function handleUserClick(id) {
+    function handleUserProfileClick(id) {
         history.push("/members/" + id);
+    }
+
+    function handleCreateProfileClick() {
+        history.push("/members/create");
     }
 
     useEffect(() => {
@@ -44,7 +48,7 @@ function Members() {
                             <div className={bodyStyles.allUsersContainerRowElement}>{user.playerName}</div>
                             <div className={bodyStyles.allUsersContainerRowElement}>{user.playerEmail}</div>
                             <div className={bodyStyles.allUsersContainerRowElement}>{user.playerPhone}</div>
-                            <Button className={bodyStyles.allUsersContainerRowElement} onClick={() => {handleUserClick(user.id)}}>Click to open</Button>
+                            <Button className={bodyStyles.allUsersContainerRowElement} onClick={() => {handleUserProfileClick(user.id)}}>Click to open</Button>
                     </div>
                 ))}
             </div>
@@ -64,12 +68,14 @@ function Members() {
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
                 </div>
             </div>
-            {/* <div>
-                {JSON.stringify(response)}
-            </div> */}
-
-            {response !== {} && response.status === 200 && renderUsers(response)}
-
+            <div className={bodyStyles.membersBody}>
+                <div className={bodyStyles.membersBodyButtonsContainer}>
+                    <Button variant="contained" color="primary" onClick={handleCreateProfileClick}>Create New</Button>
+                </div>
+                <div>
+                {response !== {} && response.status === 200 && renderUsers(response)}
+                </div>
+            </div>
         </>
     );
 };
