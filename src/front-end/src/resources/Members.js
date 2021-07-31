@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from './css/navbar.module.css';
 import bodyStyles from './css/body.module.css';
+import toolbarStyles from  './css/toolbar.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
+import { TextField } from '@material-ui/core';
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -67,14 +69,25 @@ function Members() {
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
                 </div>
+                <div className={styles.logout}>
+                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                </div>
+            </div>
+            <div className={toolbarStyles.toolbar}>
+                <div className={toolbarStyles.newUserContainer}>
+                    <Button variant="contained" color="primary" onClick={handleCreateProfileClick}>New Member</Button>
+                </div>
+                <div className={toolbarStyles.searchBarContainer}>
+                    <div className={toolbarStyles.searchBar}>
+                        <TextField style={{width: '100%'}} variant="outlined" label="Search User"/>
+                    </div>
+                    <div className={toolbarStyles.filter}>
+                        <Button variant="contained" colour="primary" onclick={placeholderAlert}>Filter</Button>
+                    </div>
+                </div>
             </div>
             <div className={bodyStyles.membersBody}>
-                <div className={bodyStyles.membersBodyButtonsContainer}>
-                    <Button variant="contained" color="primary" onClick={handleCreateProfileClick}>Create New</Button>
-                </div>
-                <div>
                 {response !== {} && response.status === 200 && renderUsers(response)}
-                </div>
             </div>
         </>
     );
