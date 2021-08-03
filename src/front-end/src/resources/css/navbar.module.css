@@ -1,11 +1,11 @@
 .body {
-    
     color: black;
     padding: 10px;
     font-family: Arial;
     align-items: center;
     height: 10vh;
-    display:flex;
+    display: flex;
+    border-bottom: 1px dotted black;
 }
 
 .logotext {
