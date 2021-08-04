@@ -16,10 +16,14 @@ function Home() {
         history.push("/members");
     };
 
+    function homeHandleClick() {
+        history.push("/home");
+      }
+
     return (
         <div className={styles.body}>
             <div className={styles.logotext} >
-                <img className={styles.mcclogo} src={mcclogo} alt="Logo" />
+                <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
             </div>
             <div className={styles.linktabs}>
                 <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>

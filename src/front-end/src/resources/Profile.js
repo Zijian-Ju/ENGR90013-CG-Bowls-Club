@@ -54,6 +54,14 @@ function Profile() {
       })
     }
 
+    function membersHandleClick() {
+      history.push("/members");
+    };
+
+    function homeHandleClick() {
+      history.push("/home");
+    }
+
     function deleteUser(Id) {
       axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
       .then(res => {
@@ -67,13 +75,16 @@ function Profile() {
         <>
             <div className={styles.body}>
                 <div className={styles.logotext} >
-                    <img className={styles.mcclogo} src={mcclogo} alt="Logo" />
+                    <img className={styles.mcclogo} src={mcclogo} onClick={homeHandleClick} alt="Logo" />
                 </div>
                 <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>TEAMS</Button>
+                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
+                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                </div>
+                <div className={styles.logout}>
+                    <Button onClick={placeholderAlert}>LOG OUT</Button>
                 </div>
             </div>
       

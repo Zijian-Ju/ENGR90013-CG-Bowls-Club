@@ -29,6 +29,10 @@ function Members() {
         history.push("/members");
     };
 
+    function homeHandleClick() {
+        history.push("/home");
+    };
+
     useEffect(() => {
 
         axios.post(`http://128.199.253.108:8082/player/getAllUser`, {username: "string"})
@@ -44,22 +48,22 @@ function Members() {
         return (
             <div className={bodyStyles.allUsersContainer}>
                 {userArray.map(user => (
-                    <div className={bodyStyles.userCard} onClick={() => alert('Unsupported function')}>
+                    <div className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                         <div className={bodyStyles.userCardImageContainer}>
-                            <img className={bodyStyles.userCardImage} src={profilepic} alt="Logo" />
+                            <div className={bodyStyles.userCardImage}>
+                                <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                            </div>
+                            <div className={bodyStyles.userName}>
+                                {user.playerName}
+                            </div>
                         </div>
-                        <div>
-                            Information
-                            <div>{user.playerName}</div>
+                        <div className={bodyStyles.userCardDescriptionContainer}>
+                            <div className={bodyStyles.userCardDescriptionItem}>Performance</div>
+                            <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
+                            <div className={bodyStyles.userCardDescriptionItem}>Favourite Position</div>
+                            <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPosPreference}</div>
                         </div>
                     </div>
-                    // <div className={bodyStyles.allUsersContainerRow}>
-                    //     <div className={bodyStyles.allUsersContainerRowElement}>{user.id}</div>
-                    //     <div className={bodyStyles.allUsersContainerRowElement}>{user.playerName}</div>
-                    //     <div className={bodyStyles.allUsersContainerRowElement}>{user.playerEmail}</div>
-                    //     <div className={bodyStyles.allUsersContainerRowElement}>{user.playerPhone}</div>
-                    //     <Button className={bodyStyles.allUsersContainerRowElement} onClick={() => {handleUserProfileClick(user.id)}}>Click to open</Button>
-                    // </div>
                 ))}
             </div>
         )
@@ -69,7 +73,7 @@ function Members() {
         <>
             <div className={styles.body}>
                 <div className={styles.logotext} >
-                    <img className={styles.mcclogo} src={mcclogo} alt="Logo" />
+                    <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
                 </div>
                 <div className={styles.linktabs}>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
