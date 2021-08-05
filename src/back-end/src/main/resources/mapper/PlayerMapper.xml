@@ -14,5 +14,13 @@
     <result column="player_pos_preference" jdbcType="VARCHAR" property="playerPosPreference" />
     <result column="player_prefer_teammates" jdbcType="VARCHAR" property="playerPreferTeammates" />
     <result column="player_not_prefer_teammates" jdbcType="VARCHAR" property="playerNotPreferTeammates" />
+    <result column="photo_url" jdbcType="VARCHAR" property="photoUrl" />
   </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, player_name, player_email, player_gender, player_phone, player_availability, 
+    player_pos_preference, player_prefer_teammates, player_not_prefer_teammates, photo_url
+  </sql>
 </mapper>

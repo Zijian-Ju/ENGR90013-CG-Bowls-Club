@@ -7,13 +7,49 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="team_name" jdbcType="VARCHAR" property="teamName" />
-    <result column="skip_bowler_id" jdbcType="BIGINT" property="skipBowlerId" />
-    <result column="skip_bowler_name" jdbcType="VARCHAR" property="skipBowlerName" />
-    <result column="third_bowler_id" jdbcType="BIGINT" property="thirdBowlerId" />
-    <result column="third_bowler_name" jdbcType="VARCHAR" property="thirdBowlerName" />
-    <result column="second_bowler_id" jdbcType="BIGINT" property="secondBowlerId" />
-    <result column="second_bowler_name" jdbcType="VARCHAR" property="secondBowlerName" />
-    <result column="lead_bowler_id" jdbcType="BIGINT" property="leadBowlerId" />
-    <result column="lead_bowler_name" jdbcType="VARCHAR" property="leadBowlerName" />
+    <result column="skip_bowler_id1" jdbcType="BIGINT" property="skipBowlerId1" />
+    <result column="skip_bowler_name1" jdbcType="VARCHAR" property="skipBowlerName1" />
+    <result column="third_bowler_id1" jdbcType="BIGINT" property="thirdBowlerId1" />
+    <result column="third_bowler_name1" jdbcType="VARCHAR" property="thirdBowlerName1" />
+    <result column="second_bowler_id1" jdbcType="BIGINT" property="secondBowlerId1" />
+    <result column="second_bowler_name1" jdbcType="VARCHAR" property="secondBowlerName1" />
+    <result column="lead_bowler_id1" jdbcType="BIGINT" property="leadBowlerId1" />
+    <result column="lead_bowler_name1" jdbcType="VARCHAR" property="leadBowlerName1" />
+    <result column="skip_bowler_id2" jdbcType="BIGINT" property="skipBowlerId2" />
+    <result column="skip_bowler_name2" jdbcType="VARCHAR" property="skipBowlerName2" />
+    <result column="third_bowler_id2" jdbcType="BIGINT" property="thirdBowlerId2" />
+    <result column="third_bowler_name2" jdbcType="VARCHAR" property="thirdBowlerName2" />
+    <result column="second_bowler_id2" jdbcType="BIGINT" property="secondBowlerId2" />
+    <result column="second_bowler_name2" jdbcType="VARCHAR" property="secondBowlerName2" />
+    <result column="lead_bowler_id2" jdbcType="BIGINT" property="leadBowlerId2" />
+    <result column="lead_bowler_name2" jdbcType="VARCHAR" property="leadBowlerName2" />
+    <result column="skip_bowler_id3" jdbcType="BIGINT" property="skipBowlerId3" />
+    <result column="skip_bowler_name3" jdbcType="VARCHAR" property="skipBowlerName3" />
+    <result column="third_bowler_id3" jdbcType="BIGINT" property="thirdBowlerId3" />
+    <result column="third_bowler_name3" jdbcType="VARCHAR" property="thirdBowlerName3" />
+    <result column="second_bowler_id3" jdbcType="BIGINT" property="secondBowlerId3" />
+    <result column="second_bowler_name3" jdbcType="VARCHAR" property="secondBowlerName3" />
+    <result column="lead_bowler_id3" jdbcType="BIGINT" property="leadBowlerId3" />
+    <result column="lead_bowler_name3" jdbcType="VARCHAR" property="leadBowlerName3" />
+    <result column="skip_bowler_id4" jdbcType="BIGINT" property="skipBowlerId4" />
+    <result column="skip_bowler_name4" jdbcType="VARCHAR" property="skipBowlerName4" />
+    <result column="third_bowler_id4" jdbcType="BIGINT" property="thirdBowlerId4" />
+    <result column="third_bowler_name4" jdbcType="VARCHAR" property="thirdBowlerName4" />
+    <result column="second_bowler_id4" jdbcType="BIGINT" property="secondBowlerId4" />
+    <result column="second_bowler_name4" jdbcType="VARCHAR" property="secondBowlerName4" />
+    <result column="lead_bowler_id4" jdbcType="BIGINT" property="leadBowlerId4" />
+    <result column="lead_bowler_name4" jdbcType="VARCHAR" property="leadBowlerName4" />
   </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, team_name, skip_bowler_id1, skip_bowler_name1, third_bowler_id1, third_bowler_name1, 
+    second_bowler_id1, second_bowler_name1, lead_bowler_id1, lead_bowler_name1, skip_bowler_id2, 
+    skip_bowler_name2, third_bowler_id2, third_bowler_name2, second_bowler_id2, second_bowler_name2, 
+    lead_bowler_id2, lead_bowler_name2, skip_bowler_id3, skip_bowler_name3, third_bowler_id3, 
+    third_bowler_name3, second_bowler_id3, second_bowler_name3, lead_bowler_id3, lead_bowler_name3, 
+    skip_bowler_id4, skip_bowler_name4, third_bowler_id4, third_bowler_name4, second_bowler_id4, 
+    second_bowler_name4, lead_bowler_id4, lead_bowler_name4
+  </sql>
 </mapper>

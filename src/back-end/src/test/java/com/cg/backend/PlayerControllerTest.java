@@ -28,29 +28,29 @@ public class PlayerControllerTest {
   @Resource
   PlayerController playerController;
 
-  @Test
-  public void testUpdatePlayer(){
-    Player player = new Player((long) 1, "James Rumbold", "jamesR@gmail.com",
-        "male", "0412345678", "Mon,Sun",
-        "lead", "John", "");
-    playerController.updatePlayer(player);
-  }
+//  @Test
+//  public void testUpdatePlayer(){
+//    Player player = new Player((long) 1, "James Rumbold", "jamesR@gmail.com",
+//        "male", "0412345678", "Mon,Sun",
+//        "lead", "John", "");
+//    playerController.updatePlayer(player);
+//  }
 
-  @Test(expected = BusinessException.class)
-  public void testUpdatePlayerNotExist(){
-    Player player = new Player((long) 101, "James Rumbold", "jamesR@gmail.com",
-        "male", "0412345678", "Mon,Sun",
-        "lead", "John", "");
-    playerController.updatePlayer(player);
-  }
+//  @Test(expected = BusinessException.class)
+//  public void testUpdatePlayerNotExist(){
+//    Player player = new Player((long) 101, "James Rumbold", "jamesR@gmail.com",
+//        "male", "0412345678", "Mon,Sun",
+//        "lead", "John", "");
+//    playerController.updatePlayer(player);
+//  }
 
-  @Test
-  public void testAddPlayer(){
-    Player player = new Player((long) 100, "James Rumbold", "jamesR@gmail.com",
-        "male", "0412345678", "Mon,Sun",
-        "lead", "John", "");
-    playerController.insertPlayer(player);
-  }
+//  @Test
+//  public void testAddPlayer(){
+//    Player player = new Player((long) 100, "James Rumbold", "jamesR@gmail.com",
+//        "male", "0412345678", "Mon,Sun",
+//        "lead", "John", "");
+//    playerController.insertPlayer(player);
+//  }
 
   @Test
   public void testGetAllPlayer(){

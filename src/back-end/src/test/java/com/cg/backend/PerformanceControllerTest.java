@@ -87,7 +87,7 @@ public class PerformanceControllerTest {
         String playerId = "1";
         Performance performance = new Performance();
         performance.setPerformanceScore(3);
-        performance.setMatchId(Long.parseLong(matchId));
+        performance.setCompetitionId(Long.parseLong(matchId));
         performance.setPlayerId(Long.parseLong(playerId));
 
         performanceService.updateUserPerformance(performance);
@@ -95,7 +95,7 @@ public class PerformanceControllerTest {
         Example example = new Example(Performance.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("playerId", performance.getPlayerId());
-        criteria.andEqualTo("matchId", performance.getMatchId());
+        criteria.andEqualTo("matchId", performance.getCompetitionId());
         performance = performanceMapper.selectOneByExample(example);
 
         // Check whether the updated record is the same as it should be
@@ -111,7 +111,7 @@ public class PerformanceControllerTest {
         String playerId = "1";
         Performance performance = new Performance();
         performance.setPerformanceScore(3);
-        performance.setMatchId(Long.parseLong(matchId));
+        performance.setCompetitionId(Long.parseLong(matchId));
         performance.setPlayerId(Long.parseLong(playerId));
 
 
@@ -128,7 +128,7 @@ public class PerformanceControllerTest {
         String playerId = "1";
         Performance performance = new Performance();
         performance.setPerformanceScore(3);
-        performance.setMatchId(Long.parseLong(matchId));
+        performance.setCompetitionId(Long.parseLong(matchId));
         performance.setPlayerId(Long.parseLong(playerId));
 
 

@@ -5,9 +5,17 @@
     <!--
       WARNING - @mbg.generated
     -->
+    <id column="id" jdbcType="INTEGER" property="id" />
     <result column="player_id" jdbcType="BIGINT" property="playerId" />
-    <result column="match_id" jdbcType="BIGINT" property="matchId" />
+    <result column="competition_id" jdbcType="BIGINT" property="competitionId" />
     <result column="performance_score" jdbcType="INTEGER" property="performanceScore" />
+    <result column="season" jdbcType="VARCHAR" property="season" />
     <result column="match_time" jdbcType="TIMESTAMP" property="matchTime" />
   </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, player_id, competition_id, performance_score, season, match_time
+  </sql>
 </mapper>
