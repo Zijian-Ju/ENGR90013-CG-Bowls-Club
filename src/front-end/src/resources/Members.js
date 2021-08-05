@@ -48,24 +48,28 @@ function Members() {
         console.log(userArray)
         return (
             <div className={bodyStyles.allUsersContainer}>
-                {userArray.map(user => { if (user.playerName.toLowerCase().includes(userSearchText.toLowerCase())) { return(
-                    <div className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
-                        <div className={bodyStyles.userCardImageContainer}>
-                            <div className={bodyStyles.userCardImage}>
-                                <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                {userArray.map(user => { 
+                    if (user.playerName.toLowerCase().includes(userSearchText.toLowerCase())) { 
+                        return (
+                            <div className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
+                                <div className={bodyStyles.userCardImageContainer}>
+                                    <div className={bodyStyles.userCardImage}>
+                                        <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                                    </div>
+                                    <div className={bodyStyles.userName}>
+                                        {user.playerName}
+                                    </div>
+                                </div>
+                                <div className={bodyStyles.userCardDescriptionContainer}>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Performance</div>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Favourite Position</div>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPosPreference}</div>
+                                </div>
                             </div>
-                            <div className={bodyStyles.userName}>
-                                {user.playerName}
-                            </div>
-                        </div>
-                        <div className={bodyStyles.userCardDescriptionContainer}>
-                            <div className={bodyStyles.userCardDescriptionItem}>Performance</div>
-                            <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
-                            <div className={bodyStyles.userCardDescriptionItem}>Favourite Position</div>
-                            <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPosPreference}</div>
-                        </div>
-                    </div>
-                )}})}
+                        )
+                    }
+                })}
             </div>
         )
     }
