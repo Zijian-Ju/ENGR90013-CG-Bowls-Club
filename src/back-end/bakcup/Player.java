@@ -43,9 +43,6 @@ public class Player {
     @Column(name = "player_not_prefer_teammates")
     private String playerNotPreferTeammates;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
-
     /**
      * @return id
      */
@@ -188,17 +185,21 @@ public class Player {
         this.playerNotPreferTeammates = playerNotPreferTeammates;
     }
 
-    /**
-     * @return photo_url
-     */
-    public String getPhotoUrl() {
-        return photoUrl;
+    public Player(){
+
     }
 
-    /**
-     * @param photoUrl
-     */
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public Player(Long id, String playerName, String playerEmail, String playerGender,
+        String playerPhone, String playerAvailability, String playerPosPreference,
+        String playerPreferTeammates, String playerNotPreferTeammates) {
+        this.id = id;
+        this.playerName = playerName;
+        this.playerEmail = playerEmail;
+        this.playerGender = playerGender;
+        this.playerPhone = playerPhone;
+        this.playerAvailability = playerAvailability;
+        this.playerPosPreference = playerPosPreference;
+        this.playerPreferTeammates = playerPreferTeammates;
+        this.playerNotPreferTeammates = playerNotPreferTeammates;
     }
 }

@@ -49,14 +49,35 @@
         <!-- 配置表信息 -->
         <!-- schema即为数据库名 tableName为对应的数据库表 domainObjectName是要生成的实体类 enable*ByExample, 是否生成 example类   -->
         <!-- 不同的表，修改tableName和domainObjectName就可以 -->
-        <table tableName="t_bowl_player" domainObjectName="Player">
+<!--        <table tableName="t_bowl_player" domainObjectName="Player">-->
+<!--        </table>-->
+<!--        <table tableName="t_bowl_team" domainObjectName="Team">-->
+<!--        </table>-->
+<!--        <table tableName="t_bowl_match" domainObjectName="Match">-->
+<!--        </table>-->
+<!--        <table tableName="t_bowl_game_player_performance" domainObjectName="Performance">-->
+<!--        </table>-->
+        <table schema = "general" tableName= "t_bowl_player" domainObjectName= "Player"
+          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
+          enableSelectByExample= "false" selectByExampleQueryId= "false" >
+            <property name = "useActualColumnNames" value= "false" />
         </table>
-        <table tableName="t_bowl_team" domainObjectName="Team">
+        <table schema = "general" tableName= "t_bowl_team" domainObjectName= "Team"
+          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
+          enableSelectByExample= "false" selectByExampleQueryId= "false" >
+            <property name = "useActualColumnNames" value= "false" />
         </table>
-        <table tableName="t_bowl_match" domainObjectName="Match">
+        <table schema = "general" tableName= "t_bowl_competition" domainObjectName= "Competition"
+          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
+          enableSelectByExample= "false" selectByExampleQueryId= "false" >
+            <property name = "useActualColumnNames" value= "false" />
         </table>
-        <table tableName="t_bowl_game_player_performance" domainObjectName="Performance">
+        <table schema = "general" tableName= "t_bowl_game_player_performance" domainObjectName= "Performance"
+          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
+          enableSelectByExample= "false" selectByExampleQueryId= "false" >
+            <property name = "useActualColumnNames" value= "false" />
         </table>
+
     </context>
 </generatorConfiguration>
 

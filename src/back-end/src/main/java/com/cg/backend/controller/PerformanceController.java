@@ -51,9 +51,9 @@ public class PerformanceController {
 
     @RequestMapping(value="/player/updateMatchPerformance", method= RequestMethod.POST, produces="application/json")
     public void updateUserPerformance(@RequestBody Performance performance){
-        if (performance.getMatchId() == null || performance.getPlayerId() == null || performance.getPerformanceScore() == null) {
-            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
-        }
+//        if (performance.getMatchId() == null || performance.getPlayerId() == null || performance.getPerformanceScore() == null) {
+//            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
+//        }
 
         if (!performanceService.isPerformanceExist(performance)) {
             throw new BusinessException(ResponseCode.PERFORMANCE_RECORD_NOT_FOUND);

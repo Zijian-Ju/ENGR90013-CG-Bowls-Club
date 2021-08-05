@@ -53,12 +53,12 @@ public class PerformanceService {
 
     public void updateUserPerformance(Performance performance) {
         Performance updatingPerformance = new Performance();
-        updatingPerformance.setMatchId(performance.getMatchId());
+        updatingPerformance.setCompetitionId(performance.getCompetitionId());
         updatingPerformance.setPlayerId(performance.getPlayerId());
 
         updatingPerformance.setPerformanceScore(performance.getPerformanceScore());
 
-        performanceMapper.updatePerformance(performance);
+        performanceMapper.updateByPrimaryKey(performance);
     }
 
     // Check whether this performance record exists
@@ -66,7 +66,7 @@ public class PerformanceService {
         Example example = new Example(Performance.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("playerId", performance.getPlayerId());
-        criteria.andEqualTo("matchId", performance.getMatchId());
+        criteria.andEqualTo("competitionId", performance.getCompetitionId());
 
         Performance savedPerformance = performanceMapper.selectOneByExample(example);
         if (savedPerformance == null) {
