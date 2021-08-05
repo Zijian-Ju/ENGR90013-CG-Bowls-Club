@@ -15,6 +15,7 @@ function placeholderAlert() {
 
 function Members() {
     const [response, setResponse] = useState({});
+    const [userSearchText, setUserSearchText] = useState("");
     const history = useHistory();
 
     function handleUserProfileClick(id) {
@@ -47,7 +48,7 @@ function Members() {
         console.log(userArray)
         return (
             <div className={bodyStyles.allUsersContainer}>
-                {userArray.map(user => (
+                {userArray.map(user => { if (user.playerName.toLowerCase().includes(userSearchText.toLowerCase())) { return(
                     <div className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                         <div className={bodyStyles.userCardImageContainer}>
                             <div className={bodyStyles.userCardImage}>
@@ -64,7 +65,7 @@ function Members() {
                             <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPosPreference}</div>
                         </div>
                     </div>
-                ))}
+                )}})}
             </div>
         )
     }
@@ -91,7 +92,7 @@ function Members() {
                 </div>
                 <div className={toolbarStyles.searchBarContainer}>
                     <div className={toolbarStyles.searchBar}>
-                        <TextField style={{width: '100%'}} variant="outlined" label="Search User"/>
+                        <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value)}} variant="outlined" label="Search User"/>
                     </div>
                     <div className={toolbarStyles.filter}>
                         <Button variant="contained" colour="primary" onclick={placeholderAlert}>Filter</Button>
