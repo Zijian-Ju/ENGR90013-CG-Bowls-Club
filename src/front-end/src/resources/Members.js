@@ -8,6 +8,15 @@ import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { TextField } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -16,6 +25,9 @@ function placeholderAlert() {
 function Members() {
     const [response, setResponse] = useState({});
     const [userSearchText, setUserSearchText] = useState("");
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [minPerformance, setMinPerformance] = useState("");
+    const [maxPerformance, setMaxPerformance] = useState("");
     const history = useHistory();
 
     function handleUserProfileClick(id) {
@@ -42,6 +54,14 @@ function Members() {
                 console.log(res);
             })
     });
+
+    function handleFilterClickOpen() {
+        setDialogOpen(true);
+    }
+
+    function handleFilterClickClose() {
+        setDialogOpen(false);
+    }
 
     function renderUsers(data) {
         const userArray = data.data.data.playerList;
@@ -99,7 +119,60 @@ function Members() {
                         <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value)}} variant="outlined" label="Search User"/>
                     </div>
                     <div className={toolbarStyles.filter}>
-                        <Button variant="contained" colour="primary" onclick={placeholderAlert}>Filter</Button>
+                        <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
+                        <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
+                            <DialogTitle>Input Filters</DialogTitle>
+                            <DialogContent className={toolbarStyles.filterDialogContent}>
+                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: '1%'}}>
+                                <InputLabel shrink id="demo-simple-select-label">Min Performance</InputLabel>
+                                    <Select
+                                        label="Minimum"
+                                        id="performance-min"
+                                        value={minPerformance}
+                                        displayEmpty
+                                        onChange={(e) => {setMinPerformance(e.target.value)}}
+                                    >
+                                        <MenuItem value={0}>0</MenuItem>
+                                        <MenuItem value={1}>1</MenuItem>
+                                        <MenuItem value={2}>2</MenuItem>
+                                        <MenuItem value={3}>3</MenuItem>
+                                        <MenuItem value={4}>4</MenuItem>
+                                        <MenuItem value={5}>5</MenuItem>
+                                        <MenuItem value={6}>6</MenuItem>
+                                        <MenuItem value={7}>7</MenuItem>
+                                        <MenuItem value={8}>8</MenuItem>
+                                        <MenuItem value={9}>9</MenuItem>
+                                        <MenuItem value={10}>10</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: '1%'}} style={{marginLeft: '1%'}} disabled={minPerformance===""} >
+                                    <InputLabel shrink id="demo-simple-select-label">Max Performance</InputLabel>
+                                    <Select
+                                        id="performance-max"
+                                        value={maxPerformance}
+                                        onChange={(e) => {setMaxPerformance(e.target.value)}}
+                                        displayEmpty
+                                    >
+                                        {(() => {
+                                            const options = [];
+                                            for (let i = minPerformance; i<=10; i++) {
+                                                options.push(<MenuItem value={i}>{i}</MenuItem>)
+                                            }
+                                            return options;
+                                        }
+                                        )()}
+                                    </Select>
+                                </FormControl>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleFilterClickClose} color="primary">
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleFilterClickClose} color="primary">
+                                    Ok
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
                     </div>
                 </div>
             </div>

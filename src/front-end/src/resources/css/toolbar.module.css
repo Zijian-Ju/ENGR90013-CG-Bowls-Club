@@ -29,3 +29,17 @@
     justify-content: center;
     width: 20%
 }
+
+.filterDialog {
+}
+
+.filterDialogContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 300px
+}
+
+.filterFormControl {
+    width: 49%
+}
