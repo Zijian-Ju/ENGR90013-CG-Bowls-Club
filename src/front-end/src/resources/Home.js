@@ -16,16 +16,23 @@ function Home() {
         history.push("/members");
     };
 
+    function homeHandleClick() {
+        history.push("/home");
+      }
+
     return (
         <div className={styles.body}>
             <div className={styles.logotext} >
-                <img className={styles.mcclogo} src={mcclogo} alt="Logo" />
+                <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
             </div>
             <div className={styles.linktabs}>
-                <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
-                <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
-                <Button className={styles.linkbuttons} onClick={membersHandleClick}>Members</Button>
-                <Button className={styles.linkbuttons} onClick={placeholderAlert}>Unsupported Placeholder</Button>
+                <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+                <Button className={styles.linkbuttons} onClick={placeholderAlert}>TEAMS</Button>
+                <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
+                <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+            </div>
+            <div className={styles.logout}>
+                <Button onClick={placeholderAlert}>LOG OUT</Button>
             </div>
         </div>
     );

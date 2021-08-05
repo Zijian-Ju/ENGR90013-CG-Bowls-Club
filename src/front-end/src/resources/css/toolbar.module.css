@@ -1,0 +1,31 @@
+.toolbar {
+    margin: 2%;
+    background-color: #DBF0FE;
+    padding: 1%;
+    display: flex;
+    flex-direction: row;
+    border-radius: 25px;
+}
+
+.newUserContainer {
+    width: 50%;
+    align-items: center;
+    display: flex;
+}
+
+.searchBarContainer {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.searchBar {
+    width: 80%
+}
+
+.filter {
+    display: flex;
+    justify-content: center;
+    width: 20%
+}
