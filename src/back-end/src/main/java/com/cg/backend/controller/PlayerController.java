@@ -5,6 +5,7 @@ import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.common.utils.Paging;
 import com.cg.backend.common.utils.SearchRequest;
 import com.cg.backend.model.Player;
+import com.cg.backend.model.PlayerFilter;
 import com.cg.backend.service.PlayerService;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +27,10 @@ public class PlayerController {
   @Resource
   private PlayerService playerService;
 
-  @RequestMapping(value="/player/getAllUser", method= RequestMethod.POST, produces="application/json")
-  public Map<String, Object> getAllUser(@RequestBody Paging paging){
+  @RequestMapping(value="/player/getAllPlayer", method= RequestMethod.POST, produces="application/json")
+  public Map<String, Object> getAllUser(@RequestBody SearchRequest<PlayerFilter> request){
     Map<String, Object> resultMap = new HashMap<>();
     List<Player> playerList = this.playerService.selectAll();
-    resultMap.put("playerList", playerList);
-    resultMap.put("Paging", paging);
 
     return resultMap;
   }
@@ -71,6 +70,4 @@ public class PlayerController {
     this.playerService.insertPlayer(player);
     return true;
   }
-
-
 }

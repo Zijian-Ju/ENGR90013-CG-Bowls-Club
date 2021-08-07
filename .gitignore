@@ -31,6 +31,7 @@ src/back-end/target
 *.iml
 *.ipr
 ./src/back-end/out
+./src/back-end/.idea/
 ./src/back-end/.gradle
 ./src/back-end/jars
 ./src/back-end/target/
