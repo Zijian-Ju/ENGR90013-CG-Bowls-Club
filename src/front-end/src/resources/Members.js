@@ -28,6 +28,9 @@ function Members() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [minPerformance, setMinPerformance] = useState("");
     const [maxPerformance, setMaxPerformance] = useState("");
+    const [availability, setAvailability] = useState([]);
+    const [favPosition, setFavPosition] = useState([]);
+    const [preference, setPreference] = useState("");
     const history = useHistory();
 
     function handleUserProfileClick(id) {
@@ -121,10 +124,10 @@ function Members() {
                     <div className={toolbarStyles.filter}>
                         <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
                         <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
-                            <DialogTitle>Input Filters</DialogTitle>
+                            <DialogTitle>Filters Results</DialogTitle>
                             <DialogContent className={toolbarStyles.filterDialogContent}>
-                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: '1%'}}>
-                                <InputLabel shrink id="demo-simple-select-label">Min Performance</InputLabel>
+                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
+                                <InputLabel shrink id="min performance label">Min Performance</InputLabel>
                                     <Select
                                         label="Minimum"
                                         id="performance-min"
@@ -145,10 +148,10 @@ function Members() {
                                         <MenuItem value={10}>10</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: '1%'}} style={{marginLeft: '1%'}} disabled={minPerformance===""} >
-                                    <InputLabel shrink id="demo-simple-select-label">Max Performance</InputLabel>
+                                <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
+                                    <InputLabel shrink id="availability label">Max Performance</InputLabel>
                                     <Select
-                                        id="performance-max"
+                                        id="availability select"
                                         value={maxPerformance}
                                         onChange={(e) => {setMaxPerformance(e.target.value)}}
                                         displayEmpty
@@ -164,12 +167,47 @@ function Members() {
                                     </Select>
                                 </FormControl>
                             </DialogContent>
+                            <DialogContent className={toolbarStyles.fullDialogContent}>
+                                <FormControl className={toolbarStyles.availabilityFormControl}>
+                                <InputLabel shrink id="availability label">Availabilities</InputLabel>
+                                <Select
+                                    labelId="availability label"
+                                    id="availability"
+                                    multiple
+                                    value={availability}
+                                    onChange={(e) => {setAvailability(e.target.value)}}
+                                >
+                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                        <MenuItem key={day} value={day}>{day}</MenuItem>
+                                    ))}
+                                </Select>
+                                </FormControl>
+                            </DialogContent>
+                            <DialogContent className={toolbarStyles.fullDialogContent}>
+                                <FormControl className={toolbarStyles.favPositionFormControl}>
+                                <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
+                                <Select
+                                    labelId=" fav position label"
+                                    id="favourite position"
+                                    multiple
+                                    value={favPosition}
+                                    onChange={(e) => {setFavPosition(e.target.value)}}
+                                >
+                                    {["Skip","Second","Third","Lead"].map((position) => (
+                                        <MenuItem key={position} value={position}>{position}</MenuItem>
+                                    ))}
+                                </Select>
+                                </FormControl>
+                            </DialogContent>
+                            <DialogContent className={toolbarStyles.fullDialogContent}>
+                                <FormControl className={toolbarStyles.preferenceFormControl}>
+                                    <InputLabel shrink>Preferences</InputLabel>
+                                    <Input id="preference" value={preference} onChange={(e) => {setPreference(e.target.value)}} />
+                                </FormControl>
+                            </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleFilterClickClose} color="primary">
-                                    Cancel
-                                </Button>
-                                <Button onClick={handleFilterClickClose} color="primary">
-                                    Ok
+                                    Go Back
                                 </Button>
                             </DialogActions>
                         </Dialog>
