@@ -7,7 +7,7 @@ import java.util.List;
 public class PlayerFilter {
     private int minScore;
     private int maxScore;
-    private List<Integer> availability;
+    private List<String> availability;
     private List<String> position;
 
     private Order order;
