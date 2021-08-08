@@ -26,6 +26,11 @@ public class Performance {
     private Date matchTime;
 
     /**
+     * Postion for the player of this game
+     */
+    private String position;
+
+    /**
      * @return id
      */
     public Integer getId() {
@@ -111,5 +116,23 @@ public class Performance {
      */
     public void setMatchTime(Date matchTime) {
         this.matchTime = matchTime;
+    }
+
+    /**
+     * 获取Postion for the player of this game
+     *
+     * @return position - Postion for the player of this game
+     */
+    public String getPosition() {
+        return position;
+    }
+
+    /**
+     * 设置Postion for the player of this game
+     *
+     * @param position Postion for the player of this game
+     */
+    public void setPosition(String position) {
+        this.position = position;
     }
 }
