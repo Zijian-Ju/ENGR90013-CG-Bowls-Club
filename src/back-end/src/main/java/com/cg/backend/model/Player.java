@@ -47,6 +47,12 @@ public class Player {
     private String photoUrl;
 
     /**
+     * Calculated by the recent five games' performance of the player
+     */
+    @Column(name = "recent_performance")
+    private Double recentPerformance;
+
+    /**
      * @return id
      */
     public Long getId() {
@@ -200,5 +206,23 @@ public class Player {
      */
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    /**
+     * 获取Calculated by the recent five games' performance of the player
+     *
+     * @return recent_performance - Calculated by the recent five games' performance of the player
+     */
+    public Double getRecentPerformance() {
+        return recentPerformance;
+    }
+
+    /**
+     * 设置Calculated by the recent five games' performance of the player
+     *
+     * @param recentPerformance Calculated by the recent five games' performance of the player
+     */
+    public void setRecentPerformance(Double recentPerformance) {
+        this.recentPerformance = recentPerformance;
     }
 }
