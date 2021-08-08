@@ -41,4 +41,4 @@ src/back-end/target
 .project
 .settings
 .springBeans
-
+./src/back-end/src/main/.gradle/
