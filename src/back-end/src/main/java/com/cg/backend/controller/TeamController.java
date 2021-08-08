@@ -30,30 +30,30 @@ public class TeamController {
     private TeamService teamService;
 
     @RequestMapping(value="/team/addTeam", method= RequestMethod.POST, produces="application/json")
-    public boolean addPlayer(@RequestBody Team team){
+    public boolean addTeam(@RequestBody Team team){
         this.teamService.addTeam(team);
         return true;
     }
 
     @RequestMapping(value="/team/updateTeam", method= RequestMethod.POST, produces="application/json")
-    public boolean updatePlayer(@RequestBody Team team){
+    public boolean updateTeam(@RequestBody Team team){
         this.teamService.updateTeam(team);
         return true;
     }
 
     @RequestMapping(value="/team/deleteTeam", method= RequestMethod.POST, produces="application/json")
-    public boolean deletePlayerById(@RequestBody Team team){
+    public boolean deleteTeamById(@RequestBody Team team){
         this.teamService.deleteTeam(team);
         return true;
     }
     @RequestMapping(value="/team/gerAllTeam", method= RequestMethod.GET, produces="application/json")
-    public Map<String, Object> deletePlayerById(){
+    public Map<String, Object> getAllTeam(){
         Map<String, Object> resultMap = new HashMap<>();
         List<Team> teamList = this.teamService.getAllTeams();
         resultMap.put("teamList", teamList);
         return resultMap;
     }
-    @RequestMapping(value="/team/getTeam", method= RequestMethod.POST, produces="application/json")
+    @RequestMapping(value="/team/getTeamById", method= RequestMethod.POST, produces="application/json")
     public Team getTeamById(@RequestBody Team team){
         return this.teamService.getTeam(team);
     }

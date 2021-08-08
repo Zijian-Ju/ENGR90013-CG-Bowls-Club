@@ -28,9 +28,10 @@ public class PlayerController {
   private PlayerService playerService;
 
   @RequestMapping(value="/player/getAllPlayer", method= RequestMethod.POST, produces="application/json")
-  public Map<String, Object> getAllUser(@RequestBody SearchRequest<PlayerFilter> request){
+  public Map<String, Object> getAllPlayer(@RequestBody SearchRequest<PlayerFilter> request){
     Map<String, Object> resultMap = new HashMap<>();
     List<Player> playerList = this.playerService.selectAll();
+    resultMap.put("playerList", playerList);
 
     return resultMap;
   }
