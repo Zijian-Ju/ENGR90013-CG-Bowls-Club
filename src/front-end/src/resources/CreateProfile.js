@@ -42,6 +42,10 @@ function CreateProfile() {
       history.push("/home");
     }
 
+    function teamsHandleClick() {
+      history.push("/teams")
+    };
+
     return (
         <>
             <div className={styles.body}>
@@ -50,7 +54,7 @@ function CreateProfile() {
                 </div>
                 <div className={styles.linktabs}>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>TEAMS</Button>
+                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
                 </div>
