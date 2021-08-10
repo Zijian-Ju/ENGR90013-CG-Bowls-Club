@@ -1,5 +1,6 @@
 .toolbar {
     margin: 2%;
+    margin-bottom: 0%;
     background-color: #DBF0FE;
     padding: 1%;
     display: flex;

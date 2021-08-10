@@ -13,7 +13,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -30,7 +29,6 @@ function Members() {
     const [maxPerformance, setMaxPerformance] = useState("");
     const [availability, setAvailability] = useState([]);
     const [favPosition, setFavPosition] = useState([]);
-    const [preference, setPreference] = useState("");
     const history = useHistory();
 
     function handleUserProfileClick(id) {
@@ -49,14 +47,25 @@ function Members() {
         history.push("/home");
     };
 
-    useEffect(() => {
+    function teamsHandleClick() {
+        history.push("/teams")
+    }
 
-        axios.post(`http://128.199.253.108:8082/player/getAllUser`, {username: "string"})
+    async function filterPost() {
+        console.log(minPerformance)
+        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, position: favPosition}})
+        .then(res => {
+            console.log(res)
+        });
+    }
+
+    useEffect(() => {
+        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {})
             .then(res => {
                 setResponse(res);
                 console.log(res);
             })
-    });
+    }, []);
 
     function handleFilterClickOpen() {
         setDialogOpen(true);
@@ -74,7 +83,7 @@ function Members() {
                 {userArray.map(user => { 
                     if (user.playerName.toLowerCase().includes(userSearchText.toLowerCase())) { 
                         return (
-                            <div className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
+                            <div id={user.playerName} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                                 <div className={bodyStyles.userCardImageContainer}>
                                     <div className={bodyStyles.userCardImage}>
                                         <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
@@ -84,13 +93,15 @@ function Members() {
                                     </div>
                                 </div>
                                 <div className={bodyStyles.userCardDescriptionContainer}>
-                                    <div className={bodyStyles.userCardDescriptionItem}>Performance</div>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Performance: {user.recentPerformance}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
-                                    <div className={bodyStyles.userCardDescriptionItem}>Favourite Position</div>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Favourite Position: {user.playerPosPreference}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPosPreference}</div>
                                 </div>
                             </div>
                         )
+                    } else {
+                        return null;
                     }
                 })}
             </div>
@@ -105,7 +116,7 @@ function Members() {
                 </div>
                 <div className={styles.linktabs}>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>TEAMS</Button>
+                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
                 </div>
@@ -199,15 +210,18 @@ function Members() {
                                 </Select>
                                 </FormControl>
                             </DialogContent>
-                            <DialogContent className={toolbarStyles.fullDialogContent}>
+                            {/* <DialogContent className={toolbarStyles.fullDialogContent}>
                                 <FormControl className={toolbarStyles.preferenceFormControl}>
                                     <InputLabel shrink>Preferences</InputLabel>
                                     <Input id="preference" value={preference} onChange={(e) => {setPreference(e.target.value)}} />
                                 </FormControl>
-                            </DialogContent>
+                            </DialogContent> */}
                             <DialogActions>
                                 <Button onClick={handleFilterClickClose} color="primary">
                                     Go Back
+                                </Button>
+                                <Button onClick={() => {handleFilterClickClose(); filterPost()}} color="primary">
+                                    Submit
                                 </Button>
                             </DialogActions>
                         </Dialog>
