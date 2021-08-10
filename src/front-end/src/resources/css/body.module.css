@@ -158,21 +158,38 @@
 .teamsListContainer{
     display: flex;
     flex-direction: row;
-    width: 30%;
+    width: 15%;
     height: 100%;
     overflow: scroll;
 }
 
 .teamsList {
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: column;
 }
 
 .selectTeam {
     display: flex;
+    flex-direction: column;
+    width: 85%;
+    height: 100%;
+}
+
+.selectTeamMain {
+    display: flex;
     flex-direction: row;
-    width: 70%;
+    width: 100%;
+    height: 92.5%;
+}
+
+.selectTeamButton {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 7.5%;
+    padding-top:1%;
+    justify-content: center;
 }
 
 .teamCard {
@@ -180,8 +197,15 @@
     display: flex;
     flex-direction: row;
     background-color: lightgrey;
-    margin: 1.0%
+    margin: 4.0%; 
+    height: 50px;
 }
+
+.teamCard:focus {
+    background-color: grey;
+    color: white
+}
+
 
 .teamCard:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -193,20 +217,59 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    height:100px;
-    width: 90%;
-}
-
-.teamCardEdit {
-    width: 10%;
-    display: flex;
-    align-items: center;
+    width: 100%;
 }
 
 .teamCardEdit:hover {
     cursor:grab
 }
 
-.allTeamsContainer {
+.selectTeamColumnContainer {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    height: 100%;
+}
 
+.selectTeamColumnHeader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10%;
+    width: 100%;
+    background-color: #7CAD3E;
+    color: white;
+    border: 1px solid grey
+}
+
+.selectTeamColumnBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22.5%;
+    width: 100%;
+    border: 1px solid grey
+}
+
+.selectTeamColumnBoxCard {
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: column;
+}
+
+.selectTeamColumnBoxCardImage {
+    width: 100%;
+    height: 75%;
+    display: flex;
+}
+
+.selectTeamColumnBoxCardText {
+    width: 100%;
+    height: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
