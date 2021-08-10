@@ -16,6 +16,8 @@ import tk.mybatis.mapper.entity.Example;
 public class PerformanceService {
     // Assume a player won't play over 10000 games
     public final int MAX_PAGE_SIZE = 10000;
+    public static final int MAX_PERFORMANCE_SCORE = 10;
+    public static final int MIN_PERFORMANCE_SCORE = 0;
 
     @Resource
     private PerformanceMapper performanceMapper;

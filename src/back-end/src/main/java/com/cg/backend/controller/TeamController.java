@@ -46,7 +46,7 @@ public class TeamController {
         this.teamService.deleteTeam(team);
         return true;
     }
-    @RequestMapping(value="/team/gerAllTeam", method= RequestMethod.GET, produces="application/json")
+    @RequestMapping(value="/team/getAllTeam", method= RequestMethod.GET, produces="application/json")
     public Map<String, Object> getAllTeam(){
         Map<String, Object> resultMap = new HashMap<>();
         List<Team> teamList = this.teamService.getAllTeams();
