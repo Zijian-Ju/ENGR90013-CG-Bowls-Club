@@ -5,6 +5,8 @@ import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import profilepic from  './img/profile.png';
+
 
 import axios from 'axios';
 import { useParams } from "react-router-dom";
@@ -22,12 +24,12 @@ function Profile() {
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
     const history = useHistory();
     const { id } = useParams();
-   
+    
     useEffect(() => {
       axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id})
       .then(res => {
           setResponse(res); 
-          // console.log(res); 
+          console.log(res); 
       })
       if (!loaded && response !== {} && response.data !== undefined && response.data.statusCode === 200) {
         setLoaded(true);
@@ -62,6 +64,10 @@ function Profile() {
       history.push("/home");
     }
 
+    function teamsHandleClick() {
+      history.push("/teams")
+    };
+
     function deleteUser(Id) {
       axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
       .then(res => {
@@ -79,7 +85,7 @@ function Profile() {
                 </div>
                 <div className={styles.linktabs}>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>TEAMS</Button>
+                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
                 </div>
@@ -89,11 +95,14 @@ function Profile() {
             </div>
       
             <div className = {bodyStyles.profilePage}>
-              <div className = {bodyStyles.profilePageColumn}>
-                <div className = {bodyStyles.profilePageColumnContainer}>
-                  <div className = {bodyStyles.profilePageTitle}>
-                  Profile Overview
+              <div style = {{width: '30%'}} className = {bodyStyles.profilePageColumn}>
+                <div style={{height: "30%"}} className = {bodyStyles.profilePageColumnContainer}>
+                  <div className = {bodyStyles.profilePagePicContainer}>
+                    <img style={{height: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
                   </div>
+                </div>
+                <div style={{height: "50%"}} className = {bodyStyles.profilePageColumnContainer}>
+                
                 </div>
                 <div style = {{height: '10%', display: 'flex', justifyContent: 'center'}} className = {bodyStyles.profilePageColumnContainer}>
                   <Button color='secondary' onClick = {() => {deleteUser(id)}}>Delete User</Button>
