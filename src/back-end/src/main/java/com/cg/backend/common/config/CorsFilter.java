@@ -1,6 +1,7 @@
 package com.cg.backend.common.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -11,12 +12,16 @@ import java.io.IOException;
 
 @Component
 @WebFilter(urlPatterns = "/*", filterName = "CorsFilter")
+@Slf4j
 public class CorsFilter implements Filter {
 
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest reqs = (HttpServletRequest) req;
+        String uri = ((HttpServletRequest) req).getRequestURI();
+        String token = ((HttpServletRequest) req).getHeader("Access-Token");
+        log.trace(uri);
         String curOrigin = reqs.getHeader("Origin");
         response.setHeader("Access-Control-Allow-Origin", curOrigin == null ? "true" : curOrigin);
         response.setHeader("Access-Control-Allow-Credentials", "true");
