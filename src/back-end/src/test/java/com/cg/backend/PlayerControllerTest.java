@@ -52,10 +52,10 @@ public class PlayerControllerTest {
 //    playerController.insertPlayer(player);
 //  }
 
-  @Test
-  public void testGetAllPlayer(){
-    this.playerService.selectAll();
-  }
+//  @Test
+//  public void testGetAllPlayer(){
+//    this.playerService.selectAll();
+//  }
 
   @Test
   public void testDeletePlayerById(){
