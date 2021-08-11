@@ -17,6 +17,15 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import clsx from 'clsx';
+import Card from '@material-ui/core/Card';
+import Typography from '@material-ui/core/Typography';
+
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import Collapse from '@material-ui/core/Collapse';
+import { ContactSupportOutlined } from '@material-ui/icons';
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -37,6 +46,7 @@ function Teams() {
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
     const [updatingTeam, setUpdatingTeam] = useState(false);
+    const [expandedCardUserId, setExpandedCardUserId] = useState(-1);
 
     function membersHandleClick() {
         history.push("/members");
@@ -67,17 +77,73 @@ function Teams() {
         )
     }
 
-    function playerCard(name) {
+    function renderPlayer(playerId) {
+        const playerQueryResponse = {}
+        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId})
+            .then(res => {
+                playerQueryResponse = res;
+                alert(res)
+            })
+
         return (
             <>
-                <div className={bodyStyles.selectTeamColumnBoxCard}>
-                    <div className={bodyStyles.selectTeamColumnBoxCardImage}>
-                        <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBoxCardText}>
-                        {name}
-                    </div>
+                <div className={bodyStyles.playerDetails}>
+                    <div className={bodyStyles.playerDetailsRow}>Performance</div>
+                    <div className={bodyStyles.playerDetailsRow}>Availabilities</div>
+                    <div className={bodyStyles.playerDetailsRow}>Favourite Position</div>
+                    <div className={bodyStyles.playerDetailsRow}>Preference</div>
                 </div>
+                <div className={bodyStyles.playerDetailsButton}>
+                    <button onClick={() => setExpandedCardUserId(-1)}>Less</button>
+                </div>
+            </>
+        )
+    }
+
+    function playerCard(name, id) {
+        return (
+            <>
+                {id === expandedCardUserId ?
+                    <div className={bodyStyles.selectTeamColumnBoxCardExpanded}>
+                        <div style={{width:'40%'}}  className={bodyStyles.selectTeamLeftColumn}>
+                            <div className={bodyStyles.selectTeamColumnBoxCardImageExpanded}>
+                                <img style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                            </div>
+                            <div className={bodyStyles.selectTeamColumnBoxCardBody}>
+                                <div style={{textAlign: 'center', width: '100%'}}>
+                                    {name}
+                                </div>
+                            </div>
+                        </div>
+                        <div className={bodyStyles.selectTeamRightColumn}>
+                            {renderPlayer(id)}
+                        </div>
+                    </div>
+                    :
+                    <div className={bodyStyles.selectTeamColumnBoxCard}>
+                        <div className={bodyStyles.selectTeamLeftColumn}>
+                            <div className={bodyStyles.selectTeamColumnBoxCardImage}>
+                                <img style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                            </div>
+                            <div className={bodyStyles.selectTeamColumnBoxCardBody}>
+                                <div style={{width: '60%'}}>
+                                    <div style={{marginLeft: '5%'}}>{name}</div>
+                                </div>
+                                <div style={{width: '40%'}}>
+                                    <button onClick={() => setExpandedCardUserId(id)}>More</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                    {/* <Card className={bodyStyles.selectTeamColumnBoxCard}>
+                        <img style={{height: '60%', width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                        <CardContent>
+                            <Typography className={bodyStyles.selectTeamColumnBoxCardText} gutterBottom variant="body2">
+                                {name}
+                            </Typography>
+                        </CardContent>
+                    </Card> */}
             </>
         )
     }
@@ -90,16 +156,16 @@ function Teams() {
                         Skip
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName1)}
+                        {playerCard(res.skipBowlerName1, res.skipBowlerId1)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName2)}
+                        {playerCard(res.skipBowlerName2, res.skipBowlerId2)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName3)}
+                        {playerCard(res.skipBowlerName3, res.skipBowlerId3)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName4)}
+                        {playerCard(res.skipBowlerName4, res.skipBowlerId4)}
                     </div>
                 </div>
                 <div className={bodyStyles.selectTeamColumnContainer}>
@@ -107,16 +173,16 @@ function Teams() {
                         Third
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName1)}
+                        {playerCard(res.thirdBowlerName1, res.thirdBowlerId1)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName2)}
+                        {playerCard(res.thirdBowlerName2, res.thirdBowlerId2)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName3)}
+                        {playerCard(res.thirdBowlerName3, res.thirdBowlerId3)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName4)}
+                        {playerCard(res.thirdBowlerName4, res.thirdBowlerId4)}
                     </div>
                 </div>
                 <div className={bodyStyles.selectTeamColumnContainer}>
@@ -124,16 +190,16 @@ function Teams() {
                         Second
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName1)}
+                        {playerCard(res.secondBowlerName1, res.secondBowlerId1)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName2)}
+                        {playerCard(res.secondBowlerName2, res.secondBowlerId2)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName3)}
+                        {playerCard(res.secondBowlerName3, res.secondBowlerId3)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName4)}
+                        {playerCard(res.secondBowlerName4, res.secondBowlerId4)}
                     </div>
                 </div>
                 <div className={bodyStyles.selectTeamColumnContainer}>
@@ -141,16 +207,16 @@ function Teams() {
                         Lead
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName1)}
+                        {playerCard(res.leadBowlerName1, res.leadBowlerId1)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName2)}
+                        {playerCard(res.leadBowlerName2, res.leadBowlerId2)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName3)}
+                        {playerCard(res.leadBowlerName3, res.leadBowlerId3)}
                     </div>
                     <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName4)}
+                        {playerCard(res.leadBowlerName4, res.leadBowlerId4)}
                     </div>
                 </div>
             </>

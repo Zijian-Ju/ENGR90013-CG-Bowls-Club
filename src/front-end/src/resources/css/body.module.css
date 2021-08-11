@@ -147,7 +147,7 @@
 .teamsBody {
     margin: 2%;
     background-color: #DBF0FE;
-    padding: 1%;
+    padding: 0.75%;
     display: flex;
     flex-direction: row;
     border-radius: 25px;  
@@ -172,7 +172,7 @@
 .selectTeam {
     display: flex;
     flex-direction: column;
-    width: 85%;
+    width: 82.5%;
     height: 100%;
 }
 
@@ -193,12 +193,12 @@
 }
 
 .teamCard {
-    width: 95%;
+    width: 90%;
     display: flex;
     flex-direction: row;
     background-color: lightgrey;
     margin: 4.0%; 
-    height: 50px;
+    min-height: 50px;
 }
 
 .teamCard:focus {
@@ -252,24 +252,84 @@
 }
 
 .selectTeamColumnBoxCard {
-    width: 80%;
+    width: 70%;
     height: 80%;
     background-color: white;
     border: 1px solid grey;
     display: flex;
+    flex-direction: row;
+    font-size: small;
+    overflow: scroll
+}
+
+.selectTeamColumnBoxCardExpanded {
+    width: 150%;
+    height: 150%;
+    background-color: white;
+    border: 1px solid grey;
+    display: flex;
+    flex-direction: row;
+    font-size: small;
+    overflow: scroll;
+    z-index: 1;
+}
+
+.selectTeamLeftColumn {
+    display: flex;
     flex-direction: column;
+    justify-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.selectTeamRightColumn {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    height: 100%;
 }
 
 .selectTeamColumnBoxCardImage {
     width: 100%;
     height: 75%;
     display: flex;
+    justify-content: center;
 }
 
-.selectTeamColumnBoxCardText {
+.selectTeamColumnBoxCardImageExpanded {
     width: 100%;
+    height: 65%;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+}
+
+.selectTeamColumnBoxCardBody {
+    width: 100%;
+    height: 35%;
+    display: flex;
+    flex-direction: row;
+}
+
+.playerDetails {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+    height: 75%;
+    align-items: center;
+}
+
+.playerDetailsButton {
     height: 25%;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.playerDetailsRow {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 }
