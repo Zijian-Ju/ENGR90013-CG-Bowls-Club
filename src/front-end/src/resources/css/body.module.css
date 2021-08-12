@@ -9,7 +9,7 @@
 .userCard {
     display:flex;
     flex-direction: row;
-    width: 15%;
+    width: 20%;
     margin: 1%;
     border-radius: 10px;
     padding: 10px;
