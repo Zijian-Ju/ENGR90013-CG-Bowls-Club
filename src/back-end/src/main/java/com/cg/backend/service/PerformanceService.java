@@ -28,6 +28,7 @@ public class PerformanceService {
         Example example = new Example(Performance.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("playerId", id);
+
         int total = performanceMapper.selectCountByExample(example);
 
         paging.setTotal(total);

@@ -31,7 +31,7 @@ function Profile() {
           setResponse(res); 
           console.log(res); 
       })
-      if (!loaded && response !== {} && response.data !== undefined && response.data.statusCode === 200) {
+      if (response !== {} && response.data !== undefined && response.data.statusCode === 200) {
         setLoaded(true);
         setPlayerName(response.data.data.playerName);
         setPlayerEmail(response.data.data.playerEmail);
@@ -42,7 +42,7 @@ function Profile() {
         setPlayerNotPreferredTM(response.data.data.playerNotPreferTeammates);
         setPlayerGender(response.data.data.playerGender);
       }
-    });
+    }, []);
 
     function placeholderAlert() {
         return alert("Unsupported");

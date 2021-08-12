@@ -1,9 +1,10 @@
 # Compiled class file
 *.class
-
+src/front-end/.idea/
+src/back-end/.idea/
 # Log file
 *.log
-
+src/back-end/target/
 # BlueJ files
 *.ctxt
 

@@ -25,11 +25,15 @@ function Members() {
     const [response, setResponse] = useState({});
     const [userSearchText, setUserSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [minPerformance, setMinPerformance] = useState("");
-    const [maxPerformance, setMaxPerformance] = useState("");
+    const [minPerformance, setMinPerformance] = useState(0);
+    const [maxPerformance, setMaxPerformance] = useState(10);
     const [availability, setAvailability] = useState([]);
     const [favPosition, setFavPosition] = useState([]);
+    const [sort, setSort] = useState("");
+    const [sortOrder, setSortOrder] = useState("");
     const history = useHistory();
+    const [random, setRandom] = useState(Math.random());
+    const reRender = () => setRandom(Math.random());
 
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
@@ -51,21 +55,13 @@ function Members() {
         history.push("/teams")
     }
 
-    async function filterPost() {
-        console.log(minPerformance)
-        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, position: favPosition}})
-        .then(res => {
-            console.log(res)
-        });
-    }
-
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {})
+        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}})
             .then(res => {
                 setResponse(res);
                 console.log(res);
             })
-    }, []);
+    }, [random]);
 
     function handleFilterClickOpen() {
         setDialogOpen(true);
@@ -96,7 +92,7 @@ function Members() {
                                     <div className={bodyStyles.userCardDescriptionItem}>Performance: {user.recentPerformance}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Favourite Position: {user.playerPosPreference}</div>
-                                    <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPosPreference}</div>
+                                    <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPreferTeammates}</div>
                                 </div>
                             </div>
                         )
@@ -136,6 +132,34 @@ function Members() {
                         <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
                         <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
                             <DialogTitle>Filters Results</DialogTitle>
+                            <DialogContent className={toolbarStyles.filterDialogContent}>
+                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
+                                <InputLabel shrink id="sort label">Sort</InputLabel>
+                                    <Select
+                                        label="Sort"
+                                        id="sort"
+                                        value={sort}
+                                        displayEmpty
+                                        onChange={(e) => {setSort(e.target.value)}}
+                                    >
+                                        <MenuItem value={'name'}>Name</MenuItem>
+                                        <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl className={toolbarStyles.filterFormControl}>
+                                <InputLabel shrink id="sort order label">Sort Order</InputLabel>
+                                    <Select
+                                        label="Sort order"
+                                        id="sort-order"
+                                        value={sortOrder}
+                                        displayEmpty
+                                        onChange={(e) => {setSortOrder(e.target.value)}}
+                                    >
+                                        <MenuItem value={'asc'}>Ascending</MenuItem>
+                                        <MenuItem value={'desc'}>Descending</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </DialogContent>
                             <DialogContent className={toolbarStyles.filterDialogContent}>
                                 <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
                                 <InputLabel shrink id="min performance label">Min Performance</InputLabel>
@@ -220,7 +244,7 @@ function Members() {
                                 <Button onClick={handleFilterClickClose} color="primary">
                                     Go Back
                                 </Button>
-                                <Button onClick={() => {handleFilterClickClose(); filterPost()}} color="primary">
+                                <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
                                     Submit
                                 </Button>
                             </DialogActions>
