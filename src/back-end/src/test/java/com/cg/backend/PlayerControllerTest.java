@@ -1,22 +1,14 @@
 package com.cg.backend;
 
-import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.controller.PlayerController;
-import com.cg.backend.dao.PlayerMapper;
-import com.cg.backend.model.Player;
 import com.cg.backend.service.PlayerService;
-import java.util.List;
+
 import javax.annotation.Resource;
-import net.bytebuddy.implementation.bytecode.Throw;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -51,11 +43,11 @@ public class PlayerControllerTest {
 //        "lead", "John", "");
 //    playerController.insertPlayer(player);
 //  }
-
-  @Test
-  public void testGetAllPlayer(){
-    this.playerService.selectAll();
-  }
+//
+//  @Test
+//  public void testGetAllPlayer(){
+//    this.playerService.getPlayersByFilter();
+//  }
 
   @Test
   public void testDeletePlayerById(){
