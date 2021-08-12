@@ -58,10 +58,10 @@ public class PlayerControllerTest {
 //  }
 
 
-  @Test
-  public void testDeletePlayerById(){
-    this.playerController.deletePlayerById(100L);
-  }
+//  @Test
+//  public void testDeletePlayerById(){
+//    this.playerController.deletePlayerById(100L);
+//  }
 
 
 

@@ -35,9 +35,9 @@ public class PlayerController {
   }
 
   @RequestMapping(value="/player/getPlayerById", method= RequestMethod.POST, produces="application/json")
-  public Player getPlayerById(@RequestBody long id){
+  public Player getPlayerById(@RequestBody  Map<String, Long> param){
     Player player = new Player();
-    player.setId(id);
+    player.setId(param.get("id"));
     Player p = this.playerService.selectPlayerById(player);
     if(p == null)
       throw new BusinessException(ResponseCode.PLAYER_NOT_EXIST);
@@ -58,9 +58,9 @@ public class PlayerController {
   }
 
   @RequestMapping(value="/player/deletePlayerById", method= RequestMethod.POST, produces="application/json")
-  public boolean deletePlayerById(@RequestBody Long playerId){
+  public boolean deletePlayerById(@RequestBody Map<String, Long> param){
     Player player=new Player();
-    player.setId(playerId);
+    player.setId(param.get("id"));
     this.playerService.deletePlayerById(player);
     return true;
   }
