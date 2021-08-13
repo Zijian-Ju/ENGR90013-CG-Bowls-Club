@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import styles from './css/navbar.module.css';
-import bodyStyles from './css/body.module.css';
+import teamsStyles from './css/teams.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
@@ -17,36 +17,176 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import clsx from 'clsx';
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
 
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
+import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
-import { ContactSupportOutlined } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Tooltip from '@material-ui/core/Tooltip';
+
+
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 function placeholderAlert() {
     return alert("Unsupported");
 }
 
+function Player(props) {
+    const [response, setResponse] = useState({})
+
+    useEffect(() => {
+        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: props.player})
+            .then(res => {
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res);
+                }
+            })
+    }, []);
+
+    return (Object.keys(response).length !== 0 && response.constructor === Object && response.data.data !== null &&
+        <TableRow key={response.data.data.id}>
+            <TableCell component="th" scope="row">
+                {response.data.data.playerName}
+            </TableCell>
+            <TableCell>
+                {response.data.data.recentPerformance}
+            </TableCell>
+            <TableCell>
+                {response.data.data.playerAvailability}
+            </TableCell>
+            <TableCell>
+                {response.data.data.playerPosPreference}
+            </TableCell>
+            <TableCell>
+                {response.data.data.playerPreferTeammates}
+            </TableCell>
+        </TableRow>
+    )
+    
+}
+
+function Row(props) {
+    const [open, setOpen] = useState(false);
+    const playerIds = calculatePlayerIds(props)
+    
+    function calculatePlayerIds(team) {
+        var count = [];
+        Object.entries(team.row).map(([key, value]) => { 
+            if (key.includes("BowlerId") && value > 0) {
+                count.push([key, key.replace("Id", "Name")])
+            }
+        })
+        return count
+    }
+
+    function renderPlayerIcons(team) {
+        return (
+            <div className={teamsStyles.collapsedPlayerIconRow}>
+                {playerIds.map(([playerId, playerName]) => (
+                    <Tooltip id={playerId} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
+                        <img style={{objectFit: 'contain', maxHeight: '50px'}} src={profilepic} alt="Logo" />
+                    </Tooltip>
+                ))}
+            </div>
+        )
+
+    }
+
+    function renderPlayerDetailed(player) {
+        var x = []
+        Object.entries(player).map(([key, value]) => { 
+            if (key.includes("BowlerId") && value > 0) {
+                x.push(value)
+            }
+        })
+        return (
+            <>
+                {x.map((playerId) => (
+                    <Player player={playerId}></Player>
+                ))}
+            </>
+       )
+    }
+
+    function renderTeamBreakdown(team) {
+        return(
+            <Table size="small">
+                <TableHead>
+                    <TableCell>Player Name</TableCell>
+                    <TableCell>Performance</TableCell>
+                    <TableCell>Availability</TableCell>
+                    <TableCell>Fav. Position</TableCell>
+                    <TableCell>Pref. Teammates</TableCell>
+                </TableHead>
+                <TableBody>
+                    {renderPlayerDetailed(team)}
+                </TableBody>
+            </Table>
+        )
+
+    }
+
+    function editTeamRedirect(teamId) {
+        // redirect to edit team page
+        placeholderAlert();
+    }
+    
+    return (
+        <>
+            <TableRow className={teamsStyles.root}>
+                <TableCell>
+                    <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </TableCell>
+                <TableCell component="th" scope="row">
+                    {props.row.teamName}
+                </TableCell>
+                <TableCell>
+                    {playerIds.length}/16
+                </TableCell>
+                <TableCell style={{Width: '50%'}}>
+                    {renderPlayerIcons(props.row)}
+                </TableCell>
+                <TableCell>
+                    <Button onClick={() => editTeamRedirect(props.row.id)}>Edit Team</Button>
+                </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                    <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Box margin={1}>
+                            {renderTeamBreakdown(props.row)}
+                        </Box>
+                    </Collapse>
+                </TableCell>
+            </TableRow>
+        </>
+    )
+
+}
+
 function Teams() {
     const [response, setResponse] = useState({});
-    const [selectedTeam, setSelectedTeam] = useState({});
-    const [userSearchText, setUserSearchText] = useState("");
+    const [teamSearchText, setTeamSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [minPerformance, setMinPerformance] = useState(0);
-    const [maxPerformance, setMaxPerformance] = useState(10);
-    const [availability, setAvailability] = useState([]);
-    const [favPosition, setFavPosition] = useState([]);
-    const [sort, setSort] = useState("");
-    const [sortOrder, setSortOrder] = useState("");
+    // const [minPerformance, setMinPerformance] = useState(0);
+    // const [maxPerformance, setMaxPerformance] = useState(10);
+    // const [availability, setAvailability] = useState([]);
+    // const [favPosition, setFavPosition] = useState([]);
+    // const [sort, setSort] = useState("");
+    // const [sortOrder, setSortOrder] = useState("");
     const history = useHistory();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
-    const [updatingTeam, setUpdatingTeam] = useState(false);
-    const [expandedCardUserId, setExpandedCardUserId] = useState(-1);
 
     function membersHandleClick() {
         history.push("/members");
@@ -58,170 +198,7 @@ function Teams() {
 
     function teamsHandleClick() {
         history.push("/teams")
-    }
-
-    function renderTeams(data) {
-        const teamsArray = data.data.data.teamList
-        return (
-            <div className={bodyStyles.teamsList}>
-                {teamsArray.map(team => {
-                    return (
-                        <div style={team.id === selectedTeam.id ? {backgroundColor: 'grey', color: 'white'}: {}} className={bodyStyles.teamCard} onClick={() => setSelectedTeam(team)}>
-                            <div className={bodyStyles.teamCardText}>
-                                {team.teamName}
-                            </div>
-                        </div>
-                    )
-                })}
-            </div>
-        )
-    }
-
-    function renderPlayer(playerId) {
-        const playerQueryResponse = {}
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId})
-            .then(res => {
-                playerQueryResponse = res;
-                alert(res)
-            })
-
-        return (
-            <>
-                <div className={bodyStyles.playerDetails}>
-                    <div className={bodyStyles.playerDetailsRow}>Performance</div>
-                    <div className={bodyStyles.playerDetailsRow}>Availabilities</div>
-                    <div className={bodyStyles.playerDetailsRow}>Favourite Position</div>
-                    <div className={bodyStyles.playerDetailsRow}>Preference</div>
-                </div>
-                <div className={bodyStyles.playerDetailsButton}>
-                    <button onClick={() => setExpandedCardUserId(-1)}>Less</button>
-                </div>
-            </>
-        )
-    }
-
-    function playerCard(name, id) {
-        return (
-            <>
-                {id === expandedCardUserId ?
-                    <div className={bodyStyles.selectTeamColumnBoxCardExpanded}>
-                        <div style={{width:'40%'}}  className={bodyStyles.selectTeamLeftColumn}>
-                            <div className={bodyStyles.selectTeamColumnBoxCardImageExpanded}>
-                                <img style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
-                            </div>
-                            <div className={bodyStyles.selectTeamColumnBoxCardBody}>
-                                <div style={{textAlign: 'center', width: '100%'}}>
-                                    {name}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={bodyStyles.selectTeamRightColumn}>
-                            {renderPlayer(id)}
-                        </div>
-                    </div>
-                    :
-                    <div className={bodyStyles.selectTeamColumnBoxCard}>
-                        <div className={bodyStyles.selectTeamLeftColumn}>
-                            <div className={bodyStyles.selectTeamColumnBoxCardImage}>
-                                <img style={{maxWidth: '100%', maxHeight: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
-                            </div>
-                            <div className={bodyStyles.selectTeamColumnBoxCardBody}>
-                                <div style={{width: '60%'}}>
-                                    <div style={{marginLeft: '5%'}}>{name}</div>
-                                </div>
-                                <div style={{width: '40%'}}>
-                                    <button onClick={() => setExpandedCardUserId(id)}>More</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-                    {/* <Card className={bodyStyles.selectTeamColumnBoxCard}>
-                        <img style={{height: '60%', width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
-                        <CardContent>
-                            <Typography className={bodyStyles.selectTeamColumnBoxCardText} gutterBottom variant="body2">
-                                {name}
-                            </Typography>
-                        </CardContent>
-                    </Card> */}
-            </>
-        )
-    }
-
-    function renderTeamComposition(res) {
-        return (
-            <>
-                <div className={bodyStyles.selectTeamColumnContainer}>
-                    <div className={bodyStyles.selectTeamColumnHeader}>
-                        Skip
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName1, res.skipBowlerId1)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName2, res.skipBowlerId2)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName3, res.skipBowlerId3)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.skipBowlerName4, res.skipBowlerId4)}
-                    </div>
-                </div>
-                <div className={bodyStyles.selectTeamColumnContainer}>
-                    <div className={bodyStyles.selectTeamColumnHeader}>
-                        Third
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName1, res.thirdBowlerId1)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName2, res.thirdBowlerId2)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName3, res.thirdBowlerId3)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.thirdBowlerName4, res.thirdBowlerId4)}
-                    </div>
-                </div>
-                <div className={bodyStyles.selectTeamColumnContainer}>
-                    <div className={bodyStyles.selectTeamColumnHeader}>
-                        Second
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName1, res.secondBowlerId1)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName2, res.secondBowlerId2)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName3, res.secondBowlerId3)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.secondBowlerName4, res.secondBowlerId4)}
-                    </div>
-                </div>
-                <div className={bodyStyles.selectTeamColumnContainer}>
-                    <div className={bodyStyles.selectTeamColumnHeader}>
-                        Lead
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName1, res.leadBowlerId1)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName2, res.leadBowlerId2)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName3, res.leadBowlerId3)}
-                    </div>
-                    <div className={bodyStyles.selectTeamColumnBox}>
-                        {playerCard(res.leadBowlerName4, res.leadBowlerId4)}
-                    </div>
-                </div>
-            </>
-        )
-    }
+    } 
 
     function handleFilterClickOpen() {
         setDialogOpen(true);
@@ -231,26 +208,13 @@ function Teams() {
         setDialogOpen(false);
     }
 
-    function renderSelectTeamComponent() {
-        return (
-            <div className={bodyStyles.selectTeam}>
-                <div className={bodyStyles.selectTeamMain}>
-                    {renderTeamComposition(selectedTeam)}
-                </div>
-                <div className={bodyStyles.selectTeamButton}>
-                    <Button variant="contained" color="primary" onClick={() => setUpdatingTeam(true)}>Update this team</Button>
-                </div>
-            </div>
-        )
-    }
-
     function renderSearchBarContainer() {
         return (
             <div className={toolbarStyles.searchBarContainer}>
                 <div className={toolbarStyles.searchBar}>
-                    <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value)}} variant="outlined" label="Search User"/>
+                    <TextField style={{width: '100%'}} onChange={(e) => {setTeamSearchText(e.target.value)}} variant="outlined" label="Search Team"/>
                 </div>
-                <div className={toolbarStyles.filter}>
+                {/* <div className={toolbarStyles.filter}>
                     <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
                     <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
                         <DialogTitle>Filters Results</DialogTitle>
@@ -355,13 +319,6 @@ function Teams() {
                                 ))}
                             </Select>
                             </FormControl>
-                        </DialogContent>
-                        {/* <DialogContent className={toolbarStyles.fullDialogContent}>
-                            <FormControl className={toolbarStyles.preferenceFormControl}>
-                                <InputLabel shrink>Preferences</InputLabel>
-                                <Input id="preference" value={preference} onChange={(e) => {setPreference(e.target.value)}} />
-                            </FormControl>
-                        </DialogContent> */}
                         <DialogActions>
                             <Button onClick={handleFilterClickClose} color="primary">
                                 Go Back
@@ -371,26 +328,35 @@ function Teams() {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                </div>
+                </div> */}
             </div>
         )
     }
 
-    function teamViewingMode() {
+    function renderTable() {
         return (
-            <div className={bodyStyles.teamsBody}>
-                <div className={bodyStyles.teamsListContainer}>
-                    {response !== {} && response.status === 200 && renderTeams(response)}
-                    {response === {} && <div>...Loading</div>}
-                </div>
-                {Object.keys(selectedTeam).length !== 0 && selectedTeam.consructor !== Object && renderSelectTeamComponent()}
-            </div>
-        )
-    }
-
-    function teamEditingMode() {
-        return (
-            <div>Editing mode</div>
+            <>
+                <TableContainer className={teamsStyles.body} component={Paper}>
+                    <Table aria-label="collapsible table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell>Team</TableCell>
+                                <TableCell>Members</TableCell>
+                                <TableCell>Team Composition</TableCell>
+                                <TableCell/>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {response.data.data.teamList.map((team) => {
+                                if (team.teamName.toLowerCase().includes(teamSearchText.toLowerCase())) {
+                                    return (<Row key={team.teamName} row={team}/>)
+                                }
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </>
         )
     }
 
@@ -421,10 +387,12 @@ function Teams() {
                 <div className={toolbarStyles.newUserContainer}>
                     <Button variant="contained" color="primary" onClick={placeholderAlert}>Create Team</Button>
                 </div>
-                {updatingTeam === true && renderSearchBarContainer()}
+                {renderSearchBarContainer()}
             </div>
-            {updatingTeam === false && teamViewingMode()}
-            {updatingTeam === true && teamEditingMode()}
+            <div className={teamsStyles.body}>
+                {Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && renderTable()}
+                {Object.keys(response).length === 0 && response.constructor === Object && <div>...Loading</div>}
+            </div>
         </div>
     )
 }
