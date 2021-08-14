@@ -41,6 +41,11 @@ function placeholderAlert() {
 
 function Player(props) {
     const [response, setResponse] = useState({})
+    const history = useHistory();
+    
+    function handleUserProfileClick(id) {
+        history.push("/members/" + id);
+    }
 
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: props.player})
@@ -51,25 +56,51 @@ function Player(props) {
             })
     }, []);
 
-    return (Object.keys(response).length !== 0 && response.constructor === Object && response.data.data !== null &&
-        <TableRow key={response.data.data.id}>
-            <TableCell component="th" scope="row">
-                {response.data.data.playerName}
-            </TableCell>
-            <TableCell>
-                {response.data.data.recentPerformance}
-            </TableCell>
-            <TableCell>
-                {response.data.data.playerAvailability}
-            </TableCell>
-            <TableCell>
-                {response.data.data.playerPosPreference}
-            </TableCell>
-            <TableCell>
-                {response.data.data.playerPreferTeammates}
-            </TableCell>
-        </TableRow>
-    )
+    if (Object.keys(response).length !== 0 && response.constructor === Object && response.data.data !== null) {
+        return (
+            <TableRow key={response.data.data.id}>
+                <TableCell component="th" scope="row">
+                    {response.data.data.playerName}
+                </TableCell>
+                <TableCell>
+                    {response.data.data.recentPerformance}
+                </TableCell>
+                <TableCell>
+                    {response.data.data.playerAvailability}
+                </TableCell>
+                <TableCell>
+                    {response.data.data.playerPosPreference}
+                </TableCell>
+                <TableCell>
+                    {response.data.data.playerPreferTeammates}
+                </TableCell>
+                <TableCell>
+                    <Button size="small" onClick={() => handleUserProfileClick(response.data.data.id)}>View</Button>
+                </TableCell>
+            </TableRow>
+        )
+    } else {
+        return (
+            <TableRow key={'0'}>
+                <TableCell component="th" scope="row">
+                    ...loading
+                </TableCell>
+                <TableCell>
+                    ...loading
+                </TableCell>
+                <TableCell>
+                    ...loading
+                </TableCell>
+                <TableCell>
+                    ...loading
+                </TableCell>
+                <TableCell>
+                    ...loading
+                </TableCell>
+                <TableCell/>
+            </TableRow>
+        )
+    }
     
 }
 
@@ -125,6 +156,7 @@ function Row(props) {
                     <TableCell>Availability</TableCell>
                     <TableCell>Fav. Position</TableCell>
                     <TableCell>Pref. Teammates</TableCell>
+                    <TableCell/>
                 </TableHead>
                 <TableBody>
                     {renderPlayerDetailed(team)}
@@ -161,7 +193,7 @@ function Row(props) {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={5}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box margin={1}>
                             {renderTeamBreakdown(props.row)}
