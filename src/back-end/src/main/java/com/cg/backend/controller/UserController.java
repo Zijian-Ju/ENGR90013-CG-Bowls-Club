@@ -39,34 +39,30 @@ public class UserController {
 
     @Resource
     private EmailService emailService;
+//
+//
+//    @RequestMapping(value="/user/hellowolrd", method= RequestMethod.GET, produces="application/json")
+//    public String getHelloWorld(){
+//        return this.hello;
+//    }
+//
+//    @ApiOperation("Get Userinfo by UserID")
+//    @RequestMapping(value="/user/getuserbyid", method= RequestMethod.POST, produces="application/json")
+//    public User GetUserById(){
+//        User user = null;
+//        Assert.notNull(user, "User is not existed.");
+//        return user;
+//    }
 
-
-    @RequestMapping(value="/user/hellowolrd", method= RequestMethod.GET, produces="application/json")
-    public String getHelloWorld(){
-        return this.hello;
-    }
-
-    @ApiOperation("Get Userinfo by UserID")
-    @RequestMapping(value="/user/getuserbyid", method= RequestMethod.POST, produces="application/json")
-    public User GetUserById(){
-        User user = null;
-        Assert.notNull(user, "User is not existed.");
-        return user;
-    }
-
-    @RequestMapping(value="/user/getuserbyusername", method= RequestMethod.POST, produces="application/json")
-    public List<User> GetUserByUsername(@RequestBody String username){
-
-        return this.userService.GetUserByUsername(username);
-    }
+//    @RequestMapping(value="/user/getuserbyusername", method= RequestMethod.POST, produces="application/json")
+//    public List<User> GetUserByUsername(@RequestBody String username){
+//
+//        return this.userService.GetUserByUsername(username);
+//    }
 
     @RequestMapping(value="/user/getAllUser", method= RequestMethod.POST, produces="application/json")
-    public Result<List<User>> getAllUser(@RequestBody String username){
-        Result<List<User>> result = new Result<List<User>>();
-        result.setData(this.userService.getAllUser());
-        Paging paging = new Paging();
-        result.setPaging(paging);
-        return result;
+    public List<User> getAllUser(){
+        return this.userService.getAllUser();
     }
 
     @RequestMapping(value="/user/error", method= RequestMethod.GET, produces="application/json")

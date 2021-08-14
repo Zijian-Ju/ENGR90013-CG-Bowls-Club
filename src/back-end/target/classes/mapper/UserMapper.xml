@@ -5,12 +5,21 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="USER_ID" jdbcType="BIGINT" property="userId" />
-    <result column="USER_NAME" jdbcType="VARCHAR" property="userName" />
-    <result column="NICKNAME" jdbcType="VARCHAR" property="nickname" />
-    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
-    <result column="MOBILE" jdbcType="VARCHAR" property="mobile" />
-    <result column="PASSWORD" jdbcType="CHAR" property="password" />
-    <result column="ROLE" jdbcType="VARCHAR" property="role" />
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="token" jdbcType="VARCHAR" property="token" />
+    <result column="token_create_date" jdbcType="TIMESTAMP" property="tokenCreateDate" />
   </resultMap>
+  <sql id="Base_Column_List">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id, user_name, real_name, email, password, address, phone, role, token, token_create_date
+  </sql>
 </mapper>
