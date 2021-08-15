@@ -6,7 +6,7 @@
 }
 
 .leftColumn {
-    height: 100%;
+    height: 99.5%;
     display: flex;
     flex-direction: column;
     background-color: #eeeeee;
@@ -44,6 +44,11 @@
     flex-direction: column;
     align-items: center;
     height: 60%;
+}
+
+.leftColumnDescriptionTextfield {
+    width: 95%;
+    margin: 2.5%
 }
 
 .leftColumnButtonContainer {
