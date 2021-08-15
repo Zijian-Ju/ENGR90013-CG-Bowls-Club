@@ -44,6 +44,13 @@ public class SwaggerConfig {
                 .parameterType("header")
                 .required(false)
                 .build());
+        parameters.add(new ParameterBuilder()
+                .name("Email")
+                .description("Email address")
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")
+                .required(false)
+                .build());
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .enable(swaggerEnabled)

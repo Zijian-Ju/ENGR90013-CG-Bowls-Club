@@ -1,6 +1,8 @@
 package com.cg.backend.service;
 
 
+import com.cg.backend.common.enums.ResponseCode;
+import com.cg.backend.common.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import com.cg.backend.dao.UserMapper;
@@ -9,7 +11,8 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.List;
+import javax.swing.plaf.basic.BasicOptionPaneUI;
+import java.util.*;
 
 @Service("userService")
 @Slf4j
@@ -71,6 +74,52 @@ public class UserService {
     }
 
 
-    public void addUser() {
+    public boolean addUser(User user) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("email", user.getEmail());
+
+        List<User> userList = userMapper.selectByExample(example);
+        if(userList.size() > 0)
+            throw new BusinessException(ResponseCode.EMAIL_ALREADY_EXISTED);
+
+        userMapper.insert(user);
+
+
+        return true;
     }
+
+
+
+    public boolean editUser(User user) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("email", user.getEmail());
+
+        List<User> userList = userMapper.selectByExample(example);
+        if(userList.size() < 1)
+            throw new BusinessException(ResponseCode.EMAIL_IS_NOT_EXISTED);
+        user.setId(userList.get(0).getId());
+        user.setPassword(userList.get(0).getPassword());
+
+        userMapper.updateByPrimaryKey(user);
+
+        return true;
+    }
+
+    public boolean deleteUser(User user) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("email", user.getEmail());
+
+        List<User> userList = userMapper.selectByExample(example);
+        if(userList.size() < 1)
+            throw new BusinessException(ResponseCode.EMAIL_IS_NOT_EXISTED);
+
+        userMapper.deleteByExample(example);
+
+        return true;
+    }
+
+
 }

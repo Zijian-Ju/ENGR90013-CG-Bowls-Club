@@ -6,33 +6,52 @@ import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import profilepic from  './img/profile.png';
-
-
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import NativeSelect from '@material-ui/core/NativeSelect';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+
+
 
 function Profile() {
     const [response, setResponse] = useState({});
+    const [performance, setPerformance] = useState();
+    const [availability, setAvailability] = useState();
+    const [favPosition, setFavPosition] = useState();
+    const [preference, setPreference] = useState();
+    const [editing, setEditing] = useState(false);
     const history = useHistory();
     const { id } = useParams();
+    const [random, setRandom] = useState(Math.random());
+    const reRender = () => setRandom(Math.random());
+    const [year, setYear] = useState();
+    const [competition, setCompetition] = useState()
+
     
     useEffect(() => {
       axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id})
       .then(res => {
-          setResponse(res); 
-          console.log(res); 
+          setResponse(res);
+          console.log(res)
+          if (res.status === 200 && res.data.statusCode === 200) {
+            setPerformance(res.data.data.recentPerformance)
+            setAvailability(res.data.data.playerAvailability)
+            setFavPosition(res.data.data.playerPosPreference)
+            setPreference(res.data.data.playerPreferTeammates)
+          }
       })
-    }, [])
+    }, [random])
 
     function placeholderAlert() {
         return alert("Unsupported");
     }; 
 
-    function onSubmit() {
-      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {})
+    function updatePlayer() {
+      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, playerAvailability: availability, playerPosPreference: favPosition, playerPreferTeammates: preference})
       .then(res => {
         alert("Player updated"); 
-        history.go(0);
       })
     }
 
@@ -51,12 +70,15 @@ function Profile() {
     function deleteUser(Id) {
       axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
       .then(res => {
-        alert("Player deleted"); 
-        history.push("/members");
+        console.log(res)
+        if (res.status === 200) {
+          alert("Player deleted"); 
+          history.push(0);
+        }
       })
     };
 
-    if (Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && response.data.statusCode === 200) {
+    if (Object.keys(response).length !== 0 && response.constructor === Object) {
       return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
           <div className={styles.body}>
@@ -84,14 +106,98 @@ function Profile() {
                 </div>
               </div>
               <div className={profileStyles.leftColumnDescriptionContainer}>
-                Player description
+                <TextField
+                  style={{width: '95%', marginTop : '1.5%', marginBottom: '1.5%'}}
+                  disabled
+                  id="Performance"
+                  label="Auto Calculated Performance"
+                  defaultValue={performance}
+                  value={performance}
+                  variant="outlined"
+                />
+                <TextField
+                  style={{width: '95%', marginTop : '1%', marginBottom: '1%'}}
+                  id="Availability"
+                  label="Availability"
+                  defaultValue={availability}
+                  value={availability}
+                  variant="outlined"
+                  onChange={(e) => {setAvailability(e.target.value)}}
+                  disabled={!editing}
+                />
+                <TextField
+                  style={{width: '95%', marginTop : '1%', marginBottom: '1%'}}
+                  id="Favourite Position"
+                  label="Favourite Position"
+                  defaultValue={favPosition}
+                  value={favPosition}
+                  variant="outlined"
+                  onChange={(e) => {setFavPosition(e.target.value)}}
+                  disabled={!editing}
+                />
+                <TextField
+                  style={{width: '95%', marginTop : '1%', marginBottom: '1%'}}
+                  id="Preferred Teammates"
+                  label="Preferred Teammates"
+                  defaultValue={preference}
+                  value={preference}
+                  variant="outlined"
+                  onChange={(e) => {setPreference(e.target.value)}}
+                  disabled={!editing}
+                />
+                {editing ? 
+                  <div>
+                    <Button onClick={() => reRender()}>Cancel</Button>
+                    <Button onClick={() => {updatePlayer()}}>Save changes</Button> 
+                  </div>
+                  : 
+                  <Button onClick={() => {setEditing(true)}}>Edit</Button>
+                }
               </div>
               <div className={profileStyles.leftColumnButtonContainer}>
-                <Button>Delete Player</Button>
+                <Button onClick={() => deleteUser()}>Delete Player</Button>
               </div>
             </div>
             <div style={{width: '75%'}} className={profileStyles.rightColumn}>
-              Hi
+              <div className={profileStyles.rightColumnSettingsContainer}>
+                <FormControl style={{minWidth: '200px', marginRight: '5%'}}>
+                  <InputLabel shrink htmlFor="age-native-label-placeholder">
+                    Year
+                  </InputLabel>
+                  <NativeSelect
+                    labelId="demo-simple-select-label"
+                    id="competition year"
+                    value={year}
+                    onChange={(e) => {setYear(e.target.value)}}
+                    inputProps={{name:'Year'}}
+                  >
+                    <option value={'2019-2020'}>2019-2020</option>
+                    <option value={'2020-2021'}>2020-2021</option>
+                  </NativeSelect>
+                </FormControl>
+                <FormControl style={{minWidth: '200px'}}>
+                  <InputLabel shrink htmlFor="age-native-label-placeholder">
+                    Competition
+                  </InputLabel>
+                  <NativeSelect
+                    labelId="demo-simple-select-label"
+                    id="competition"
+                    value={competition}
+                    onChange={(e) => {setCompetition(e.target.value)}}
+                    label="Competition"
+                    style={{minWidth: '200px'}}
+                  >
+                    <option value={'Weekend Pennant'}>Weekend Pennant</option>
+                    <option value={'Weekday Pennant'}>Weekday Pennant</option>
+                  </NativeSelect>
+                </FormControl>
+              </div>
+              <div className={profileStyles.rightColumnGraphContainer}>
+                graph
+              </div>
+              <div className={profileStyles.rightColumnCompetitionContainer}>
+                Competition tracking
+              </div>
             </div>
           </div>
         </div> 

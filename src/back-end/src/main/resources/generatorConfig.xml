@@ -57,7 +57,7 @@
 <!--        </table>-->
 <!--        <table tableName="t_bowl_game_player_performance" domainObjectName="Performance">-->
 <!--        </table>-->
-        <table schema = "general" tableName= "t_bowl_player" domainObjectName= "Player"
+        <table schema = "general" tableName= "t_sys_config" domainObjectName= "SysConfig"
           enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
           enableSelectByExample= "false" selectByExampleQueryId= "false" >
             <property name = "useActualColumnNames" value= "false" />

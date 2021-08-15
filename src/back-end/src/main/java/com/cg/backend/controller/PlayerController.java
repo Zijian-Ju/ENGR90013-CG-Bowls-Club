@@ -25,6 +25,7 @@ public class PlayerController {
   @Resource
   private PlayerService playerService;
 
+
   @RequestMapping(value="/player/getAllPlayer", method= RequestMethod.POST, produces="application/json")
   public Map<String, Object> getAllPlayer(@RequestBody SearchRequest<PlayerFilter> request){
     Map<String, Object> resultMap = new HashMap<>();
