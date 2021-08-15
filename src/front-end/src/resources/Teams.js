@@ -8,7 +8,7 @@ import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import profilepic from  './img/profile.png';
-import { TextField } from '@material-ui/core';
+import { createGenerateClassName, TextField } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -210,6 +210,7 @@ function Teams() {
     const [response, setResponse] = useState({});
     const [teamSearchText, setTeamSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [newTeamName, setNewTeamName] = useState("");
     // const [minPerformance, setMinPerformance] = useState(0);
     // const [maxPerformance, setMaxPerformance] = useState(10);
     // const [availability, setAvailability] = useState([]);
@@ -232,21 +233,54 @@ function Teams() {
         history.push("/teams")
     } 
 
-    function handleFilterClickOpen() {
+    function handleDialogClickOpen() {
         setDialogOpen(true);
     }
 
-    function handleFilterClickClose() {
+    function handleDialogClickClose() {
         setDialogOpen(false);
+    }
+
+    function createTeam() {
+        axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
+            .then(res => {
+                if (res.status === 200) {
+                    alert("Team created")
+                }
+            })
+            .then(x => reRender())
     }
 
     function renderSearchBarContainer() {
         return (
-            <div className={toolbarStyles.searchBarContainer}>
-                <div className={toolbarStyles.searchBar}>
-                    <TextField style={{width: '100%'}} onChange={(e) => {setTeamSearchText(e.target.value)}} variant="outlined" label="Search Team"/>
+            <>
+                <div className={toolbarStyles.newTeamContainer}>
+                    <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Team</Button>
+                    <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleDialogClickClose}>
+                        <DialogTitle>Create a team</DialogTitle>
+                        <DialogContent className={toolbarStyles.filterDialogContent}>
+                            <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
+                                <TextField style={{width: '100%'}} variant="outlined" label="Enter Team Name" onChange={(e) => {setNewTeamName(e.target.value)}}/>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDialogClickClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={() => {createTeam(); handleDialogClickClose()}} color="primary">
+                                Submit
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
-                {/* <div className={toolbarStyles.filter}>
+                <div className={toolbarStyles.searchBarContainer}>
+                    <div style={{width: '95%'}}>
+                        <TextField style={{width: '100%'}} onChange={(e) => {setTeamSearchText(e.target.value)}} variant="outlined" label="Search Team"/>
+                    </div>
+                </div>
+            </>
+            
+                /* <div className={toolbarStyles.filter}>
                     <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
                     <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
                         <DialogTitle>Filters Results</DialogTitle>
@@ -360,8 +394,7 @@ function Teams() {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                </div> */}
-            </div>
+                </div> */
         )
     }
 
@@ -416,9 +449,6 @@ function Teams() {
                 </div>
             </div>
             <div className={toolbarStyles.toolbar}>
-                <div className={toolbarStyles.newUserContainer}>
-                    <Button variant="contained" color="primary" onClick={placeholderAlert}>Create Team</Button>
-                </div>
                 {renderSearchBarContainer()}
             </div>
             <div className={teamsStyles.body}>

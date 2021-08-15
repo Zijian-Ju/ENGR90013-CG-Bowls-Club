@@ -49,9 +49,12 @@ function Profile() {
     }; 
 
     function updatePlayer() {
-      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, playerAvailability: availability, playerPosPreference: favPosition, playerPreferTeammates: preference})
+      console.log(id)
+      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, photoUrl: response.data.data.photoUrl, playerName: response.data.data.playerName, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerNotPreferTeammates: response.data.data.playerNotPreferTeammates, playerPhone: response.data.data.playerPhone, recentPerformance: response.data.data.recentPerformance, playerAvailability: availability, playerPosPreference: favPosition, playerPreferTeammates: preference})
       .then(res => {
-        alert("Player updated"); 
+        alert("Saved")
+        reRender();
+        setEditing(false);
       })
     }
 
@@ -67,13 +70,13 @@ function Profile() {
       history.push("/teams")
     };
 
-    function deleteUser(Id) {
-      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: Id})
+    function deleteUser() {
+      axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: id})
       .then(res => {
         console.log(res)
         if (res.status === 200) {
           alert("Player deleted"); 
-          history.push(0);
+          history.push('/members');
         }
       })
     };
@@ -106,48 +109,60 @@ function Profile() {
                 </div>
               </div>
               <div className={profileStyles.leftColumnDescriptionContainer}>
-                <TextField
-                  style={{width: '95%', marginTop : '1.5%', marginBottom: '1.5%'}}
-                  disabled
-                  id="Performance"
-                  label="Auto Calculated Performance"
-                  defaultValue={performance}
-                  value={performance}
-                  variant="outlined"
-                />
-                <TextField
-                  style={{width: '95%', marginTop : '1%', marginBottom: '1%'}}
-                  id="Availability"
-                  label="Availability"
-                  defaultValue={availability}
-                  value={availability}
-                  variant="outlined"
-                  onChange={(e) => {setAvailability(e.target.value)}}
-                  disabled={!editing}
-                />
-                <TextField
-                  style={{width: '95%', marginTop : '1%', marginBottom: '1%'}}
-                  id="Favourite Position"
-                  label="Favourite Position"
-                  defaultValue={favPosition}
-                  value={favPosition}
-                  variant="outlined"
-                  onChange={(e) => {setFavPosition(e.target.value)}}
-                  disabled={!editing}
-                />
-                <TextField
-                  style={{width: '95%', marginTop : '1%', marginBottom: '1%'}}
-                  id="Preferred Teammates"
-                  label="Preferred Teammates"
-                  defaultValue={preference}
-                  value={preference}
-                  variant="outlined"
-                  onChange={(e) => {setPreference(e.target.value)}}
-                  disabled={!editing}
-                />
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    disabled
+                    id="Performance"
+                    label="Auto Calculated Performance"
+                    defaultValue={performance}
+                    value={performance}
+                    variant="outlined"
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Availability"
+                    label="Availability"
+                    defaultValue={availability}
+                    value={availability}
+                    variant="outlined"
+                    onChange={(e) => {setAvailability(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Favourite Position"
+                    label="Favourite Position"
+                    defaultValue={favPosition}
+                    value={favPosition}
+                    variant="outlined"
+                    onChange={(e) => {setFavPosition(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Preferred Teammates"
+                    label="Preferred Teammates"
+                    defaultValue={preference}
+                    value={preference}
+                    variant="outlined"
+                    onChange={(e) => {setPreference(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
                 {editing ? 
                   <div>
-                    <Button onClick={() => reRender()}>Cancel</Button>
+                    <Button onClick={() => {reRender(); setEditing(false)}}>Cancel</Button>
                     <Button onClick={() => {updatePlayer()}}>Save changes</Button> 
                   </div>
                   : 
