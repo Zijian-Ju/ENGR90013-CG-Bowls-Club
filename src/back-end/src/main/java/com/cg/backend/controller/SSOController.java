@@ -1,6 +1,7 @@
 package com.cg.backend.controller;
 
 import com.cg.backend.model.User;
+import com.cg.backend.service.SSOService;
 import com.cg.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -21,9 +22,12 @@ public class SSOController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private SSOService ssoService;
+
     @RequestMapping(value="/sso/login", method= RequestMethod.POST, produces="application/json")
     public Map<String, Object> login(@RequestBody User user){
-        return userService.login(user);
+        return ssoService.login(user);
     }
 
     @RequestMapping(value="/sso/addUser", method= RequestMethod.POST, produces="application/json")

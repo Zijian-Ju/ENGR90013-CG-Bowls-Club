@@ -2,6 +2,7 @@ package com.cg.backend.common.config;
 
 import com.cg.backend.model.User;
 import com.cg.backend.service.PermissionService;
+import com.cg.backend.service.SSOService;
 import com.cg.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
     @Resource
-    UserService userService;
+    SSOService ssoService;
 
     @Resource
     PermissionService permissionService;
@@ -34,8 +35,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String email = request.getHeader("Email");
         User user = null;
         if(token != null){
-            user = userService.checkToken(email, token);
+            user = ssoService.checkToken(email, token);
             permissionService.checkPermission(uri, user);
+            // 1. check uri, whether in BOWLS_CLUB.t_api_permission
+            // 1.1 False, Pass
+            // 1.2 True, check token and check create date
+                // 2.1 False, throw Business Exception TOKEN_CHECK_ERROR
+                // 2.2 True, check permission
+                    // 3.1 False, throw Business Exception PERMISSION_DENIED
+                    // 3.2 True, pass
         }
 //        permissionService.checkPermission(uri, user);
         return true;

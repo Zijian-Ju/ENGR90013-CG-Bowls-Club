@@ -26,12 +26,14 @@ public class PermissionService {
 
         Example example = new Example(APIPermission.class);
         Example.Criteria criteria = example.createCriteria();
+        // check uri
         criteria.andEqualTo("uri", uri);
         List<APIPermission> permissionList = permissionMapper.selectByExample(example);
 
         if(permissionList.size() < 1)
             return true;
 
+        //
         if(user == null)
             throw new BusinessException(ResponseCode.PERMISSION_DENIED);
 

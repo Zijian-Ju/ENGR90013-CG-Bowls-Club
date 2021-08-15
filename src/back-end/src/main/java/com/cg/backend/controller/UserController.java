@@ -59,7 +59,7 @@ public class UserController {
 //
 //        return this.userService.GetUserByUsername(username);
 //    }
-
+    @ApiOperation("Get Userinfo by UserID")
     @RequestMapping(value="/user/getAllUser", method= RequestMethod.POST, produces="application/json")
     public List<User> getAllUser(){
         return this.userService.getAllUser();
