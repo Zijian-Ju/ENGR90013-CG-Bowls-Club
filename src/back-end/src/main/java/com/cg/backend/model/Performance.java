@@ -1,6 +1,5 @@
 package com.cg.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 import javax.persistence.*;
@@ -23,7 +22,7 @@ public class Performance {
      * The Season of the competition(seperate by year)
      */
     private String season;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+
     @Column(name = "match_time")
     private Date matchTime;
 

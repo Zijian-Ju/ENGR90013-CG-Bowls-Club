@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+
 import tk.mybatis.mapper.entity.Example;
 
 @Service("performanceService")
@@ -38,7 +39,7 @@ public class PerformanceService {
 
         // Identify real offset and limit
         if (paging.getCurrentPage() > 0) {
-            offset  = (paging.getCurrentPage() - 1) * paging.getPageSize();
+            offset = (paging.getCurrentPage() - 1) * paging.getPageSize();
             limit = paging.getPageSize();
 
             // Prevent invalid paging number
@@ -54,14 +55,34 @@ public class PerformanceService {
         return performancesList;
     }
 
+    public List<Performance> getAllUserPerformanceByFilter(String playerId, String season, String competitionId) {
+        long id = Long.parseLong(playerId);
+        long competitionIdLong = Long.parseLong(competitionId);
+        // Get total number of user performances for paging usage
+        Example example = new Example(Performance.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("playerId", id);
+        criteria.andEqualTo("season", season);
+        criteria.andEqualTo("competitionId", competitionIdLong);
+        example.setOrderByClause("match_time desc");
+
+        return performanceMapper.selectByExample(example);
+    }
+
     public void updateUserPerformance(Performance performance) {
         Performance updatingPerformance = new Performance();
         updatingPerformance.setCompetitionId(performance.getCompetitionId());
         updatingPerformance.setPlayerId(performance.getPlayerId());
-
         updatingPerformance.setPerformanceScore(performance.getPerformanceScore());
-
         performanceMapper.updateByPrimaryKey(performance);
+    }
+
+    public void addUserPerformance(Performance performance) {
+        performanceMapper.insert(performance);
+    }
+
+    public void deleteUserPerformance(Performance performance) {
+        performanceMapper.deleteByPrimaryKey(performance);
     }
 
     // Check whether this performance record exists

@@ -29,8 +29,6 @@ public class PerformanceController {
     private PerformanceService performanceService;
     @Resource
     private PlayerService playerService;
-    private byte[] lock1 = new byte[0];
-    private byte[] lock2 = new byte[0];
 
     @RequestMapping(value = "/player/getUserPerformances", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> getUserPerformances(@RequestBody SearchRequest<Map<String, String>> searching) {
@@ -57,12 +55,25 @@ public class PerformanceController {
         return resultMap;
     }
 
+    @RequestMapping(value = "/player/getUserPerformancesByFilter", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> getUserPerformancesByFilter(@RequestBody SearchRequest<Map<String, String>> searching) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, String> params = searching.getSearching();
+        String playerId = params.get("playerId");
+        String season = params.get("season");
+        String competitionId = params.get("competitionId");
+
+        if (playerId == null) {
+            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
+        }
+        List<Performance> performanceList = performanceService.getAllUserPerformanceByFilter(playerId, season, competitionId);
+
+        resultMap.put("performanceList", performanceList);
+        return resultMap;
+    }
+
     @RequestMapping(value = "/player/updateMatchPerformance", method = RequestMethod.POST, produces = "application/json")
     public void updateUserPerformance(@RequestBody Performance performance) {
-//        if (performance.getMatchId() == null || performance.getPlayerId() == null || performance.getPerformanceScore() == null) {
-//            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
-//        }
-
         if (!performanceService.isPerformanceExist(performance)) {
             throw new BusinessException(ResponseCode.PERFORMANCE_RECORD_NOT_FOUND);
         }
@@ -88,16 +99,37 @@ public class PerformanceController {
 
     @RequestMapping(value = "/player/addMatchPerformance", method = RequestMethod.POST, produces = "application/json")
     public void addUserPerformance(@RequestBody Performance performance) {
-//        if (performance.getMatchId() == null || performance.getPlayerId() == null || performance.getPerformanceScore() == null) {
-//            throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
-//        }
+        synchronized (this) {
+            performanceService.addUserPerformance(performance);
+            Paging paging = new Paging();
+            paging.setCurrentPage(1);
+            paging.setPageSize(Integer.MAX_VALUE);
+            paging.setTotal(5);
+            List<Performance> performanceList = performanceService.getAllUserPerformance(performance.getPlayerId().toString(), paging);
+            Double recentScore = 0D;
+            for (Performance performance1 : performanceList) {
+                recentScore += performance1.getPerformanceScore();
+            }
+            recentScore = (Math.round((recentScore / performanceList.size()) * 100) / 100.0);
+            Player player = new Player();
+            player.setId(performance.getPlayerId());
+            player = playerService.selectPlayerById(player);
+            player.setRecentPerformance(recentScore);
+            playerService.insertPlayer(player);
+        }
+
+        performanceService.updateUserPerformance(performance);
+    }
+
+    @RequestMapping(value = "/player/deleteMatchPerformanceById", method = RequestMethod.POST, produces = "application/json")
+    public void deleteMatchPerformanceById(@RequestBody Performance performance) {
 
         if (!performanceService.isPerformanceExist(performance)) {
             throw new BusinessException(ResponseCode.PERFORMANCE_RECORD_NOT_FOUND);
         }
 
         synchronized (this) {
-            performanceService.updateUserPerformance(performance);
+            performanceService.deleteUserPerformance(performance);
             Paging paging = new Paging();
             paging.setCurrentPage(1);
             paging.setPageSize(Integer.MAX_VALUE);
