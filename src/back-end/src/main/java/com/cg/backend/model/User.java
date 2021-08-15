@@ -1,191 +1,171 @@
 package com.cg.backend.model;
 
+import java.util.Date;
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
-@Table(name = "BASE_USER_INFO")
+@Table(name = "t_user_info")
 public class User {
-    /**
-     * user_id
-     */
     @Id
-    @Column(name = "USER_ID")
-    private Long userId;
+    private Integer id;
 
-    /**
-     * nickname
-     */
-    @NotBlank(message = "用户名不为空")
-    @Column(name = "USER_NAME")
+    @Column(name = "user_name")
     private String userName;
 
-    /**
-     * nickname
-     */
-    @Column(name = "NICKNAME")
-    private String nickname;
+    @Column(name = "real_name")
+    private String realName;
 
-    /**
-     * E-mail
-     */
-    @Column(name = "EMAIL")
     private String email;
 
-    /**
-     * phonenumber
-     */
-    @Column(name = "MOBILE")
-    private String mobile;
-
-    /**
-     * hashcode of password
-     */
-    @Column(name = "PASSWORD")
     private String password;
 
-    /**
-     * roles, devided by , 
-     */
-    @Column(name = "ROLE")
+    private String address;
+
+    private String phone;
+
     private String role;
 
+    private String token;
+
+    @Column(name = "token_create_date")
+    private Date tokenCreateDate;
+
     /**
-     * 获取user_id
-     *
-     * @return USER_ID - user_id
+     * @return id
      */
-    public Long getUserId() {
-        return userId;
+    public Integer getId() {
+        return id;
     }
 
     /**
-     * 设置user_id
-     *
-     * @param userId user_id
+     * @param id
      */
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     /**
-     * 获取nickname
-     *
-     * @return USER_NAME - nickname
+     * @return user_name
      */
     public String getUserName() {
         return userName;
     }
 
     /**
-     * 设置nickname
-     *
-     * @param userName nickname
+     * @param userName
      */
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
     /**
-     * 获取nickname
-     *
-     * @return NICKNAME - nickname
+     * @return real_name
      */
-    public String getNickname() {
-        return nickname;
+    public String getRealName() {
+        return realName;
     }
 
     /**
-     * 设置nickname
-     *
-     * @param nickname nickname
+     * @param realName
      */
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setRealName(String realName) {
+        this.realName = realName;
     }
 
     /**
-     * 获取E-mail
-     *
-     * @return EMAIL - E-mail
+     * @return email
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * 设置E-mail
-     *
-     * @param email E-mail
+     * @param email
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * 获取phonenumber
-     *
-     * @return MOBILE - phonenumber
-     */
-    public String getMobile() {
-        return mobile;
-    }
-
-    /**
-     * 设置phonenumber
-     *
-     * @param mobile phonenumber
-     */
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    /**
-     * 获取hashcode of password
-     *
-     * @return PASSWORD - hashcode of password
+     * @return password
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * 设置hashcode of password
-     *
-     * @param password hashcode of password
+     * @param password
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
-     * 获取roles, devided by , 
-     *
-     * @return ROLE - roles, devided by , 
+     * @return address
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * @param address
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    /**
+     * @return phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    /**
+     * @return role
      */
     public String getRole() {
         return role;
     }
 
     /**
-     * 设置roles, devided by , 
-     *
-     * @param role roles, devided by , 
+     * @param role
      */
     public void setRole(String role) {
         this.role = role;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", userName='" + userName + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", email='" + email + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    /**
+     * @return token
+     */
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * @param token
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    /**
+     * @return token_create_date
+     */
+    public Date getTokenCreateDate() {
+        return tokenCreateDate;
+    }
+
+    /**
+     * @param tokenCreateDate
+     */
+    public void setTokenCreateDate(Date tokenCreateDate) {
+        this.tokenCreateDate = tokenCreateDate;
     }
 }
