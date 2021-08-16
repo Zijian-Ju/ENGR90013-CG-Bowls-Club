@@ -1,0 +1,64 @@
+.more-teams{
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.more-teams .main{
+    width: 100%;
+    height: calc(90vh - 21px);
+    display: flex;
+    justify-content: space-between;
+}
+
+.more-teams .footer{
+    padding: 20px 0;
+    text-align: right;
+}
+
+.main .left-teams-nav{
+    width: 200px;
+    height: 100%;
+    background-color: #F2F2F2;
+}
+
+.main .right-teams-list{
+    width: calc(100% - 200px);
+    min-height: 100%;
+    overflow-y: scroll;
+    background-color: #F2F2F2;
+    border-left: 1px solid white;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.main .list{
+    width: 100%;
+    display: flex;
+}
+
+.main .list .item {
+    flex: 1;
+}
+
+.main .list .item h3,
+.main .list .item p{
+    margin: 0;
+    line-height: 1.8;
+}
+
+.main .list .item .head {
+    background-color: #4E758A;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 2px solid white;
+    color: #F2F2F2;
+}
+.main .list .item .user-item{
+    padding: 10px 30px;
+}
+.main .list .item .head:last-child{
+    border-right: none;
+}
