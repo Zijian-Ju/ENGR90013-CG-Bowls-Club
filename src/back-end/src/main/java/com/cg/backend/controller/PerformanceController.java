@@ -67,9 +67,7 @@ public class PerformanceController {
             throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
         }
         List<Performance> performanceList = performanceService.getAllUserPerformanceByFilter(playerId, season, competitionId);
-        if(performanceList.size()>10){
-            performanceList=performanceList.subList(0,10);
-        }
+
         resultMap.put("performanceList", performanceList);
         return resultMap;
     }
@@ -86,9 +84,6 @@ public class PerformanceController {
             paging.setPageSize(Integer.MAX_VALUE);
             paging.setTotal(5);
             List<Performance> performanceList = performanceService.getAllUserPerformance(performance.getPlayerId().toString(), paging);
-            if(performanceList.size()>5){
-                performanceList=performanceList.subList(0,5);
-            }
             Double recentScore = 0D;
             for (Performance performance1 : performanceList) {
                 recentScore += performance1.getPerformanceScore();
@@ -98,7 +93,7 @@ public class PerformanceController {
             player.setId(performance.getPlayerId());
             player = playerService.selectPlayerById(player);
             player.setRecentPerformance(recentScore);
-            playerService.updatePlayer(player);
+            playerService.insertPlayer(player);
         }
     }
 
@@ -111,9 +106,6 @@ public class PerformanceController {
             paging.setPageSize(Integer.MAX_VALUE);
             paging.setTotal(5);
             List<Performance> performanceList = performanceService.getAllUserPerformance(performance.getPlayerId().toString(), paging);
-            if(performanceList.size()>5){
-                performanceList=performanceList.subList(0,5);
-            }
             Double recentScore = 0D;
             for (Performance performance1 : performanceList) {
                 recentScore += performance1.getPerformanceScore();
@@ -123,9 +115,10 @@ public class PerformanceController {
             player.setId(performance.getPlayerId());
             player = playerService.selectPlayerById(player);
             player.setRecentPerformance(recentScore);
-            playerService.updatePlayer(player);
+            playerService.insertPlayer(player);
         }
 
+        performanceService.updateUserPerformance(performance);
     }
 
     @RequestMapping(value = "/player/deleteMatchPerformanceById", method = RequestMethod.POST, produces = "application/json")
@@ -142,9 +135,6 @@ public class PerformanceController {
             paging.setPageSize(Integer.MAX_VALUE);
             paging.setTotal(5);
             List<Performance> performanceList = performanceService.getAllUserPerformance(performance.getPlayerId().toString(), paging);
-            if(performanceList.size()>5){
-                performanceList=performanceList.subList(0,5);
-            }
             Double recentScore = 0D;
             for (Performance performance1 : performanceList) {
                 recentScore += performance1.getPerformanceScore();
@@ -154,9 +144,10 @@ public class PerformanceController {
             player.setId(performance.getPlayerId());
             player = playerService.selectPlayerById(player);
             player.setRecentPerformance(recentScore);
-            playerService.updatePlayer(player);
+            playerService.insertPlayer(player);
         }
 
+        performanceService.updateUserPerformance(performance);
     }
 }
 
