@@ -85,16 +85,18 @@ public class CompetitionController {
     }
 
     @RequestMapping(value = "/competition/getCompetitionById", method = RequestMethod.POST, produces = "application/json")
-    public Competition getCompetitionById(@RequestBody CompetitionVO competitionVO) {
+    public CompetitionVO getCompetitionById(@RequestBody CompetitionVO competitionVO) {
         Competition competition = new Competition();
         BeanUtils.copyProperties(competitionVO, competition);
-        if (!CollectionUtils.isEmpty(competitionVO.getCompetitionDays())) {
-            competition.setCompetitionDay(String.join("|", competitionVO.getCompetitionDays()));
-        }
         if (competitionVO.getId() == null) {
             throw new BusinessException(ResponseCode.PARAM_IS_INVALID);
         }
-        return competitionService.getCompetitionById(competition);
+        competition.setCompetitionDay(String.join("|", competitionVO.getCompetitionDays()));
+        CompetitionVO competitionReturn = new CompetitionVO();
+        competition = competitionService.getCompetitionById(competition);
+        BeanUtils.copyProperties(competition, competitionReturn);
+        competitionReturn.setCompetitionDay(Arrays.asList(competition.getCompetitionDay().split("\\|")));
+        return competitionReturn;
     }
 
     @RequestMapping(value = "/competition/deleteCompetitionById", method = RequestMethod.POST, produces = "application/json")
