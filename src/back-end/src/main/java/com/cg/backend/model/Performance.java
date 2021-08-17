@@ -1,6 +1,5 @@
 package com.cg.backend.model;
 
-
 import java.util.Date;
 import javax.persistence.*;
 
@@ -30,6 +29,9 @@ public class Performance {
      * Postion for the player of this game
      */
     private String position;
+
+    @Column(name = "competition_name")
+    private String competitionName;
 
     /**
      * @return id
@@ -135,5 +137,19 @@ public class Performance {
      */
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    /**
+     * @return competition_name
+     */
+    public String getCompetitionName() {
+        return competitionName;
+    }
+
+    /**
+     * @param competitionName
+     */
+    public void setCompetitionName(String competitionName) {
+        this.competitionName = competitionName;
     }
 }

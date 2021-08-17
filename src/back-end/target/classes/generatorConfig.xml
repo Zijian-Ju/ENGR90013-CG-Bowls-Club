@@ -57,21 +57,21 @@
 <!--        </table>-->
 <!--        <table tableName="t_bowl_game_player_performance" domainObjectName="Performance">-->
 <!--        </table>-->
-        <table schema = "general" tableName= "t_sys_config" domainObjectName= "SysConfig"
-          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
-          enableSelectByExample= "false" selectByExampleQueryId= "false" >
-            <property name = "useActualColumnNames" value= "false" />
-        </table>
+<!--        <table schema = "general" tableName= "t_sys_config" domainObjectName= "SysConfig"-->
+<!--          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"-->
+<!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->
+<!--            <property name = "useActualColumnNames" value= "false" />-->
+<!--        </table>-->
 <!--        <table schema = "general" tableName= "t_bowl_team" domainObjectName= "Team"-->
 <!--          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"-->
 <!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->
 <!--            <property name = "useActualColumnNames" value= "false" />-->
 <!--        </table>-->
-<!--        <table schema = "general" tableName= "t_bowl_competition" domainObjectName= "Competition"-->
-<!--          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"-->
-<!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->
-<!--            <property name = "useActualColumnNames" value= "false" />-->
-<!--        </table>-->
+        <table schema = "general" tableName= "t_bowl_competition" domainObjectName= "Competition"
+          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
+          enableSelectByExample= "false" selectByExampleQueryId= "false" >
+            <property name = "useActualColumnNames" value= "false" />
+        </table>
 <!--        <table schema = "general" tableName= "t_bowl_game_player_performance" domainObjectName= "Performance"-->
 <!--          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"-->
 <!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->

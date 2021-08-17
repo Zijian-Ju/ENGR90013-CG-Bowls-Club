@@ -91,7 +91,7 @@ public class PerformanceService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("playerId", performance.getPlayerId());
         criteria.andEqualTo("competitionId", performance.getCompetitionId());
-
+        criteria.andEqualTo("id", performance.getId());
         Performance savedPerformance = performanceMapper.selectOneByExample(example);
         if (savedPerformance == null) {
             return false;
