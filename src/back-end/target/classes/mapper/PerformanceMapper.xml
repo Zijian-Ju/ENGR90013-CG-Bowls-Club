@@ -12,11 +12,12 @@
     <result column="season" jdbcType="VARCHAR" property="season" />
     <result column="match_time" jdbcType="TIMESTAMP" property="matchTime" />
     <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="competition_name" jdbcType="VARCHAR" property="competitionName" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--
       WARNING - @mbg.generated
     -->
-    id, player_id, competition_id, performance_score, season, match_time, position
+    id, player_id, competition_id, performance_score, season, match_time, position, competition_name
   </sql>
 </mapper>
