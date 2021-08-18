@@ -35,7 +35,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import {KeyboardArrowDown,KeyboardArrowUp,Search,FindInPage} from '@material-ui/icons';
+import {KeyboardArrowDown,KeyboardArrowUp,Search,FindInPage,Close} from '@material-ui/icons';
 
 
 const Toolbar = (props) => {
@@ -248,10 +248,13 @@ const EditTeam = () => {
       const id = `${destination.droppableId}BowlerId${destination.index > 4 ? 4 : destination.index}`
       const name = `${destination.droppableId}BowlerName${destination.index > 4 ? 4 : destination.index}`
       setTeamDetail({...teamDetail,[id]: data.id,[name]: data.playerName})
+      setCopyPayerList(copyPayerList.filter(item => item.id != data.id))
+      setPayList(payerList.filter(item => item.id != data.id))
     }
   }
   const [payerList,setPayList] = useState([])
   const [copyPayerList,setCopyPayerList] = useState([])
+  const [copyPayerListOne,setCopyPayerListOne] = useState([])
   const [teamDetail,setTeamDetail] = useState({})
   const [userDetail,setUserDetail] = useState()
   const teamList = ['skip','third','second','lead']
@@ -264,6 +267,7 @@ const EditTeam = () => {
     setPayList(list.data.data.playerList)
     setTeamDetail(detail.data.data)
     setCopyPayerList(list.data.data.playerList)
+    setCopyPayerListOne(list.data.data.playerList)
   }
   useEffect(() => {
     getDetail()
@@ -282,7 +286,7 @@ const EditTeam = () => {
   const searchUser =  (name) => {
     if (name) {
 
-    const list = payerList.filter(item => {
+    const list = copyPayerList.filter(item => {
       if (item.playerName.toLowerCase().includes(name.toLowerCase())) {
         return true
       }
@@ -293,6 +297,13 @@ const EditTeam = () => {
     }else {
       setPayList(copyPayerList)
     }
+  }
+  const removeList = (item,i) => {
+    const id = `${item}BowlerId${i > 4 ? 4 : i}`
+    const name = `${item}BowlerName${i > 4 ? 4 : i}`
+    const data = copyPayerListOne.find(item => item.id == teamDetail[id])
+    setCopyPayerList([...copyPayerList,data])
+    setTeamDetail({...teamDetail,[id]: '',[name]: ''})
   }
   return (
   <>
@@ -321,8 +332,16 @@ const EditTeam = () => {
                             <Draggable key={item+i} draggableId={item+i} index={l+1} isDragDisabled>
                               {(provided, snapshot) => (
                                 <div  className={[teamsStyles.rightGridItem,teamsStyles.rightGridEdit].join(' ')} onClick={() => {getPlayerDetail(item,i)}}  ref={provided.innerRef}  {...provided.draggableProps}  {...provided.dragHandleProps}>
-                                  <div className={bodyStyles.userCardImageContainer} style={{margin: 'auto',padding: '10px', borderRadius: '4px',width: '150px'}}>
-                                    {teamDetail[`${item}BowlerName${i}`]}
+                                  <div className={bodyStyles.userCardImageContainer} style={{margin: 'auto',padding: '10px 5px',width:'100%', borderRadius: '4px',textAlign: 'left',flexDirection: 'row',justifyContent: 'space-between',}}>
+                                    {teamDetail[`${item}BowlerName${i}`] && (
+                                      <>
+                                      <span>{teamDetail[`${item}BowlerName${i}`]}</span>
+                                      <Close style={{cursor: 'pointer'}} onClick={(e) => {
+                                        e.stopPropagation()
+                                        removeList(item,i)
+                                      }} />
+                                      </>
+                                    )}
                                   </div>
                                 </div>
                               )}
