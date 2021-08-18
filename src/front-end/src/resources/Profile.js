@@ -7,8 +7,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import profilepic from  './img/profile.png';
 import axios from 'axios';
-import { useParams } from "react-router-dom";
-import NativeSelect from '@material-ui/core/NativeSelect';
+import { useParams } from "react-router-dom";import NativeSelect from '@material-ui/core/NativeSelect';
 import { Line } from 'react-chartjs-2';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -27,6 +26,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import moment from 'moment';
+// import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+// import DateTimePicker from '@material-ui/lab/DateTimePicker';
+
 
 
 function CustomTableRow(props) {
@@ -124,7 +127,7 @@ function CustomTableRow(props) {
 }
 
 function Profile() {
-    const [playerResponse, setPlayerResponse] = useState({});
+    const [playerResponse, setPlayerResponse] = useState(false);
     const [competitionResponse, setCompetitionResponse] = useState({})
     const [performanceResponse, setPerformanceResponse] = useState({})
     const [performanceFilterResponse, setPerformanceFilterResponse] = useState({})
@@ -141,10 +144,13 @@ function Profile() {
     const [competition, setCompetition] = useState()
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const [createYear, setCreateYear] = useState();
-    const [createDate, setCreateDate] = useState();
+    const [createPerformance, setCreatePerformance] = useState();
+    const [createDate, setCreateDate] = useState("2021-01-01T00:00");
     const [createSeason, setCreateSeason] = useState();
+    const [createPosition, setCreatePosition] = useState("")
+    const [createCompetition, setCreateCompetition] = useState()
     
+
     useEffect(() => {
 
       const post1 = axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: id});
@@ -247,6 +253,22 @@ function Profile() {
       }
     }
 
+    function dialogSubmit() {
+      console.log(createDate)
+      console.log(moment().toISOString(Date(createDate)))
+      return (
+        axios.post(`http://128.199.253.108:8082/player/addMatchPerformance`, {competitionId: JSON.parse(createCompetition).id, competitionName:JSON.parse(createCompetition).name, matchTime: createDate, performanceScore: createPerformance, playerId: id, position: createPosition, season: createSeason})
+        .then(res => {
+          if (res.status === 200) {
+            console.log(res)
+            alert("Performance created"); 
+            reRender();
+          }
+        })
+      )
+      // return (null)
+    }
+
     function handleDialogClickOpen() {
       setDialogOpen(true);
   }
@@ -270,18 +292,18 @@ function Profile() {
                   <TableCell>
                     <Button variant="contained" color="primary" size="small" onClick={handleDialogClickOpen}>Add New</Button>
                     <Dialog open={dialogOpen} onClose={handleDialogClickClose}>
-                      <DialogTitle>Filters Results</DialogTitle>
+                      <DialogTitle>Adding a result for {playerResponse.data.data.playerName}</DialogTitle>
                       <DialogContent>
                           <FormControl style={{width: '48%', margin:'1%'}}>
                               <InputLabel shrink>Season</InputLabel>
                               <NativeSelect
                                 labelId="demo-simple-select-label"
                                 id="season"
-             
-                                value={year}
-                                onChange={(e) => {setCreateYear(e.target.value)}}
-                                inputProps={{name:'Year'}}
+                                value={createSeason}
+                                onChange={(e) => {setCreateSeason(e.target.value)}}
+                                inputProps={{name:'Season'}}
                               >
+                                <option aria-label="None" value="" />
                                 <option value={2019}>2019</option>
                                 <option value={2020}>2020</option>
                                 <option value={2021}>2021</option>
@@ -289,26 +311,60 @@ function Profile() {
                           </FormControl>
                           <FormControl style={{width: '48%', margin:'1%'}}>
                               <InputLabel shrink>Date</InputLabel>
-                              <Input id="date" />
+                              <TextField onChange={(e) => setCreateDate(e.target.value)} type="datetime-local" label=" "/>
+                              {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DateTimePicker
+                                  renderInput={(props) => <TextField {...props} />}
+                                  label="DateTimePicker"
+                                  value={createDate}
+                                  onChange={(newValue) => {
+                                    setCreateDate(newValue);
+                                  }}
+                                />
+                              </LocalizationProvider> */}
                           </FormControl>
                           <FormControl style={{width: '48%', margin:'1%'}}>
                               <InputLabel shrink>Position</InputLabel>
-                              <Input id="position" />
+                              <NativeSelect
+                                labelId="demo-simple-select-label"
+                                id="season"
+                                value={createPosition}
+                                onChange={(e) => {setCreatePosition(e.target.value)}}
+                                inputProps={{name:'Year'}}
+                              >
+                                <option aria-label="None" value="" />
+                                <option value={"Skip"}>Skip</option>
+                                <option value={"Lead"}>Lead</option>
+                                <option value={"First"}>First</option>
+                                <option value={"Second"}>Second</option>
+                              </NativeSelect>
                           </FormControl>
                           <FormControl style={{width: '48%', margin:'1%'}}>
                               <InputLabel shrink>Competition</InputLabel>
-                              <Input id="Competition" />
+                              <NativeSelect
+                                labelId="demo-simple-select-label"
+                                id="competition"
+                                onChange={(e) => {setCreateCompetition(e.target.value)}}
+                                label="Competition"
+                              >
+                                <option aria-label="None" value="" />
+                                {competitionResponse.status === 200 && competitionResponse.data.statusCode === 200 &&
+                                  competitionResponse.data.data.competitionList.map((comp) => (
+                                    <option value={JSON.stringify({id: comp.id, name: comp.competitionName})}>{comp.competitionName}</option>
+                                  ))
+                                }
+                              </NativeSelect>
                           </FormControl>
                           <FormControl style={{width: '48%', margin:'1%'}}>
                               <InputLabel shrink>Performance</InputLabel>
-                              <Input id="Performance" />
+                              <Input onChange={(e) => setCreatePerformance(e.target.value)} id="Performance" />
                           </FormControl>
                       </DialogContent>
                       <DialogActions>
                           <Button onClick={handleDialogClickClose} color="primary">
                               Go Back
                           </Button>
-                          <Button onClick={() => {handleDialogClickClose()}} color="primary">
+                          <Button onClick={() => {dialogSubmit(); handleDialogClickClose()}} color="primary">
                               Submit
                           </Button>
                       </DialogActions>
@@ -331,146 +387,148 @@ function Profile() {
         )
       }
     }
-
-    return (
-      <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-        <div className={styles.body}>
-            <div className={styles.logotext} >
-                <img className={styles.mcclogo} src={mcclogo} onClick={homeHandleClick} alt="Logo" />
-            </div>
-            <div className={styles.linktabs}>
-                <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
-                <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
-            </div>
-            <div className={styles.logout}>
-                <Button onClick={placeholderAlert}>LOG OUT</Button>
-            </div>
-        </div>
-        <div className={profileStyles.body}>
-          <div className={profileStyles.leftColumn}>
-            <div className={profileStyles.leftColumnImgContainer}>
-              <img style={{objectFit: 'contain', height: '100%'}} src={profilepic} alt="Logo" />
-            </div>
-            <div className={profileStyles.leftColumnNameContainer}>
-              <div>
-                {playerResponse.status === 200 && playerResponse.data.statusCode === 200 && playerResponse.data.data.playerName}
+    
+    if (playerResponse.status === 200 && playerResponse.data.statusCode === 200) {
+      return (
+        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
+          <div className={styles.body}>
+              <div className={styles.logotext} >
+                  <img className={styles.mcclogo} src={mcclogo} onClick={homeHandleClick} alt="Logo" />
               </div>
-            </div>
-            <div className={profileStyles.leftColumnDescriptionContainer}>
-              <div className={profileStyles.leftColumnDescriptionTextfield}>
-                <TextField
-                  style={{width: '100%'}}
-                  disabled
-                  id="Performance"
-                  label="Auto Calculated Performance"
-                  defaultValue={performance}
-                  value={performance}
-                  variant="outlined"
-                  size="small"
-                />
+              <div className={styles.linktabs}>
+                  <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+                  <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
+                  <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
+                  <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
               </div>
-              <div className={profileStyles.leftColumnDescriptionTextfield}>
-                <TextField
-                  style={{width: '100%'}}
-                  id="Availability"
-                  label="Availability"
-                  defaultValue={availability}
-                  value={availability}
-                  variant="outlined"
-                  onChange={(e) => {setAvailability(e.target.value)}}
-                  disabled={!editing}
-                  size="small"
-                />
+              <div className={styles.logout}>
+                  <Button onClick={placeholderAlert}>LOG OUT</Button>
               </div>
-              <div className={profileStyles.leftColumnDescriptionTextfield}>
-                <TextField
-                  style={{width: '100%'}}
-                  id="Favourite Position"
-                  label="Favourite Position"
-                  defaultValue={favPosition}
-                  value={favPosition}
-                  variant="outlined"
-                  onChange={(e) => {setFavPosition(e.target.value)}}
-                  disabled={!editing}
-                  size="small"
-                />
+          </div>
+          <div className={profileStyles.body}>
+            <div className={profileStyles.leftColumn}>
+              <div className={profileStyles.leftColumnImgContainer}>
+                <img style={{objectFit: 'contain', height: '100%'}} src={profilepic} alt="Logo" />
               </div>
-              <div className={profileStyles.leftColumnDescriptionTextfield}>
-                <TextField
-                  style={{width: '100%'}}
-                  id="Preferred Teammates"
-                  label="Preferred Teammates"
-                  defaultValue={preference}
-                  value={preference}
-                  variant="outlined"
-                  onChange={(e) => {setPreference(e.target.value)}}
-                  disabled={!editing}
-                  size="small"
-                />
-              </div>
-              {editing ? 
+              <div className={profileStyles.leftColumnNameContainer}>
                 <div>
-                  <Button onClick={() => {reRender(); setEditing(false)}}>Cancel</Button>
-                  <Button onClick={() => {updatePlayer()}}>Save changes</Button> 
+                  {playerResponse.status === 200 && playerResponse.data.statusCode === 200 && playerResponse.data.data.playerName}
                 </div>
-                : 
-                <Button onClick={() => {setEditing(true)}}>Edit</Button>
-              }
+              </div>
+              <div className={profileStyles.leftColumnDescriptionContainer}>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    disabled
+                    id="Performance"
+                    label="Auto Calculated Performance"
+                    defaultValue={performance}
+                    value={performance}
+                    variant="outlined"
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Availability"
+                    label="Availability"
+                    defaultValue={availability}
+                    value={availability}
+                    variant="outlined"
+                    onChange={(e) => {setAvailability(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Favourite Position"
+                    label="Favourite Position"
+                    defaultValue={favPosition}
+                    value={favPosition}
+                    variant="outlined"
+                    onChange={(e) => {setFavPosition(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Preferred Teammates"
+                    label="Preferred Teammates"
+                    defaultValue={preference}
+                    value={preference}
+                    variant="outlined"
+                    onChange={(e) => {setPreference(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
+                {editing ? 
+                  <div>
+                    <Button onClick={() => {reRender(); setEditing(false)}}>Cancel</Button>
+                    <Button onClick={() => {updatePlayer()}}>Save changes</Button> 
+                  </div>
+                  : 
+                  <Button onClick={() => {setEditing(true)}}>Edit</Button>
+                }
+              </div>
+              <div className={profileStyles.leftColumnButtonContainer}>
+                <Button onClick={() => deleteUser()}>Delete Player</Button>
+              </div>
             </div>
-            <div className={profileStyles.leftColumnButtonContainer}>
-              <Button onClick={() => deleteUser()}>Delete Player</Button>
+            <div style={{width: '75%'}} className={profileStyles.rightColumn}>
+              <div className={profileStyles.rightColumnSettingsContainer}>
+                <FormControl style={{minWidth: '200px', marginRight: '5%'}}>
+                  <InputLabel shrink htmlFor="age-native-label-placeholder">
+                    Year
+                  </InputLabel>
+                  <NativeSelect
+                    labelId="demo-simple-select-label"
+                    id="competition year"
+                    value={year}
+                    onChange={(e) => {setYear(e.target.value); reRender()}}
+                    inputProps={{name:'Year'}}
+                  >
+                    <option value={2019}>2019</option>
+                    <option value={2020}>2020</option>
+                    <option value={2021}>2021</option>
+                  </NativeSelect>
+                </FormControl>
+                <FormControl style={{minWidth: '200px'}}>
+                  <InputLabel shrink htmlFor="age-native-label-placeholder">
+                    Competition
+                  </InputLabel>
+                  <NativeSelect
+                    labelId="demo-simple-select-label"
+                    id="competition"
+                    value={competition}
+                    onChange={(e) => {setCompetition(e.target.value); reRender()}}
+                    label="Competition"
+                    style={{minWidth: '200px'}}
+                  >
+                    {competitionResponse.status === 200 && competitionResponse.data.statusCode === 200 &&
+                      competitionResponse.data.data.competitionList.map((comp) => (
+                        <option value={comp.id}>{comp.competitionName}</option>
+                      ))
+                    }
+                  </NativeSelect>
+                </FormControl>
+              </div>
+              <div className={profileStyles.rightColumnGraphContainer}>
+                {generateChart()}
+              </div>
+              <div className={profileStyles.rightColumnCompetitionContainer}>
+                {generatePastPerformance()}
+              </div>
             </div>
           </div>
-          <div style={{width: '75%'}} className={profileStyles.rightColumn}>
-            <div className={profileStyles.rightColumnSettingsContainer}>
-              <FormControl style={{minWidth: '200px', marginRight: '5%'}}>
-                <InputLabel shrink htmlFor="age-native-label-placeholder">
-                  Year
-                </InputLabel>
-                <NativeSelect
-                  labelId="demo-simple-select-label"
-                  id="competition year"
-                  value={year}
-                  onChange={(e) => {setYear(e.target.value); reRender()}}
-                  inputProps={{name:'Year'}}
-                >
-                  <option value={2019}>2019</option>
-                  <option value={2020}>2020</option>
-                  <option value={2021}>2021</option>
-                </NativeSelect>
-              </FormControl>
-              <FormControl style={{minWidth: '200px'}}>
-                <InputLabel shrink htmlFor="age-native-label-placeholder">
-                  Competition
-                </InputLabel>
-                <NativeSelect
-                  labelId="demo-simple-select-label"
-                  id="competition"
-                  value={competition}
-                  onChange={(e) => {setCompetition(e.target.value); reRender()}}
-                  label="Competition"
-                  style={{minWidth: '200px'}}
-                >
-                  {competitionResponse.status === 200 && competitionResponse.data.statusCode === 200 &&
-                    competitionResponse.data.data.competitionList.map((comp) => (
-                      <option value={comp.id}>{comp.competitionName}</option>
-                    ))
-                  }
-                </NativeSelect>
-              </FormControl>
-            </div>
-            <div className={profileStyles.rightColumnGraphContainer}>
-              {generateChart()}
-            </div>
-            <div className={profileStyles.rightColumnCompetitionContainer}>
-              {generatePastPerformance()}
-            </div>
-          </div>
-        </div>
-      </div> 
-    )         
+        </div> 
+      )
+    } else {return <div>Player does not exist</div>}       
 };
 
 export default Profile;

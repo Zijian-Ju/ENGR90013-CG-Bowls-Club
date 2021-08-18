@@ -133,21 +133,22 @@ function Members() {
                         <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
                             <DialogTitle>Filters Results</DialogTitle>
                             <DialogContent className={toolbarStyles.filterDialogContent}>
-                                <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                                <InputLabel shrink id="sort label">Sort</InputLabel>
-                                    <Select
-                                        label="Sort"
-                                        id="sort"
-                                        value={sort}
-                                        displayEmpty
-                                        onChange={(e) => {setSort(e.target.value)}}
-                                    >
-                                        <MenuItem value={'name'}>Name</MenuItem>
-                                        <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
-                                    </Select>
+                                <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%", marginRight: "10%"}}>
+                                <InputLabel id="sort label">Sort</InputLabel>
+                                <Select
+                                    label="Sort"
+                                    labelId="Sort"
+                                    id="sort"
+                                    value={sort}
+                                    displayEmpty
+                                    onChange={(e) => {setSort(e.target.value)}}
+                                >
+                                    <MenuItem value={'name'}>Name</MenuItem>
+                                    <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
+                                </Select>
                                 </FormControl>
-                                <FormControl className={toolbarStyles.filterFormControl}>
-                                <InputLabel shrink id="sort order label">Sort Order</InputLabel>
+                                <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%"}}>
+                                <InputLabel id="sort order label">Sort Order</InputLabel>
                                     <Select
                                         label="Sort order"
                                         id="sort-order"
@@ -162,9 +163,9 @@ function Members() {
                             </DialogContent>
                             <DialogContent className={toolbarStyles.filterDialogContent}>
                                 <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                                <InputLabel shrink id="min performance label">Min Performance</InputLabel>
+                                <InputLabel id="min performance label">Min Performance</InputLabel>
                                     <Select
-                                        label="Minimum"
+                                        label="Min Performance"
                                         id="performance-min"
                                         value={minPerformance}
                                         displayEmpty
@@ -187,6 +188,7 @@ function Members() {
                                     <InputLabel shrink id="availability label">Max Performance</InputLabel>
                                     <Select
                                         id="availability select"
+                                        label="Max Performance"
                                         value={maxPerformance}
                                         onChange={(e) => {setMaxPerformance(e.target.value)}}
                                         displayEmpty
@@ -204,10 +206,11 @@ function Members() {
                             </DialogContent>
                             <DialogContent className={toolbarStyles.fullDialogContent}>
                                 <FormControl className={toolbarStyles.availabilityFormControl}>
-                                <InputLabel shrink id="availability label">Availabilities</InputLabel>
+                                <InputLabel id="availability label">Availabilities</InputLabel>
                                 <Select
                                     labelId="availability label"
                                     id="availability"
+                                    label="Availabilities"
                                     multiple
                                     value={availability}
                                     onChange={(e) => {setAvailability(e.target.value)}}
@@ -220,9 +223,10 @@ function Members() {
                             </DialogContent>
                             <DialogContent className={toolbarStyles.fullDialogContent}>
                                 <FormControl className={toolbarStyles.favPositionFormControl}>
-                                <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
+                                <InputLabel id="fav position label">Favourite Position</InputLabel>
                                 <Select
                                     labelId=" fav position label"
+                                    label="Favourite Position"
                                     id="favourite position"
                                     multiple
                                     value={favPosition}
