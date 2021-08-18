@@ -8,7 +8,8 @@ import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import profilepic from  './img/profile.png';
-import { TextField } from '@material-ui/core';
+import { createGenerateClassName, TextField } from '@material-ui/core';
+import bodyStyles from './css/body.module.css';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -16,8 +17,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Select from '@material-ui/core/Select';
-
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
@@ -32,8 +36,7 @@ import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 
 
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import {KeyboardArrowDown,KeyboardArrowUp,Search,FindInPage} from '@material-ui/icons';
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -42,7 +45,7 @@ function placeholderAlert() {
 function Player(props) {
     const [response, setResponse] = useState({})
     const history = useHistory();
-    
+
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
     }
@@ -101,16 +104,16 @@ function Player(props) {
             </TableRow>
         )
     }
-    
+
 }
 
 function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props)
-    
+
     function calculatePlayerIds(team) {
         var count = [];
-        Object.entries(team.row).map(([key, value]) => { 
+        Object.entries(team.row).map(([key, value]) => {
             if (key.includes("BowlerId") && value > 0) {
                 count.push([key, key.replace("Id", "Name")])
             }
@@ -133,7 +136,7 @@ function Row(props) {
 
     function renderPlayerDetailed(player) {
         var x = []
-        Object.entries(player).map(([key, value]) => { 
+        Object.entries(player).map(([key, value]) => {
             if (key.includes("BowlerId") && value > 0) {
                 x.push(value)
             }
@@ -170,13 +173,13 @@ function Row(props) {
         // redirect to edit team page
         placeholderAlert();
     }
-    
+
     return (
         <>
             <TableRow className={teamsStyles.root}>
                 <TableCell>
                     <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                        {open ? <KeyboardArrowDown /> : <KeyboardArrowDown />}
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
@@ -208,8 +211,10 @@ function Row(props) {
 
 function Teams() {
     const [response, setResponse] = useState({});
+    const [resData,setResData] = useState({})
     const [teamSearchText, setTeamSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [newTeamName, setNewTeamName] = useState("");
     // const [minPerformance, setMinPerformance] = useState(0);
     // const [maxPerformance, setMaxPerformance] = useState(10);
     // const [availability, setAvailability] = useState([]);
@@ -219,6 +224,13 @@ function Teams() {
     const history = useHistory();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
+    const getPlayerDetail = async (team) => {
+        // const res = await axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id})
+        // if (res.status === 200 && res.data.statusCode === 200) {
+            setResData(team);
+        // }
+        // console.log(res)
+    }
 
     function membersHandleClick() {
         history.push("/members");
@@ -230,23 +242,75 @@ function Teams() {
 
     function teamsHandleClick() {
         history.push("/teams")
-    } 
+    }
 
-    function handleFilterClickOpen() {
+    function handleDialogClickOpen() {
         setDialogOpen(true);
     }
 
-    function handleFilterClickClose() {
+    function handleDialogClickClose() {
         setDialogOpen(false);
+    }
+
+    function createTeam() {
+        axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
+            .then(res => {
+                if (res.status === 200) {
+                    alert("Team created")
+                }
+            })
+            .then(x => reRender())
     }
 
     function renderSearchBarContainer() {
         return (
-            <div className={toolbarStyles.searchBarContainer}>
-                <div className={toolbarStyles.searchBar}>
-                    <TextField style={{width: '100%'}} onChange={(e) => {setTeamSearchText(e.target.value)}} variant="outlined" label="Search Team"/>
+            <>
+                <div className={toolbarStyles.newTeamContainer}>
+                    <Button className={toolbarStyles.newTeam} onClick={handleDialogClickOpen}>New Team</Button>
+                    <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleDialogClickClose}>
+                        <DialogTitle>Create a team</DialogTitle>
+                        <DialogContent className={toolbarStyles.filterDialogContent}>
+                            <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
+                                <TextField style={{width: '100%'}} variant="outlined" label="Enter Team Name" onChange={(e) => {setNewTeamName(e.target.value)}}/>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDialogClickClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={() => {createTeam(); handleDialogClickClose()}} color="primary">
+                                Submit
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
-                {/* <div className={toolbarStyles.filter}>
+                <div className={toolbarStyles.searchBarContainer}>
+                    <div style={{width: '50%'}}>
+                        <TextField
+                            style={{width: '100%',backgroundColor: '#fff'}}
+                            className={toolbarStyles.input} size="small"
+                            onChange={(e) => {setTeamSearchText(e.target.value)}}
+                            variant="outlined"
+                            placeholder="Search Team"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search />
+                                    </InputAdornment>
+                                ),}}
+                        />
+                    </div>
+                    <Button
+                        size="large"
+                        className={toolbarStyles.button}
+                        startIcon={<FindInPage />}
+                    >
+                        Filter
+                    </Button>
+                </div>
+            </>
+
+                /* <div className={toolbarStyles.filter}>
                     <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
                     <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
                         <DialogTitle>Filters Results</DialogTitle>
@@ -360,15 +424,51 @@ function Teams() {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                </div> */}
-            </div>
+                </div> */
         )
+    }
+    function TeamRight(props) {
+        const teamList = ['skip','third','second','lead']
+        const arr = [1,2,3,4]
+        return <div className={teamsStyles.right}>
+            {
+                props.teamName && <>
+                    <div className={teamsStyles.rightName}>
+                        <span>{props.teamName}</span>
+                        <Button color="primary" variant="contained" onClick={() => {
+                            history.push({pathname: `/edit-team/${props.id}`,state: props.id})
+                        }}>Edit Team</Button>
+                    </div>
+                    <div className={teamsStyles.rightGrid}>
+                        {teamList.map(item => (<div key={item}  style={{width: '100%',textAlign: 'center'}}>
+                            <div>
+                                <div className={teamsStyles.rightGridTitle}>{item.replace(/\b\w+\b/g, function(word){
+                                    return word.substring(0,1).toUpperCase()+word.substring(1);
+                                })}</div>
+                                {arr.map(i => (
+                                    <div key={item+i} className={teamsStyles.rightGridItem}>
+                                        <div className={bodyStyles.userCardImageContainer} style={{margin: 'auto',height: '200px',border: '1px solid #ddd',padding: '10px', borderRadius: '4px',width: '150px'}}>
+                                            <div className={bodyStyles.userCardImage}>
+                                                <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                                            </div>
+                                            <div style={{    position: 'relative', top: '30px'}}>
+                                                {props[`${item}BowlerName${i}`]}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>))}
+                    </div>
+                </>
+            }
+        </div>
     }
 
     function renderTable() {
         return (
             <>
-                <TableContainer className={teamsStyles.body} component={Paper}>
+                {/* <TableContainer className={teamsStyles.body} component={Paper}>
                     <Table aria-label="collapsible table">
                         <TableHead>
                             <TableRow>
@@ -387,7 +487,19 @@ function Teams() {
                             })}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </TableContainer> */}
+                <List className={teamsStyles.left}>
+                    {response.data.data.teamList.map((team) => {
+                        if (team.teamName.toLowerCase().includes(teamSearchText.toLowerCase())) {
+                            return (<ListItem button key={team.teamName} onClick={() => {
+                                setResData(team)}}>
+                                <ListItemText className={teamsStyles.listText}>{team.teamName}</ListItemText>
+                            </ListItem>)
+                        }
+                        return null
+                    })}
+                </List>
+                <TeamRight {...resData}/>
             </>
         )
     }
@@ -416,9 +528,6 @@ function Teams() {
                 </div>
             </div>
             <div className={toolbarStyles.toolbar}>
-                <div className={toolbarStyles.newUserContainer}>
-                    <Button variant="contained" color="primary" onClick={placeholderAlert}>Create Team</Button>
-                </div>
                 {renderSearchBarContainer()}
             </div>
             <div className={teamsStyles.body}>
