@@ -75,20 +75,23 @@
 
 .profilePage {
     display: flex; 
-    margin: 10px;
     flex-direction: row;
+    flex: 1;
+    height: 0%;
+    justify-content: center;
 }
 
 .profilePageColumn {
     flex: flex;
     flex-direction: column;
-    height: 90vh
+    height: 100%
 }
 
 .profilePageColumnContainer {
     border: 1px solid rgba(0, 0, 0, 0.05);
     margin: 2%;
     align-items: top;
+    height: 100%;
 }
 
 .profilePagePicContainer {
@@ -111,6 +114,7 @@
     flex-direction: column;
     height: 80%;
     width: 100%;
+    overflow: scroll;
 }
 
 .profilePageInfoContainerRow {

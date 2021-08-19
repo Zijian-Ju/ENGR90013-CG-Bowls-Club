@@ -27,7 +27,7 @@ function CreateProfile() {
     }; 
 
     function onSubmit() {
-      axios.post(`http://128.199.253.108:8082/player/insertPlayer`, {playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM})
+      axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: "", playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM, recentPerformance: 0, id: 0})
       .then(res => {
         alert("Player Created"); 
         history.push("/members");
@@ -46,14 +46,18 @@ function CreateProfile() {
       history.push("/teams")
     };
 
+    function competitionsHandleClick() {
+      history.push("/competitions")
+    }
+
     return (
-        <>
+        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
             <div className={styles.body}>
                 <div className={styles.logotext} >
                     <img className={styles.mcclogo} src={mcclogo} onClick={homeHandleClick} alt="Logo" />
                 </div>
                 <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
@@ -64,15 +68,7 @@ function CreateProfile() {
             </div>
       
             <div className = {bodyStyles.profilePage}>
-              <div className = {bodyStyles.profilePageColumn}>
-                <div className = {bodyStyles.profilePageColumnContainer}>
-                  <div className = {bodyStyles.profilePageTitle}>
-                  Create Profile
-                  </div>
-                </div>
-      
-              </div>
-              <div className = {bodyStyles.profilePageColumn}>
+              <div style={{width:'70%', height: '100%'}} className = {bodyStyles.profilePageColumn}>
                 <div style ={{height: '93.5%'}} className = {bodyStyles.profilePageColumnContainer}>
                   <div className = {bodyStyles.profilePageContainerTitle}>
                     Basic Information
@@ -148,16 +144,8 @@ function CreateProfile() {
                   </div>
                 </div>
               </div>
-              <div className = {bodyStyles.profilePageColumn}>
-                <div className = {bodyStyles.profilePageColumnContainer}>
-                  Free container
-                </div>
-                <div className = {bodyStyles.profilePageColumnContainer}>
-                  Free container
-                </div>
-              </div>
             </div>
-        </>
+        </div>
     )
 };
 

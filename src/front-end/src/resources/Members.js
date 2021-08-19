@@ -55,6 +55,10 @@ function Members() {
         history.push("/teams")
     }
 
+    function competitionsHandleClick() {
+        history.push("/competitions")
+    }
+
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}})
             .then(res => {
@@ -111,7 +115,7 @@ function Members() {
                     <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
                 </div>
                 <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>

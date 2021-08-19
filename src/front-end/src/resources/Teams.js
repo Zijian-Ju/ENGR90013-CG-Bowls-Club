@@ -209,6 +209,10 @@ function Teams() {
         history.push("/teams")
     } 
 
+    function competitionsHandleClick() {
+        history.push("/competitions")
+    }
+
     function handleDialogClickOpen() {
         setDialogOpen(true);
     }
@@ -415,7 +419,7 @@ function Teams() {
                     <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
                 </div>
                 <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
