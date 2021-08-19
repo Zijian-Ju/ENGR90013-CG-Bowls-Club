@@ -80,7 +80,7 @@ function CustomTableRow(props) {
         <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setSeason(e.target.value)} disableUnderline value={season}/>
       </TableCell>
       <TableCell>
-        <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setDate(e.target.value)}  disableUnderline value={date}/>
+        <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setDate(e.target.value)} disableUnderline value={date}/>
       </TableCell>
       <TableCell>
         <NativeSelect
@@ -300,7 +300,7 @@ function Profile() {
                     <Dialog open={dialogOpen} onClose={handleDialogClickClose}>
                       <DialogTitle>Adding a result for {playerResponse.data.data.playerName}</DialogTitle>
                       <DialogContent>
-                          <FormControl style={{width: '48%', margin:'1%'}}>
+                          <FormControl style={{width: '48%', marginTop: '5%', margin:'1%'}}>
                               <InputLabel shrink>Season</InputLabel>
                               <NativeSelect
                                 labelId="demo-simple-select-label"
@@ -308,6 +308,7 @@ function Profile() {
                                 value={createSeason}
                                 onChange={(e) => {setCreateSeason(e.target.value)}}
                                 inputProps={{name:'Season'}}
+                                variant="outlined"
                               >
                                 <option aria-label="None" value="" />
                                 <option value={2019}>2019</option>
@@ -315,9 +316,9 @@ function Profile() {
                                 <option value={2021}>2021</option>
                               </NativeSelect>
                           </FormControl>
-                          <FormControl style={{width: '48%', margin:'1%'}}>
-                              <InputLabel shrink>Date</InputLabel>
-                              <TextField onChange={(e) => setCreateDate(e.target.value)} type="datetime-local" label=" "/>
+                          <FormControl style={{width: '48%', marginTop: '5%', margin:'1%'}}>
+                              {/* <InputLabel shrink>Date</InputLabel> */}
+                              <TextField id="datetime-local" InputLabelProps={{shrink: true}} onChange={(e) => setCreateDate(e.target.value)} type="datetime-local" label="Date"/>
                               {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DateTimePicker
                                   renderInput={(props) => <TextField {...props} />}
@@ -337,6 +338,7 @@ function Profile() {
                                 value={createPosition}
                                 onChange={(e) => {setCreatePosition(e.target.value)}}
                                 inputProps={{name:'Year'}}
+                                variant="outlined"
                               >
                                 <option aria-label="None" value="" />
                                 <option value={"Skip"}>Skip</option>
@@ -352,6 +354,7 @@ function Profile() {
                                 id="competition"
                                 onChange={(e) => {setCreateCompetition(e.target.value)}}
                                 label="Competition"
+                                variant="outlined"
                               >
                                 <option aria-label="None" value="" />
                                 {competitionResponse.status === 200 && competitionResponse.data.statusCode === 200 &&

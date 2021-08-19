@@ -140,12 +140,11 @@ function Row(props) {
                 </TableBody>
             </Table>
         )
-
     }
 
-    function editTeamRedirect(teamId) {
-        // redirect to edit team page
-        placeholderAlert();
+    function editTeamRedirect(teamId, props) {
+        // history.push({pathname: `/editteam/${teamId}`});
+        return (null)
     }
 
     function deleteTeam(id) {
@@ -177,7 +176,7 @@ function Row(props) {
                     {renderPlayerIcons(props.row)}
                 </TableCell>
                 <TableCell>
-                    <Button onClick={() => editTeamRedirect(props.row.id)}>Edit</Button>
+                    <Button onClick={() => editTeamRedirect(props.row.id, props)}>Edit</Button>
                     <Button onClick={() => deleteTeam(props.row.id)}>Delete</Button>
                 </TableCell>
             </TableRow>
