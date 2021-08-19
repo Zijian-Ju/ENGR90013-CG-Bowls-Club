@@ -82,7 +82,8 @@ function Player(props) {
 
 function Row(props) {
     const [open, setOpen] = useState(false);
-    const playerIds = calculatePlayerIds(props)
+    const playerIds = calculatePlayerIds(props);
+    const history = useHistory();
     
     function calculatePlayerIds(team) {
         var count = [];
@@ -146,6 +147,17 @@ function Row(props) {
         // redirect to edit team page
         placeholderAlert();
     }
+
+    function deleteTeam(id) {
+        axios.post(`http://128.199.253.108:8082/team/deleteTeam`, {id: id, teamName: props.row.teamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
+            .then(res => {
+                if (res.status === 200) {
+                    alert("Team deleted")
+                    history.push("/teams");
+                }
+            })
+    }
+    
     
     return (
         <>
@@ -165,7 +177,8 @@ function Row(props) {
                     {renderPlayerIcons(props.row)}
                 </TableCell>
                 <TableCell>
-                    <Button onClick={() => editTeamRedirect(props.row.id)}>Edit Team</Button>
+                    <Button onClick={() => editTeamRedirect(props.row.id)}>Edit</Button>
+                    <Button onClick={() => deleteTeam(props.row.id)}>Delete</Button>
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -240,7 +253,7 @@ function Teams() {
                         <DialogTitle>Create a team</DialogTitle>
                         <DialogContent className={toolbarStyles.filterDialogContent}>
                             <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
-                                <TextField style={{width: '100%'}} variant="outlined" label="Enter Team Name" onChange={(e) => {setNewTeamName(e.target.value)}}/>
+                                <TextField style={{width: '100%', marginTop: '10px'}} variant="outlined" label="Enter Team Name" onChange={(e) => {setNewTeamName(e.target.value)}}/>
                             </FormControl>
                         </DialogContent>
                         <DialogActions>
