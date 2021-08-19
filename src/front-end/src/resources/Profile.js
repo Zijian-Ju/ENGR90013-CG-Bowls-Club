@@ -135,6 +135,7 @@ function Profile() {
     const [availability, setAvailability] = useState("");
     const [favPosition, setFavPosition] = useState("");
     const [preference, setPreference] = useState("");
+    const [notPreference, setNotPreference] = useState("");
     const [editing, setEditing] = useState(false);
     const history = useHistory();
     const { id } = useParams();
@@ -165,6 +166,7 @@ function Profile() {
           setAvailability(res1.data.data.playerAvailability)
           setFavPosition(res1.data.data.playerPosPreference)
           setPreference(res1.data.data.playerPreferTeammates)
+          setNotPreference(res1.data.data.playerNotPreferTeammates)
         };
         if (res3.status === 200 && res3.data.statusCode === 200) {
           setPerformanceResponse(res3)
@@ -193,7 +195,7 @@ function Profile() {
     }; 
 
     function updatePlayer() {
-      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, photoUrl: playerResponse.data.data.photoUrl, playerName: playerResponse.data.data.playerName, playerEmail: playerResponse.data.data.playerEmail, playerGender: playerResponse.data.data.playerGender, playerNotPreferTeammates: playerResponse.data.data.playerNotPreferTeammates, playerPhone: playerResponse.data.data.playerPhone, recentPerformance: playerResponse.data.data.recentPerformance, playerAvailability: availability, playerPosPreference: favPosition, playerPreferTeammates: preference})
+      axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {id: id, photoUrl: playerResponse.data.data.photoUrl, playerName: playerResponse.data.data.playerName, playerEmail: playerResponse.data.data.playerEmail, playerGender: playerResponse.data.data.playerGender, playerNotPreferTeammates: notPreference, playerPhone: playerResponse.data.data.playerPhone, recentPerformance: playerResponse.data.data.recentPerformance, playerAvailability: availability, playerPosPreference: favPosition, playerPreferTeammates: preference})
       .then(res => {
         alert("Saved")
         reRender();
@@ -424,8 +426,8 @@ function Profile() {
                   <TextField
                     style={{width: '100%'}}
                     disabled
-                    id="Performance"
-                    label="Auto Calculated Performance"
+                    id="Recent Performance"
+                    label="Recent Performance"
                     defaultValue={performance}
                     value={performance}
                     variant="outlined"
@@ -467,6 +469,19 @@ function Profile() {
                     value={preference}
                     variant="outlined"
                     onChange={(e) => {setPreference(e.target.value)}}
+                    disabled={!editing}
+                    size="small"
+                  />
+                </div>
+                <div className={profileStyles.leftColumnDescriptionTextfield}>
+                  <TextField
+                    style={{width: '100%'}}
+                    id="Not Preferred Teammates"
+                    label="Not Preferred Teammates"
+                    defaultValue={notPreference}
+                    value={notPreference}
+                    variant="outlined"
+                    onChange={(e) => {setNotPreference(e.target.value)}}
                     disabled={!editing}
                     size="small"
                   />
