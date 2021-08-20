@@ -72,7 +72,6 @@ function RenderTeam(props) {
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: props.teamId})
             .then(res => {
-                console.log(res)
                 if (res.status === 200 && res.data.statusCode === 200) {
                     setResponse(res)
                 }
