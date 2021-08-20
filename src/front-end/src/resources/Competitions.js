@@ -4,8 +4,8 @@ import Button from '@material-ui/core/Button';
 import mcclogo from './img/mcc-logo.png';
 import toolbarStyles from  './css/toolbar.module.css';
 import teamsStyles from './css/teams.module.css';
-
 import competitionStyles from './css/competitions.module.css'
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { TextField } from '@material-ui/core';
@@ -44,6 +44,143 @@ function isObjectEmpty(input) {
     }
     return out;
 };
+
+function RenderTeam(props) {
+    const [response, setResponse] = useState({})
+    const [competitionName, setCompetitionName] = useState(props.comp.competitionName);
+    const [competitionDays, setCompetitionDays] = useState(props.comp.competitionDays);
+    const [newCompetitionName, setNewCompetitionName] = useState(props.comp.competitionName);
+    const [newCompetitionDays, setNewCompetitionDays] = useState(props.comp.competitionDays);
+
+    function deleteCompetition() {
+        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id})
+        .then(res => {
+            alert("Success")
+            props.parentRefresh();
+            props.resetSelectedComp({})
+        })
+    }
+
+    function unassociateTeam() {
+        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: 0, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName})
+        .then(res => {
+            alert("Success")
+            props.parentRefresh();
+        })
+    }
+
+    useEffect(() => {
+        axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: props.teamId})
+            .then(res => {
+                console.log(res)
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                }
+            })
+    }, []);
+
+    function renderPlayerDetailed(player) {
+        var x = []
+        Object.entries(player).map(([key, value]) => { 
+            if (key.includes("BowlerId") && value > 0) {
+                x.push(value)
+            }
+        })
+        return (
+            <>
+                {x.map((playerId) => (
+                    <Player id={playerId} player={playerId}></Player>
+                ))}
+            </>
+       )
+    }
+
+    function changeCompetition(changeField) {
+        if (changeField === "Name" && competitionName === newCompetitionName) {
+            alert("No name change detected")
+            return null
+        } else if (changeField === "Days" && competitionDays === newCompetitionDays) {
+            alert("No days change detected")
+            return null
+        } else if (changeField === "Name") {
+            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: newCompetitionName})
+            .then(res => {
+                alert("Success")
+                setCompetitionName(newCompetitionName)
+                props.parentRefresh()
+            })
+        } else if (changeField === "Days") {
+            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: props.comp.competitionName})
+            .then(res => {
+                alert("Success")
+                setCompetitionDays(newCompetitionDays)
+                props.parentRefresh()
+            })
+        }
+    }
+
+    return (
+        <div className={competitionStyles.renderTeamContainer}>
+            <div className={competitionStyles.renderTeamControlsContainer}>
+                <div className={competitionStyles.renderTeamsControlsTextfield}>
+                    <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                        <TextField
+                            style={{width: '95%'}}
+                            id="standard-basic" 
+                            size="small"
+                            label="Edit Competition Name"
+                            defaultValue={competitionName}
+                            onChange={(e) => setNewCompetitionName(e.target.value)}
+                        />
+                        <Button onClick={() => changeCompetition("Name")}>Save</Button>
+                    </div>
+                    <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                        <FormControl style={{width: '95%'}}>
+                            <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
+                            <Select
+                                size = "small"
+                                id="competition days"
+                                label="Edit Competition Days"
+                                multiple
+                                value={newCompetitionDays}
+                                onChange={(e) => {setNewCompetitionDays(e.target.value)}}
+                            >
+                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                    <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Button onClick={() => changeCompetition("Days")}>Save</Button>
+                    </div>
+                </div>
+                <div className={competitionStyles.renderTeamsControlsButtons}>
+                    <div style={{width: '100%', textAlign: 'center'}}>
+                        Team Id {props.teamId} and competition id {props.comp.id}
+                    </div>
+                    <div style={{width: '100%'}}>
+                        <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
+                        <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                    </div>
+                </div>
+            </div>
+            <div style={{width: '100%'}}>
+                <Table style={{width: '100%'}} size="small">
+                    <TableHead style={{width: '100%'}}>
+                        <TableCell>Player Name</TableCell>
+                        <TableCell>Performance</TableCell>
+                        <TableCell>Availability</TableCell>
+                        <TableCell>Fav. Position</TableCell>
+                        <TableCell>Pref. Teammates</TableCell>
+                        <TableCell/>
+                    </TableHead>
+                    <TableBody style={{width: '100%'}}>
+                        {!isObjectEmpty(response) && renderPlayerDetailed(response.data.data)}
+                    </TableBody>
+                </Table>
+            </div> 
+        </div>
+    )
+}
 
 function SelectTeam(props) {
     const [response, setResponse] = useState({});
@@ -93,6 +230,8 @@ function SelectTeam(props) {
                             {response.data.data.teamList.map((team) => {
                                 if (true) {
                                     return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={team.teamName} row={team}/>)
+                                } else {
+                                    return null;
                                 }
                             })}
                         </TableBody>
@@ -109,8 +248,6 @@ function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props);
     const history = useHistory();
-
-    console.log(props)
     
     function calculatePlayerIds(team) {
         var count = [];
@@ -173,7 +310,6 @@ function Row(props) {
         axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName})
             .then(res => {
                 if (res.status === 200) {
-                    console.log(res)
                     alert("Success")
                     props.parentRefresh()
                 }
@@ -342,17 +478,6 @@ function Competitions() {
         })
     }
 
-    function renderTeam() {
-        return (
-            <div>
-                <Button onClick={() => deleteCompetition()}>Delete this competition</Button>
-                <div>
-                    Render existing team comp with team Id {getTeamByCompId(selectedComp.id)} and competition id {selectedComp.id}
-                </div> 
-            </div>
-        )
-    }
-
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
             <div className={styles.body}>
@@ -411,9 +536,8 @@ function Competitions() {
                     {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
                 </div>
                 <div className={competitionStyles.displayCompetitionsContainer}>
-                    {/* {selectedCompId === -1 ? <div>Select a team</div> : {checkIfCompHasTeam(selectedCompId) ? <RenderTeams id={selectedCompId} parentRefresh={reRender}/> : {}}} */}
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && renderTeam()}
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
+                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
+                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam  resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
                     {isObjectEmpty(selectedComp) && <div>Select a team</div>}
                 </div>
             </div>
