@@ -267,7 +267,7 @@ function SelectTeam(props) {
                                     onChange={(e) => {setNewCompetitionDays(e.target.value)}}
                                 >
                                     {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                        <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                        <MenuItem key={`weeklist${day}`} id={`competitiondays${day}`} value={day}>{day}</MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
@@ -296,7 +296,7 @@ function SelectTeam(props) {
                         <TableBody>
                             {response.data.data.teamList.map((team) => {
                                 if (true) {
-                                    return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={team.teamName} row={team}/>)
+                                    return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={`selectTeamRender${team.teamName}`} row={team}/>)
                                 } else {
                                     return null;
                                 }
@@ -331,7 +331,7 @@ function Row(props) {
             <div style={{width: '100%', overflowX: 'scroll'}} className={teamsStyles.collapsedPlayerIconRow}>
                 {playerIds.map(([playerId, playerName]) => {
                     return (
-                        <Tooltip id={`${playerId}${playerName}`} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
+                        <Tooltip key={`${playerId}${playerName}`} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
                             <img style={{objectFit: 'contain', maxHeight: '40px'}} src={profilepic} alt="Logo" />
                         </Tooltip>
                     )
@@ -352,7 +352,7 @@ function Row(props) {
         return (
             <>
                 {x.map((playerId) => (
-                    <Player id={`render ${playerId}`} player={playerId}></Player>
+                    <Player key={`renderdetailed${playerId}`} player={playerId}></Player>
                 ))}
             </>
        )
@@ -512,7 +512,7 @@ function Competitions() {
             <>  
                 Select:
                 {response.data.data.competitionList.map((comp) => (
-                    <div onClick={() => {setSelectedComp(comp); reRender()}} className={competitionStyles.competitionCard} id={comp.id}>
+                    <div onClick={() => {setSelectedComp(comp); reRender()}} className={competitionStyles.competitionCard} key={`rendercomplist${comp.id}`}>
                         {comp.competitionName}
                     </div>
                 ))}
@@ -579,7 +579,7 @@ function Competitions() {
                                 onChange={(e) => {setNewCompDay(e.target.value)}}
                             >
                                 {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <MenuItem id={day} key={day} value={day}>{day}</MenuItem>
+                                    <MenuItem id={day} key={`dialogcompday${day}`} value={day}>{day}</MenuItem>
                                 ))}
                             </Select>
                             </FormControl>
