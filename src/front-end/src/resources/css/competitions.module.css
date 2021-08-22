@@ -55,7 +55,7 @@
 
 .renderTeamsControlsTextfield {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 50%;
     height: 100%;
     margin-top: 10px;
@@ -80,4 +80,10 @@
     margin-top: 10px;
     justify-content: center;
     align-items: center;
+}
+
+.renderTeamControlsTextfieldInput {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }

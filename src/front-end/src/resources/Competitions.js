@@ -70,6 +70,7 @@ function RenderTeam(props) {
     }
 
     useEffect(() => {
+        console.log("re rendering render team")
         setCompetitionName(props.comp.competitionName)
         setCompetitionDays(props.comp.competitionDays)
         setNewCompetitionDays(props.comp.competitionDays)
@@ -80,7 +81,7 @@ function RenderTeam(props) {
                     setResponse(res)
                 }
             })
-    }, [props]);
+    }, [props.comp]);
 
     function renderPlayerDetailed(player) {
         var x = []
@@ -99,24 +100,15 @@ function RenderTeam(props) {
        )
     }
 
-    function changeCompetition(changeField) {
-        if (changeField === "Name" && competitionName === newCompetitionName) {
-            alert("No name change detected")
+    function changeCompetition() {
+        if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
+            alert("No changes detected")
             return null
-        } else if (changeField === "Days" && competitionDays === newCompetitionDays) {
-            alert("No days change detected")
-            return null
-        } else if (changeField === "Name") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: newCompetitionName})
+        } else {
+            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName})
             .then(res => {
                 alert("Success")
                 setCompetitionName(newCompetitionName)
-                props.parentRefresh()
-            })
-        } else if (changeField === "Days") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: props.comp.competitionName})
-            .then(res => {
-                alert("Success")
                 setCompetitionDays(newCompetitionDays)
                 props.parentRefresh()
             })
@@ -127,34 +119,37 @@ function RenderTeam(props) {
         <div className={competitionStyles.renderTeamContainer}>
             <div className={competitionStyles.renderTeamControlsContainer}>
                 <div className={competitionStyles.renderTeamsControlsTextfield}>
-                    <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                        <TextField
-                            style={{width: '95%'}}
-                            id="standard-basic" 
-                            size="small"
-                            label="Edit Competition Name"
-                            defaultValue={newCompetitionName}
-                            onChange={(e) => setNewCompetitionName(e.target.value)}
-                        />
-                        <Button onClick={() => changeCompetition("Name")}>Save</Button>
+                    <div className={competitionStyles.renderTeamControlsTextfieldInput}>
+                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                            <TextField
+                                style={{width: '95%'}}
+                                id="standard-basic" 
+                                size="small"
+                                label="Edit Competition Name"
+                                value={newCompetitionName}
+                                onChange={(e) => setNewCompetitionName(e.target.value)}
+                            />
+                        </div>
+                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                            <FormControl style={{width: '95%'}}>
+                                <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
+                                <Select
+                                    size = "small"
+                                    id="competition days"
+                                    label="Edit Competition Days"
+                                    multiple
+                                    value={newCompetitionDays}
+                                    onChange={(e) => {setNewCompetitionDays(e.target.value)}}
+                                >
+                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                        <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </div>
                     </div>
-                    <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                        <FormControl style={{width: '95%'}}>
-                            <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
-                            <Select
-                                size = "small"
-                                id="competition days"
-                                label="Edit Competition Days"
-                                multiple
-                                defaultValue={newCompetitionDays}
-                                onChange={(e) => {setNewCompetitionDays(e.target.value)}}
-                            >
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <Button onClick={() => changeCompetition("Days")}>Save</Button>
+                    <div>
+                        <Button onClick={() => changeCompetition()}>Save</Button>
                     </div>
                 </div>
                 <div className={competitionStyles.renderTeamsControlsButtons}>
@@ -194,24 +189,15 @@ function SelectTeam(props) {
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
 
-    function changeCompetition(changeField) {
-        if (changeField === "Name" && competitionName === newCompetitionName) {
-            alert("No name change detected")
+    function changeCompetition() {
+        if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
+            alert("No changes detected")
             return null
-        } else if (changeField === "Days" && competitionDays === newCompetitionDays) {
-            alert("No days change detected")
-            return null
-        } else if (changeField === "Name") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: newCompetitionName})
+        } else {
+            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName})
             .then(res => {
                 alert("Success")
                 setCompetitionName(newCompetitionName)
-                props.parentRefresh()
-            })
-        } else if (changeField === "Days") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: props.comp.competitionName})
-            .then(res => {
-                alert("Success")
                 setCompetitionDays(newCompetitionDays)
                 props.parentRefresh()
             })
@@ -228,6 +214,7 @@ function SelectTeam(props) {
     }
 
     useEffect(() => {
+        console.log("re rendering select team")
         setCompetitionName(props.comp.competitionName)
         setCompetitionDays(props.comp.competitionDays)
         setNewCompetitionDays(props.comp.competitionDays)
@@ -237,41 +224,44 @@ function SelectTeam(props) {
                 setResponse(res);
                 setLoading(false)
             })
-    }, [props]);
+    }, [props.comp]);
 
     if (loading === false) {
         return (
             <div style={{width: '100%'}}>
                 <div className={competitionStyles.renderTeamControlsContainer}>
                     <div className={competitionStyles.renderTeamsControlsTextfield}>
-                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                            <TextField
-                                style={{width: '95%'}}
-                                id="standard-basic" 
-                                size="small"
-                                label="Edit Competition Name"
-                                defaultValue={newCompetitionName}
-                                onChange={(e) => setNewCompetitionName(e.target.value)}
-                            />
-                            <Button onClick={() => changeCompetition("Name")}>Save</Button>
+                        <div className={competitionStyles.renderTeamControlsTextfieldInput}>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <TextField
+                                    style={{width: '95%'}}
+                                    id="standard-basic" 
+                                    size="small"
+                                    label="Edit Competition Name"
+                                    value={newCompetitionName}
+                                    onChange={(e) => setNewCompetitionName(e.target.value)}
+                                />
+                            </div>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <FormControl style={{width: '95%'}}>
+                                    <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
+                                    <Select
+                                        size = "small"
+                                        id="competition days"
+                                        label="Edit Competition Days"
+                                        multiple
+                                        value={newCompetitionDays}
+                                        onChange={(e) => {setNewCompetitionDays(e.target.value)}}
+                                    >
+                                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                            <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
                         </div>
-                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                            <FormControl style={{width: '95%'}}>
-                                <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
-                                <Select
-                                    size = "small"
-                                    id="competition days"
-                                    label="Edit Competition Days"
-                                    multiple
-                                    defaultValue={newCompetitionDays}
-                                    onChange={(e) => {setNewCompetitionDays(e.target.value)}}
-                                >
-                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                        <MenuItem key={`weeklist${day}`} id={`competitiondays${day}`} value={day}>{day}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <Button onClick={() => changeCompetition("Days")}>Save</Button>
+                        <div>
+                            <Button onClick={() => changeCompetition()}>Save</Button>
                         </div>
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
@@ -600,8 +590,8 @@ function Competitions() {
                     {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
                 </div>
                 <div className={competitionStyles.displayCompetitionsContainer}>
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
+                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam key={`renderTeamfor${selectedComp}`} comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
+                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam key={`selectTeamfor${selectedComp}`} resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
                     {isObjectEmpty(selectedComp) && <div>Select a team</div>}
                 </div>
             </div>
