@@ -1,0 +1,83 @@
+.body {
+    display: flex;
+    flex-direction: row;
+    flex:1;
+    height: 0%
+}
+
+.selectCompetitionContainer {
+    width: 25%;
+    height: 98%;
+    background-color: #eeeeee;
+    margin: 0.5%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.displayCompetitionsContainer {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 98%;
+    margin: 0.5%;
+    overflow: scroll;
+}
+
+.competitionCard {
+    height: 50px;
+    margin: 5px;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.competitionCard:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.renderTeamContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.renderTeamControlsContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.renderTeamsControlsTextfield {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    height: 100%;
+    margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.renderTeamsControlsTextfieldBox {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.renderTeamsControlsButtons {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+    margin-top: 10px;
+    justify-content: center;
+    align-items: center;
+}
