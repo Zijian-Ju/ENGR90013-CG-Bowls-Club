@@ -50,7 +50,7 @@ function Player(props) {
                     setResponse(res);
                 }
             })
-    }, []);
+    }, [props.player]);
 
     if (Object.keys(response).length !== 0 && response.constructor === Object && response.data.data !== null) {
         return (
@@ -91,6 +91,7 @@ function Row(props) {
             if (key.includes("BowlerId") && value > 0) {
                 count.push([key, key.replace("Id", "Name")])
             }
+            return null;
         })
         return count
     }
@@ -114,6 +115,7 @@ function Row(props) {
             if (key.includes("BowlerId") && value > 0) {
                 x.push(value)
             }
+            return null;
         })
         return (
             <>
@@ -153,11 +155,11 @@ function Row(props) {
                 if (res.status === 200) {
                     alert("Team deleted")
                     history.push("/teams");
+                    props.parentRefresh()
                 }
             })
     }
-    
-    
+     
     return (
         <>
             <TableRow className={teamsStyles.root}>
@@ -199,12 +201,6 @@ function Teams() {
     const [teamSearchText, setTeamSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newTeamName, setNewTeamName] = useState("");
-    // const [minPerformance, setMinPerformance] = useState(0);
-    // const [maxPerformance, setMaxPerformance] = useState(10);
-    // const [availability, setAvailability] = useState([]);
-    // const [favPosition, setFavPosition] = useState([]);
-    // const [sort, setSort] = useState("");
-    // const [sortOrder, setSortOrder] = useState("");
     const history = useHistory();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
@@ -271,122 +267,6 @@ function Teams() {
                     </div>
                 </div>
             </>
-            
-                /* <div className={toolbarStyles.filter}>
-                    <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
-                    <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
-                        <DialogTitle>Filters Results</DialogTitle>
-                        <DialogContent className={toolbarStyles.filterDialogContent}>
-                            <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                            <InputLabel shrink id="sort label">Sort</InputLabel>
-                                <Select
-                                    label="Sort"
-                                    id="sort"
-                                    value={sort}
-                                    displayEmpty
-                                    onChange={(e) => {setSort(e.target.value)}}
-                                >
-                                    <MenuItem value={'name'}>Name</MenuItem>
-                                    <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl className={toolbarStyles.filterFormControl}>
-                            <InputLabel shrink id="sort order label">Sort Order</InputLabel>
-                                <Select
-                                    label="Sort order"
-                                    id="sort-order"
-                                    value={sortOrder}
-                                    displayEmpty
-                                    onChange={(e) => {setSortOrder(e.target.value)}}
-                                >
-                                    <MenuItem value={'asc'}>Ascending</MenuItem>
-                                    <MenuItem value={'desc'}>Descending</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.filterDialogContent}>
-                            <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                            <InputLabel shrink id="min performance label">Min Performance</InputLabel>
-                                <Select
-                                    label="Minimum"
-                                    id="performance-min"
-                                    value={minPerformance}
-                                    displayEmpty
-                                    onChange={(e) => {setMinPerformance(e.target.value)}}
-                                >
-                                    <MenuItem value={0}>0</MenuItem>
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
-                                    <MenuItem value={6}>6</MenuItem>
-                                    <MenuItem value={7}>7</MenuItem>
-                                    <MenuItem value={8}>8</MenuItem>
-                                    <MenuItem value={9}>9</MenuItem>
-                                    <MenuItem value={10}>10</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
-                                <InputLabel shrink id="availability label">Max Performance</InputLabel>
-                                <Select
-                                    id="availability select"
-                                    value={maxPerformance}
-                                    onChange={(e) => {setMaxPerformance(e.target.value)}}
-                                    displayEmpty
-                                >
-                                    {(() => {
-                                        const options = [];
-                                        for (let i = minPerformance; i<=10; i++) {
-                                            options.push(<MenuItem value={i}>{i}</MenuItem>)
-                                        }
-                                        return options;
-                                    }
-                                    )()}
-                                </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.fullDialogContent}>
-                            <FormControl className={toolbarStyles.availabilityFormControl}>
-                            <InputLabel shrink id="availability label">Availabilities</InputLabel>
-                            <Select
-                                labelId="availability label"
-                                id="availability"
-                                multiple
-                                value={availability}
-                                onChange={(e) => {setAvailability(e.target.value)}}
-                            >
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <MenuItem key={day} value={day}>{day}</MenuItem>
-                                ))}
-                            </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.fullDialogContent}>
-                            <FormControl className={toolbarStyles.favPositionFormControl}>
-                            <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
-                            <Select
-                                labelId=" fav position label"
-                                id="favourite position"
-                                multiple
-                                value={favPosition}
-                                onChange={(e) => {setFavPosition(e.target.value)}}
-                            >
-                                {["Skip","Second","Third","Lead"].map((position) => (
-                                    <MenuItem key={position} value={position}>{position}</MenuItem>
-                                ))}
-                            </Select>
-                            </FormControl>
-                        <DialogActions>
-                            <Button onClick={handleFilterClickClose} color="primary">
-                                Go Back
-                            </Button>
-                            <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
-                                Submit
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </div> */
         )
     }
 
@@ -407,8 +287,9 @@ function Teams() {
                         <TableBody>
                             {response.data.data.teamList.map((team) => {
                                 if (team.teamName.toLowerCase().includes(teamSearchText.toLowerCase())) {
-                                    return (<Row key={team.teamName} row={team}/>)
+                                    return (<Row parentRefresh={reRender} key={team.teamName} row={team}/>)
                                 }
+                                return null;
                             })}
                         </TableBody>
                     </Table>

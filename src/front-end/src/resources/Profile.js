@@ -27,10 +27,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import moment from 'moment';
-// import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
-// import DateTimePicker from '@material-ui/lab/DateTimePicker';
-
-
 
 function CustomTableRow(props) {
   const [season, setSeason] = useState(props.data.season);
@@ -93,9 +89,11 @@ function CustomTableRow(props) {
           disableUnderline={!editing}
         >
           {props.competitions.status === 200 && props.competitions.data.statusCode === 200 &&
-            props.competitions.data.data.competitionList.map((comp) => (
-              <option value={JSON.stringify({id: comp.id, name:comp.competitionName})}>{comp.competitionName}</option>
-            ))
+            props.competitions.data.data.competitionList.map(function(comp,index) {
+              return (
+                <option key={`rowcompetitionlist${comp}${index}`} value={JSON.stringify({id: comp.id, name:comp.competitionName})}>{comp.competitionName}</option>
+              )
+            })
           }
         </NativeSelect>
       </TableCell>
@@ -126,6 +124,33 @@ function CustomTableRow(props) {
   )
 }
 
+function LineChart(props) {
+  const performanceFilterResponse = props.data
+
+  const yData = performanceFilterResponse.data.data.performanceList.reverse().map((aPerformance) => {
+    return (aPerformance.performanceScore)
+  })
+  const xData = Array.from(Array(10).keys())
+    const data = {
+      labels: xData,
+      datasets: [
+        {
+          label: 'Performance',
+          data: yData,
+          fill: false,
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgba(255, 99, 132, 0.2)',
+        },
+      ],
+    };
+
+  return (
+    <>
+      <Line className={profileStyles.rightColumnGraph} data={data}/>
+    </>
+  )
+}
+
 function Profile() {
     const [playerResponse, setPlayerResponse] = useState(false);
     const [competitionResponse, setCompetitionResponse] = useState({})
@@ -142,7 +167,7 @@ function Profile() {
     const [random, setRandom] = useState(Math.random());
     const reRender = () => {setRandom(Math.random())};
     const [year, setYear] = useState(2021);
-    const [competition, setCompetition] = useState()
+    const [competition, setCompetition] = useState("")
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const [createPerformance, setCreatePerformance] = useState();
@@ -188,7 +213,7 @@ function Profile() {
           setPerformanceFilterResponse(res)
         };
       })
-    }, [random])
+    }, [random, id, year])
 
     function placeholderAlert() {
         return alert("Unsupported");
@@ -229,39 +254,9 @@ function Profile() {
       })
     };
 
-    function generateChart() {
-      if (Object.keys(performanceFilterResponse).length !== 0 && performanceFilterResponse.constructor === Object) {
-        const yData = performanceFilterResponse.data.data.performanceList.reverse().map((aPerformance) => {
-          return (aPerformance.performanceScore)
-        })
-        const xData = Array.from(Array(10).keys())
-        const data = {
-          labels: xData,
-          datasets: [
-            {
-              label: 'Performance',
-              data: yData,
-              fill: false,
-              backgroundColor: 'rgb(255, 99, 132)',
-              borderColor: 'rgba(255, 99, 132, 0.2)',
-            },
-          ],
-        };
-        return (
-          <>
-            <Line className={profileStyles.rightColumnGraph} data={data}/>
-          </>
-        )
-      } else {
-        return (
-          <div>...Loading</div>
-        )
-      }
-    }
-
     function dialogSubmit() {
-      console.log(createDate)
-      console.log(moment().toISOString(Date(createDate)))
+      // console.log(createDate)
+      // console.log(moment().toISOString(Date(createDate)))
       return (
         axios.post(`http://128.199.253.108:8082/player/addMatchPerformance`, {competitionId: JSON.parse(createCompetition).id, competitionName:JSON.parse(createCompetition).name, matchTime: createDate, performanceScore: createPerformance, playerId: id, position: createPosition, season: createSeason})
         .then(res => {
@@ -272,7 +267,6 @@ function Profile() {
           }
         })
       )
-      // return (null)
     }
 
     function handleDialogClickOpen() {
@@ -317,18 +311,7 @@ function Profile() {
                               </NativeSelect>
                           </FormControl>
                           <FormControl style={{width: '48%', marginTop: '5%', margin:'1%'}}>
-                              {/* <InputLabel shrink>Date</InputLabel> */}
-                              <TextField id="datetime-local" InputLabelProps={{shrink: true}} onChange={(e) => setCreateDate(e.target.value)} type="datetime-local" label="Date"/>
-                              {/* <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DateTimePicker
-                                  renderInput={(props) => <TextField {...props} />}
-                                  label="DateTimePicker"
-                                  value={createDate}
-                                  onChange={(newValue) => {
-                                    setCreateDate(newValue);
-                                  }}
-                                />
-                              </LocalizationProvider> */}
+                              <TextField id="datetime-local" InputLabelProps={{shrink: true}} onChange={(e) => setCreateDate(e.target.value)} type="datetime-local" label="Date"/>   
                           </FormControl>
                           <FormControl style={{width: '48%', margin:'1%'}}>
                               <InputLabel shrink>Position</InputLabel>
@@ -359,7 +342,7 @@ function Profile() {
                                 <option aria-label="None" value="" />
                                 {competitionResponse.status === 200 && competitionResponse.data.statusCode === 200 &&
                                   competitionResponse.data.data.competitionList.map((comp) => (
-                                    <option value={JSON.stringify({id: comp.id, name: comp.competitionName})}>{comp.competitionName}</option>
+                                    <option key={`profilecompetitionist${comp}`} value={JSON.stringify({id: comp.id, name: comp.competitionName})}>{comp.competitionName}</option>
                                   ))
                                 }
                               </NativeSelect>
@@ -383,9 +366,11 @@ function Profile() {
               </TableHead>
               <TableBody>
                 {performanceResponse.data.data.performanceList.length === 0 ? <div>No data.</div> :
-                performanceResponse.data.data.performanceList.map((row) => (
-                  <CustomTableRow refresh={reRender} competitions={competitionResponse} data={row}/>
-                ))}
+                performanceResponse.data.data.performanceList.map(function(row, index) {
+                  return (
+                    <CustomTableRow key={`customtablerow${row}${index}`} refresh={reRender} competitions={competitionResponse} data={row}/>
+                  )
+                })}
               </TableBody>
             </Table>
           </TableContainer>
@@ -431,7 +416,6 @@ function Profile() {
                     disabled
                     id="Recent Performance"
                     label="Recent Performance"
-                    defaultValue={performance}
                     value={performance}
                     variant="outlined"
                     size="small"
@@ -442,7 +426,6 @@ function Profile() {
                     style={{width: '100%'}}
                     id="Availability"
                     label="Availability"
-                    defaultValue={availability}
                     value={availability}
                     variant="outlined"
                     onChange={(e) => {setAvailability(e.target.value)}}
@@ -455,7 +438,6 @@ function Profile() {
                     style={{width: '100%'}}
                     id="Favourite Position"
                     label="Favourite Position"
-                    defaultValue={favPosition}
                     value={favPosition}
                     variant="outlined"
                     onChange={(e) => {setFavPosition(e.target.value)}}
@@ -468,7 +450,6 @@ function Profile() {
                     style={{width: '100%'}}
                     id="Preferred Teammates"
                     label="Preferred Teammates"
-                    defaultValue={preference}
                     value={preference}
                     variant="outlined"
                     onChange={(e) => {setPreference(e.target.value)}}
@@ -481,7 +462,6 @@ function Profile() {
                     style={{width: '100%'}}
                     id="Not Preferred Teammates"
                     label="Not Preferred Teammates"
-                    defaultValue={notPreference}
                     value={notPreference}
                     variant="outlined"
                     onChange={(e) => {setNotPreference(e.target.value)}}
@@ -512,7 +492,7 @@ function Profile() {
                     labelId="demo-simple-select-label"
                     id="competition year"
                     value={year}
-                    onChange={(e) => {setYear(e.target.value); reRender()}}
+                    onChange={(e) => {setYear(e.target.value)}}
                     inputProps={{name:'Year'}}
                   >
                     <option value={2019}>2019</option>
@@ -528,20 +508,22 @@ function Profile() {
                     labelId="demo-simple-select-label"
                     id="competition"
                     value={competition}
-                    onChange={(e) => {setCompetition(e.target.value); reRender()}}
+                    onChange={(e) => {setCompetition(e.target.value)}}
                     label="Competition"
                     style={{minWidth: '200px'}}
                   >
                     {competitionResponse.status === 200 && competitionResponse.data.statusCode === 200 &&
-                      competitionResponse.data.data.competitionList.map((comp) => (
-                        <option value={comp.id}>{comp.competitionName}</option>
-                      ))
+                      competitionResponse.data.data.competitionList.map(function(comp, index) {
+                        return (
+                          <option key={`compdropdown${comp}${index}`} value={comp.id}>{comp.competitionName}</option>
+                        )
+                      })
                     }
                   </NativeSelect>
                 </FormControl>
               </div>
               <div className={profileStyles.rightColumnGraphContainer}>
-                {generateChart()}
+                {Object.keys(performanceFilterResponse).length !== 0 && performanceFilterResponse.constructor === Object && <LineChart key={'graph'} data={performanceFilterResponse}/>}
               </div>
               <div className={profileStyles.rightColumnCompetitionContainer}>
                 {generatePastPerformance()}

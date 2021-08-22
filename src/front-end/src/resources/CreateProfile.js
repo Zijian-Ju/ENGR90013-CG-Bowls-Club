@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './css/navbar.module.css';
 import bodyStyles from './css/body.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
 import axios from 'axios';
-import { useParams } from "react-router-dom";
 
 function CreateProfile() {
-    const [response, setResponse] = useState({});
-    const [loaded, setLoaded] = useState(false);
     const [playerName, setPlayerName] = useState("");
     const [playerEmail, setPlayerEmail] = useState("");
     const [playerPhone, setPlayerPhone] = useState("");

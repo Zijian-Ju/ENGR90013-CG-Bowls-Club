@@ -63,9 +63,8 @@ function Members() {
         axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}})
             .then(res => {
                 setResponse(res);
-                console.log(res);
             })
-    }, [random]);
+    }, [random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder]);
 
     function handleFilterClickOpen() {
         setDialogOpen(true);
@@ -77,7 +76,6 @@ function Members() {
 
     function renderUsers(data) {
         const userArray = data.data.data.playerList;
-        console.log(userArray)
         return (
             <div className={bodyStyles.allUsersContainer}>
                 {userArray.map(user => { 

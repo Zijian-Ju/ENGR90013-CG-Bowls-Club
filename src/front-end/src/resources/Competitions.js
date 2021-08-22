@@ -70,7 +70,6 @@ function RenderTeam(props) {
     }
 
     useEffect(() => {
-        console.log("re rendering render team")
         setCompetitionName(props.comp.competitionName)
         setCompetitionDays(props.comp.competitionDays)
         setNewCompetitionDays(props.comp.competitionDays)
@@ -81,7 +80,7 @@ function RenderTeam(props) {
                     setResponse(res)
                 }
             })
-    }, [props.comp]);
+    }, [props.comp, props.teamId]);
 
     function renderPlayerDetailed(player) {
         var x = []
@@ -214,7 +213,6 @@ function SelectTeam(props) {
     }
 
     useEffect(() => {
-        console.log("re rendering select team")
         setCompetitionName(props.comp.competitionName)
         setCompetitionDays(props.comp.competitionDays)
         setNewCompetitionDays(props.comp.competitionDays)
