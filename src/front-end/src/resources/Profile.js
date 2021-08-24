@@ -200,12 +200,10 @@ function LineChart(props) {
   const [yData, setYData] = useState([])
 
   useEffect(() => {
-    console.log("chart re render")
     axios.post(`http://128.199.253.108:8082/player/getUserPerformancesByFilter`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {competitionId: props.compId, season: props.year, playerId: props.playerId}})
     .then((res) => {
       if (res.status === 200 & res.data.statusCode === 200) {
         setLoaded(true)
-        console.log(res.data.data.performanceList)
         const temp = res.data.data.performanceList.reverse().map((aPerformance) => {
           return (aPerformance.performanceScore)
         });
@@ -524,8 +522,6 @@ function Performances(props) {
   const id = props.playerId;
   const [random, setRandom] = useState(Math.random());
   const reRender = () => {setRandom(Math.random())};
-
-  console.log("Performance re-render");
 
   return (
     <>
