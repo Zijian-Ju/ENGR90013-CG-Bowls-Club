@@ -46,6 +46,9 @@ public class PlayerService {
   }
 
   private void sortPlayers(List<Player> resultPlayers, Order order) {
+    if (order == null || order.getDirection() == null || order.getSortField() == null) {
+      return;
+    }
     if (order.getSortField().equals("recentPerformance")) {
       sortByRecenetPerformance(resultPlayers, order);
     }
