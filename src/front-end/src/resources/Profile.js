@@ -523,7 +523,7 @@ function PerformanceControl(props) {
 function Performances(props) {
   const id = props.playerId;
   const [random, setRandom] = useState(Math.random());
-  const reRender = () => {setRandom(1)};
+  const reRender = () => {setRandom(Math.random())};
 
   console.log("Performance re-render");
 
