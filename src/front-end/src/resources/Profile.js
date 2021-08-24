@@ -38,8 +38,6 @@ function CustomTableRow(props) {
   const [position, setPosition] = useState(props.data.position);
   const [performance, setPerformance] = useState(props.data.performanceScore)
   const [editing, setEditing] = useState(false);
-  const [random, setRandom] = useState(Math.random());
-  const reRender = () => {setRandom(Math.random())};
   const [deleted, setDeleted] = useState(false)
 
   function resetFields() {
@@ -57,6 +55,7 @@ function CustomTableRow(props) {
         if (res.status === 200) {
           alert("Success")
           props.performanceUpdate()
+          props.performanceTableUpdate()
         }
       })
   }
@@ -65,7 +64,7 @@ function CustomTableRow(props) {
     axios.post(`http://128.199.253.108:8082/player/updateMatchPerformance`, {competitionId: competitionId, competitionName: competitionName, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId, position: position, season: season})
       .then(res => {
         if (res.status === 200) {
-          reRender();
+          // reRender();
           alert("Success")
           props.performanceUpdate()
         }
@@ -112,7 +111,7 @@ function CustomTableRow(props) {
         {editing ? 
           <>
             <Tooltip placement="top" title={"Save"}>
-              <CheckCircleIcon className={profileStyles.tickIcon} onClick={() => {updatePerformance(); setEditing(false); reRender()}} fontSize="large"/>
+              <CheckCircleIcon className={profileStyles.tickIcon} onClick={() => {updatePerformance(); setEditing(false)}} fontSize="large"/>
             </Tooltip>
             <Tooltip placement="top" title={"Delete Record"}>
               <CancelIcon className={profileStyles.cancelIcon} onClick={() => {deletePerformance(); setEditing(false); setDeleted(true)}} fontSize="large"/>
@@ -133,8 +132,6 @@ function LineChartControl(props) {
   const [response, setResponse] = useState({});
   const [year, setYear] = useState("");
   const [competition, setCompetition] = useState("");
-  const [random, setRandom] = useState(Math.random());
-  const reRender = () => {setRandom(Math.random())};
 
   useEffect(() => {
     axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
@@ -361,11 +358,11 @@ function PerformanceControl(props) {
   const reRender = () => {setRandom(Math.random())};
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [createPerformance, setCreatePerformance] = useState();
+  const [createPerformance, setCreatePerformance] = useState("");
   const [createDate, setCreateDate] = useState("2020-01-01T00:00:00.00Z");
-  const [createSeason, setCreateSeason] = useState();
+  const [createSeason, setCreateSeason] = useState("");
   const [createPosition, setCreatePosition] = useState("")
-  const [createCompetition, setCreateCompetition] = useState()
+  const [createCompetition, setCreateCompetition] = useState("")
 
   function objectNotEmpty(obj) {
     if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
@@ -472,7 +469,7 @@ function PerformanceControl(props) {
             {performanceResponse.data.data.performanceList.length === 0 ? <div>No data.</div> :
             performanceResponse.data.data.performanceList.map(function(row, index) {
               return (
-                <CustomTableRow key={`customtablerow${row}${index}`} performanceUpdate={props.performanceUpdate} competitions={competitionResponse} data={row}/>
+                <CustomTableRow key={`customtablerow${row}${index}`} performanceTableUpdate={reRender} performanceUpdate={props.performanceUpdate} competitions={competitionResponse} data={row}/>
               )
             })}
           </TableBody>
@@ -488,6 +485,7 @@ function PerformanceControl(props) {
         if (res.status === 200) {
           alert("Performance created"); 
           props.performanceUpdate()
+          reRender()
         }
       })
     )

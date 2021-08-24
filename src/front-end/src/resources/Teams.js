@@ -99,11 +99,13 @@ function Row(props) {
     function renderPlayerIcons(team) {
         return (
             <div className={teamsStyles.collapsedPlayerIconRow}>
-                {playerIds.map(([playerId, playerName]) => (
-                    <Tooltip id={playerId} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
-                        <img style={{objectFit: 'contain', maxHeight: '50px'}} src={profilepic} alt="Logo" />
-                    </Tooltip>
-                ))}
+                {playerIds.map(function([playerId, playerName], index) {
+                    return (
+                        <Tooltip key={`playerIcons${playerId}${index}`} id={playerId} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
+                            <img style={{objectFit: 'contain', maxHeight: '50px'}} src={profilepic} alt="Logo" />
+                        </Tooltip>
+                    )
+                })}
             </div>
         )
 
@@ -119,9 +121,11 @@ function Row(props) {
         })
         return (
             <>
-                {x.map((playerId) => (
-                    <Player player={playerId}></Player>
-                ))}
+                {x.map(function(playerId, index) {
+                    return (
+                        <Player key={`${playerId}${index}`} player={playerId}></Player>
+                    )
+                })}
             </>
        )
     }

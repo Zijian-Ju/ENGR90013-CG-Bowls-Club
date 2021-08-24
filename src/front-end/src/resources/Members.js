@@ -78,10 +78,10 @@ function Members() {
         const userArray = data.data.data.playerList;
         return (
             <div className={bodyStyles.allUsersContainer}>
-                {userArray.map(user => { 
+                {userArray.map(function(user, index) { 
                     if (user.playerName.toLowerCase().includes(userSearchText.toLowerCase())) { 
                         return (
-                            <div id={user.playerName} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
+                            <div key={`userarray${user}${index}`} id={user.playerName} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                                 <div className={bodyStyles.userCardImageContainer}>
                                     <div className={bodyStyles.userCardImage}>
                                         <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
@@ -240,12 +240,6 @@ function Members() {
                                 </Select>
                                 </FormControl>
                             </DialogContent>
-                            {/* <DialogContent className={toolbarStyles.fullDialogContent}>
-                                <FormControl className={toolbarStyles.preferenceFormControl}>
-                                    <InputLabel shrink>Preferences</InputLabel>
-                                    <Input id="preference" value={preference} onChange={(e) => {setPreference(e.target.value)}} />
-                                </FormControl>
-                            </DialogContent> */}
                             <DialogActions>
                                 <Button onClick={handleFilterClickClose} color="primary">
                                     Go Back

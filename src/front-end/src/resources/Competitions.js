@@ -92,9 +92,11 @@ function RenderTeam(props) {
         })
         return (
             <>
-                {x.map((playerId) => (
-                    <Player id={playerId} player={playerId}></Player>
-                ))}
+                {x.map(function(playerId, index) {
+                    return (
+                        <Player key={`renderPlayer${playerId}${index}`} id={playerId} player={playerId}></Player>
+                    )
+                })}
             </>
        )
     }
@@ -172,7 +174,7 @@ function RenderTeam(props) {
                         <TableCell/>
                     </TableHead>
                     <TableBody style={{width: '100%'}}>
-                        {!isObjectEmpty(response) && renderPlayerDetailed(response.data.data)}
+                        {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
                     </TableBody>
                 </Table>
             </div> 
