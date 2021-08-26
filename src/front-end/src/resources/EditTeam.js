@@ -257,7 +257,7 @@ const EditTeam = () => {
     }
   }
   const onSave = async() => {
-    await axios.post('http://128.199.253.108:8082/team/updateTeam',teamDetail)
+    await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail)
     teamsHandleClick()
   }
   const searchUser =  (name) => {
@@ -280,7 +280,7 @@ const EditTeam = () => {
     const name = `${item}BowlerName${i > 4 ? 4 : i}`
     const data = copyPayerListOne.find(item => item.id === teamDetail[id])
     setCopyPayerList([...copyPayerList,data])
-    setTeamDetail({...teamDetail,[id]: '',[name]: ''})
+    setTeamDetail({...teamDetail,[id]: -1,[name]: ''})
   }
   return (
   <>
