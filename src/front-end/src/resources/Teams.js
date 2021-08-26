@@ -116,7 +116,6 @@ function Row(props) {
 
     function renderPlayerDetailed(player) {
         var x = []
-        console.log(player)
         Object.entries(player).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
                 x.push([`${key.split("B")[0]} ${key.slice(-1)}`, value])
