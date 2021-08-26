@@ -59,6 +59,9 @@ function Player(props) {
                     {response.data.data.playerName}
                 </TableCell>
                 <TableCell>
+                    {props.position}
+                </TableCell>
+                <TableCell>
                     {response.data.data.recentPerformance}
                 </TableCell>
                 <TableCell>
@@ -113,17 +116,18 @@ function Row(props) {
 
     function renderPlayerDetailed(player) {
         var x = []
+        console.log(player)
         Object.entries(player).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                x.push(value)
+                x.push([`${key.split("B")[0]} ${key.slice(-1)}`, value])
             }
             return null;
         })
         return (
             <>
-                {x.map(function(playerId, index) {
+                {x.map(function(player, index) {
                     return (
-                        <Player key={`${playerId}${index}`} player={playerId}></Player>
+                        <Player key={`${player[1]}${index}`} position={player[0]} player={player[1]}></Player>
                     )
                 })}
             </>
@@ -135,6 +139,7 @@ function Row(props) {
             <Table size="small">
                 <TableHead>
                     <TableCell>Player Name</TableCell>
+                    <TableCell>Position</TableCell>
                     <TableCell>Performance</TableCell>
                     <TableCell>Availability</TableCell>
                     <TableCell>Fav. Position</TableCell>
@@ -187,7 +192,7 @@ function Row(props) {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box margin={1}>
                             {renderTeamBreakdown(props.row)}

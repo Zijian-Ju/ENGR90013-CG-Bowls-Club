@@ -293,6 +293,9 @@ function Details(props) {
             variant="outlined"
             size="small"
             value={response.data.data.recentPerformance}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -303,6 +306,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerAvailability}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -313,6 +319,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerPosPreference}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -323,6 +332,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerPreferTeammates}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -333,6 +345,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerNotPreferTeammates}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           {editing === false && <Button onClick={() => {setEditing(true)}}>Edit</Button>}
           {editing === true && 
