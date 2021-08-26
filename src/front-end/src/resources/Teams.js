@@ -154,7 +154,7 @@ function Row(props) {
     }
 
     function editTeamRedirect(teamId, props) {
-        // history.push({pathname: `/editteam/${teamId}`});
+        history.push({pathname: `/editteam/${teamId}`, state: teamId});
         return (null)
     }
 
