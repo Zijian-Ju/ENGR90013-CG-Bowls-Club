@@ -33,12 +33,14 @@ const Toolbar = (props) => {
   const [sortOrder, setSortOrder] = useState("");
   const [random, setRandom] = useState(Math.random());
   const reRender = () => setRandom(Math.random());
+
   function handleFilterClickOpen() {
     setDialogOpen(true);
-}
-function handleFilterClickClose() {
+  }
+  function handleFilterClickClose() {
   setDialogOpen(false);
-}
+  }
+  
   return (
     <div className={toolbarStyles.toolbar} style={{justifyContent: 'space-between'}}>
       <div> </div>
@@ -219,7 +221,7 @@ const EditTeam = () => {
 }
   const onDragEnd = (e) => {
     const {draggableId,destination} = e
-    const data = payerList.find(item => item.id === draggableId)
+    const data = payerList.find(item => item.id === parseInt(draggableId))
     if (data) {
       const id = `${destination.droppableId}BowlerId${destination.index > 4 ? 4 : destination.index}`
       const name = `${destination.droppableId}BowlerName${destination.index > 4 ? 4 : destination.index}`
