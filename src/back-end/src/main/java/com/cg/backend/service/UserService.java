@@ -82,10 +82,7 @@ public class UserService {
         List<User> userList = userMapper.selectByExample(example);
         if(userList.size() > 0)
             throw new BusinessException(ResponseCode.EMAIL_ALREADY_EXISTED);
-
-        userMapper.insert(user);
-
-
+        userMapper.insertSelective(user);
         return true;
     }
 

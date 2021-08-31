@@ -10,8 +10,6 @@
     <result column="real_name" jdbcType="VARCHAR" property="realName" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="role" jdbcType="VARCHAR" property="role" />
     <result column="token" jdbcType="VARCHAR" property="token" />
     <result column="token_create_date" jdbcType="TIMESTAMP" property="tokenCreateDate" />
@@ -20,6 +18,6 @@
     <!--
       WARNING - @mbg.generated
     -->
-    id, user_name, real_name, email, password, address, phone, role, token, token_create_date
+    id, user_name, real_name, email, password, role, token, token_create_date
   </sql>
 </mapper>

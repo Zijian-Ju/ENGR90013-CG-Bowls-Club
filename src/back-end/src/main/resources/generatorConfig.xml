@@ -67,17 +67,21 @@
 <!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->
 <!--            <property name = "useActualColumnNames" value= "false" />-->
 <!--        </table>-->
-        <table schema = "general" tableName= "t_bowl_competition" domainObjectName= "Competition"
-          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
-          enableSelectByExample= "false" selectByExampleQueryId= "false" >
+<!--        <table schema = "general" tableName= "t_bowl_competition" domainObjectName= "Competition"-->
+<!--          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"-->
+<!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->
+<!--            <property name = "useActualColumnNames" value= "false" />-->
+<!--        </table>-->
+<!--        <table schema = "general" tableName= "t_bowl_game_player_performance" domainObjectName= "Performance"-->
+<!--          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"-->
+<!--          enableSelectByExample= "false" selectByExampleQueryId= "false" >-->
+<!--            <property name = "useActualColumnNames" value= "false" />-->
+<!--        </table>-->
+        <table schema = "general" tableName= "t_user_info" domainObjectName= "User"
+               enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
+               enableSelectByExample= "false" selectByExampleQueryId= "false" >
             <property name = "useActualColumnNames" value= "false" />
         </table>
-        <table schema = "general" tableName= "t_bowl_game_player_performance" domainObjectName= "Performance"
-          enableCountByExample= "false" enableUpdateByExample= "false" enableDeleteByExample= "false"
-          enableSelectByExample= "false" selectByExampleQueryId= "false" >
-            <property name = "useActualColumnNames" value= "false" />
-        </table>
-
     </context>
 </generatorConfiguration>
 

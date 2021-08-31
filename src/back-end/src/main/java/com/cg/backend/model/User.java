@@ -18,10 +18,6 @@ public class User {
 
     private String password;
 
-    private String address;
-
-    private String phone;
-
     private String role;
 
     private String token;
@@ -97,34 +93,6 @@ public class User {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * @return address
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * @param address
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    /**
-     * @return phone
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * @param phone
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     /**
