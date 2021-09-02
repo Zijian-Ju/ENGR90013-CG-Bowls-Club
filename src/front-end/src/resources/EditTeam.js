@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import styles from './css/navbar.module.css';
-import teamsStyles from './css/teams.module.css';
+import editTeamsStyles from './css/editteam.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import profilepic from  './img/profile.png';
-import { createGenerateClassName, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import bodyStyles from './css/body.module.css';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -17,29 +17,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Select from '@material-ui/core/Select';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Box from '@material-ui/core/Box';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import {KeyboardArrowDown,KeyboardArrowUp,Search,FindInPage,Close} from '@material-ui/icons';
+import {Close} from '@material-ui/icons';
 
 
 const Toolbar = (props) => {
-  const [response, setResponse] = useState({});
   const [userSearchText, setUserSearchText] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [minPerformance, setMinPerformance] = useState(0);
@@ -48,29 +31,22 @@ const Toolbar = (props) => {
   const [favPosition, setFavPosition] = useState([]);
   const [sort, setSort] = useState("");
   const [sortOrder, setSortOrder] = useState("");
-  const history = useHistory();
   const [random, setRandom] = useState(Math.random());
   const reRender = () => setRandom(Math.random());
+
   function handleFilterClickOpen() {
     setDialogOpen(true);
-}
-function handleFilterClickClose() {
+  }
+  function handleFilterClickClose() {
   setDialogOpen(false);
-}
+  }
+  
   return (
     <div className={toolbarStyles.toolbar} style={{justifyContent: 'space-between'}}>
       <div> </div>
       <div className={toolbarStyles.searchBarContainer}>
           <div className={toolbarStyles.searchBar}>
-              <TextField style={{width: '100%',background: '#fff'}} onChange={(e) => {
-                setUserSearchText(e.target.value)
-                props.searchUser(e.target.value)
-              }} variant="outlined" placeholder="Search User" size="small" InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <Search />
-                                    </InputAdornment>
-                                ),}} />
+            <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value); props.searchUser(e.target.value)}} variant="outlined" label="Search User"/>
           </div>
           <div className={toolbarStyles.filter}>
               <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
@@ -138,7 +114,7 @@ function handleFilterClickClose() {
                               {(() => {
                                   const options = [];
                                   for (let i = minPerformance; i<=10; i++) {
-                                      options.push(<MenuItem value={i}>{i}</MenuItem>)
+                                      options.push(<MenuItem key={i} value={i}>{i}</MenuItem>)
                                   }
                                   return options;
                               }
@@ -156,9 +132,11 @@ function handleFilterClickClose() {
                           value={availability}
                           onChange={(e) => {setAvailability(e.target.value)}}
                       >
-                          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                              <MenuItem key={day} value={day}>{day}</MenuItem>
-                          ))}
+                          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
+                            return (
+                              <MenuItem key={`day${day}${index}`} value={day}>{day}</MenuItem>
+                            )
+                          })}
                       </Select>
                       </FormControl>
                   </DialogContent>
@@ -172,18 +150,14 @@ function handleFilterClickClose() {
                           value={favPosition}
                           onChange={(e) => {setFavPosition(e.target.value)}}
                       >
-                          {["Skip","Second","Third","Lead"].map((position) => (
-                              <MenuItem key={position} value={position}>{position}</MenuItem>
-                          ))}
+                          {["Skip","Second","Third","Lead"].map(function(position, index) {
+                            return (
+                              <MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>
+                            )
+                          })}
                       </Select>
                       </FormControl>
                   </DialogContent>
-                  {/* <DialogContent className={toolbarStyles.fullDialogContent}>
-                      <FormControl className={toolbarStyles.preferenceFormControl}>
-                          <InputLabel shrink>Preferences</InputLabel>
-                          <Input id="preference" value={preference} onChange={(e) => {setPreference(e.target.value)}} />
-                      </FormControl>
-                  </DialogContent> */}
                   <DialogActions>
                       <Button onClick={handleFilterClickClose} color="primary">
                           Go Back
@@ -210,6 +184,10 @@ const HomeTitle = () => {
       history.push("/home");
   };
 
+  function competitionsHandleClick() {
+    history.push("/competitions")
+  }
+
   function teamsHandleClick() {
       history.push("/teams")
   }
@@ -223,7 +201,7 @@ const HomeTitle = () => {
           <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
       </div>
       <div className={styles.linktabs}>
-          <Button className={styles.linkbuttons} onClick={placeholderAlert}>COMPETITION</Button>
+          <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
           <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
           <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
           <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
@@ -243,44 +221,45 @@ const EditTeam = () => {
 }
   const onDragEnd = (e) => {
     const {draggableId,destination} = e
-    const data = payerList.find(item => item.id == draggableId)
+    const data = payerList.find(item => item.id === parseInt(draggableId))
     if (data) {
       const id = `${destination.droppableId}BowlerId${destination.index > 4 ? 4 : destination.index}`
       const name = `${destination.droppableId}BowlerName${destination.index > 4 ? 4 : destination.index}`
       setTeamDetail({...teamDetail,[id]: data.id,[name]: data.playerName})
-      setCopyPayerList(copyPayerList.filter(item => item.id != data.id))
-      setPayList(payerList.filter(item => item.id != data.id))
+      setCopyPayerList(copyPayerList.filter(item => item.id !== data.id))
+      setPayList(payerList.filter(item => item.id !== data.id))
     }
   }
   const [payerList,setPayList] = useState([])
   const [copyPayerList,setCopyPayerList] = useState([])
   const [copyPayerListOne,setCopyPayerListOne] = useState([])
   const [teamDetail,setTeamDetail] = useState({})
-  const [userDetail,setUserDetail] = useState()
+  const [userDetail,setUserDetail] = useState({})
   const teamList = ['skip','third','second','lead']
   const arr = [1,2,3,4]
-  const getDetail = async () => {
-    const [list,detail] = await Promise.all([
-      axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: [], maxScore: 10, minScore: 0, order: {direction: '', sortField: ''}, position: []}}),
-      axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: history.location.state})
-    ])
-    setPayList(list.data.data.playerList)
-    setTeamDetail(detail.data.data)
-    setCopyPayerList(list.data.data.playerList)
-    setCopyPayerListOne(list.data.data.playerList)
-  }
+
   useEffect(() => {
-    getDetail()
-  },[])
+    axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: [], maxScore: 10, minScore: 0, order: {direction: '', sortField: ''}, position: []}})
+    .then((list) => {
+      setPayList(list.data.data.playerList)
+      setCopyPayerList(list.data.data.playerList)
+      setCopyPayerListOne(list.data.data.playerList)
+    })
+    axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: history.location.state})
+    .then((detail) => {
+      setTeamDetail(detail.data.data)
+    })
+  }, [history.location.state])
+
   const getPlayerDetail = (item,i) => {
     const id = teamDetail[`${item}BowlerId${i}`]
-    const detail = payerList.find(item => item.id == id)
+    const detail = payerList.find(item => item.id === id)
     if (detail) {
       setUserDetail(detail)
     }
   }
   const onSave = async() => {
-    await axios.post('http://128.199.253.108:8082/team/updateTeam',teamDetail)
+    await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail)
     teamsHandleClick()
   }
   const searchUser =  (name) => {
@@ -301,15 +280,15 @@ const EditTeam = () => {
   const removeList = (item,i) => {
     const id = `${item}BowlerId${i > 4 ? 4 : i}`
     const name = `${item}BowlerName${i > 4 ? 4 : i}`
-    const data = copyPayerListOne.find(item => item.id == teamDetail[id])
+    const data = copyPayerListOne.find(item => item.id === teamDetail[id])
     setCopyPayerList([...copyPayerList,data])
-    setTeamDetail({...teamDetail,[id]: '',[name]: ''})
+    setTeamDetail({...teamDetail,[id]: -1,[name]: ''})
   }
   return (
   <>
     <HomeTitle />
     <Toolbar searchUser={searchUser}/>
-    <div className={teamsStyles.teamName}>
+    <div className={editTeamsStyles.teamName}>
       <span>
       Team Name：
       </span>
@@ -317,21 +296,21 @@ const EditTeam = () => {
         setTeamDetail({...teamDetail,teamName: currentTarget.value})
       }} />
     </div>
-    <div className={teamsStyles.edit}>
+    <div className={editTeamsStyles.edit}>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className={teamsStyles.rightEdit}>
+        <div className={editTeamsStyles.rightEdit}>
           {teamList.map((item,index) => (
-              <Droppable droppableId={item} type="player" >{(provided, snapshot)=>(
+              <Droppable key={`droppable${item}${index}`} droppableId={item} type="player" >{(provided, snapshot)=>(
                 <div ref={provided.innerRef} >
-                  <div className={teamsStyles.rightGrid} style={{gridTemplateColumns: '100%', border: 'none',marginBottom: '20px'}}>
+                  <div className={editTeamsStyles.rightGrid} style={{gridTemplateColumns: '100%', border: 'none',marginBottom: '20px'}}>
                     <div key={item}  style={{width: '100%',textAlign: 'center'}}>
-                            <div className={teamsStyles.rightGridTitle} >
+                            <div className={editTeamsStyles.rightGridTitle} >
                             {item.replace(/\b\w+\b/g, function(word){return word.substring(0,1).toUpperCase()+word.substring(1)})}
                           </div>
                         {arr.map((i,l) => (
                             <Draggable key={item+i} draggableId={item+i} index={l+1} isDragDisabled>
                               {(provided, snapshot) => (
-                                <div  className={[teamsStyles.rightGridItem,teamsStyles.rightGridEdit].join(' ')} onClick={() => {getPlayerDetail(item,i)}}  ref={provided.innerRef}  {...provided.draggableProps}  {...provided.dragHandleProps}>
+                                <div  className={[editTeamsStyles.rightGridItem,editTeamsStyles.rightGridEdit].join(' ')} onClick={() => {getPlayerDetail(item,i)}}  ref={provided.innerRef}  {...provided.draggableProps}  {...provided.dragHandleProps}>
                                   <div className={bodyStyles.userCardImageContainer} style={{margin: 'auto',padding: '10px 5px',width:'100%', borderRadius: '4px',textAlign: 'left',flexDirection: 'row',justifyContent: 'space-between',}}>
                                     {teamDetail[`${item}BowlerName${i}`] && (
                                       <>
@@ -372,15 +351,15 @@ const EditTeam = () => {
                   <div className={bodyStyles.userCardDescriptionItem}>Preference: {userDetail.playerPreferTeammates}</div>
               </div>
           </div>)}
-          <div className={teamsStyles.ButtonTeam}>
+          <div className={editTeamsStyles.ButtonTeam}>
             <Button variant="contained" onClick={teamsHandleClick}>BACK</Button>
-            <Button variant="contained" className={teamsStyles.saveButton} onClick={onSave}>SAVE</Button>
+            <Button variant="contained" className={editTeamsStyles.saveButton} onClick={onSave}>SAVE</Button>
           </div>
           </div>
         </div>
         <Droppable droppableId="droppable2" type="player" isCombineEnabled={false}>
           {(provided, snapshot) => (
-            <div ref={provided.innerRef} className={teamsStyles.editRight}>
+            <div ref={provided.innerRef} className={editTeamsStyles.editRight}>
               {payerList.map(user => (
                 <Draggable key={user.id} draggableId={`${user.id}`}  index={user.id}>
                   {(provided, snapshot) => (

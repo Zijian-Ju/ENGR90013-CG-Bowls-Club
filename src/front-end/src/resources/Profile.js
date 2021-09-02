@@ -39,6 +39,9 @@ function CustomTableRow(props) {
   const [performance, setPerformance] = useState(props.data.performanceScore)
   const [editing, setEditing] = useState(false);
   const [deleted, setDeleted] = useState(false)
+  const history = useHistory()
+  console.log(props.data.competitionId)
+  console.log(props.competitions)
 
   function resetFields() {
     setSeason(props.data.season);
@@ -56,6 +59,7 @@ function CustomTableRow(props) {
           alert("Success")
           props.performanceUpdate()
           props.performanceTableUpdate()
+          history.go(0)
         }
       })
   }
@@ -64,9 +68,10 @@ function CustomTableRow(props) {
     axios.post(`http://128.199.253.108:8082/player/updateMatchPerformance`, {competitionId: competitionId, competitionName: competitionName, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId, position: position, season: season})
       .then(res => {
         if (res.status === 200) {
-          // reRender();
           alert("Success")
+          alert(JSON.stringify(res))
           props.performanceUpdate()
+          history.go(0)
         }
       })
   }
@@ -84,7 +89,8 @@ function CustomTableRow(props) {
         <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setDate(e.target.value)} disableUnderline value={date}/>
       </TableCell>
       <TableCell>
-        <NativeSelect
+        <Input disabled value={competitionName}/>
+        {/* <NativeSelect
           id="competition"
           disabled={!editing}
           onChange={(e) => {setCompetitionId(JSON.parse(e.target.value).id); setCompetitionName(JSON.parse(e.target.value).name)}}
@@ -92,14 +98,15 @@ function CustomTableRow(props) {
           style={{minWidth: '200px'}}
           disableUnderline={!editing}
         >
+          <option key={`rowcompetitionlist${competitionName}${competitionId}`} value={JSON.stringify({id: competitionId, name: competitionName})}>{`${competitionName} (#${competitionId})`}</option>
           {props.competitions.status === 200 && props.competitions.data.statusCode === 200 &&
             props.competitions.data.data.competitionList.map(function(comp,index) {
               return (
-                <option key={`rowcompetitionlist${comp}${index}`} value={JSON.stringify({id: comp.id, name:comp.competitionName})}>{comp.competitionName}</option>
+                <option key={`rowcompetitionlist${comp}${index}`} value={JSON.stringify({id: comp.id, name:comp.competitionName})}>{`${comp.competitionName} (#${comp.id})`}</option>
               )
             })
           }
-        </NativeSelect>
+        </NativeSelect> */}
       </TableCell>
       <TableCell>
         <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setPosition(e.target.value)}  disableUnderline value={position}/>
@@ -177,7 +184,7 @@ function LineChartControl(props) {
             {response.status === 200 && response.data.statusCode === 200 &&
               response.data.data.competitionList.map(function(comp, index) {
                 return (
-                  <MenuItem key={`compdropdown${comp}${index}`} value={comp.id}>{comp.competitionName}</MenuItem>
+                  <MenuItem key={`compdropdown${comp}${index}`} value={comp.id}>{`${comp.competitionName} (#${comp.id})`}</MenuItem>
                 )
               })
             }
@@ -200,8 +207,9 @@ function LineChart(props) {
     axios.post(`http://128.199.253.108:8082/player/getUserPerformancesByFilter`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {competitionId: props.compId, season: props.year, playerId: props.playerId}})
     .then((res) => {
       if (res.status === 200 & res.data.statusCode === 200) {
+        console.log(res)
         setLoaded(true)
-        const temp = res.data.data.performanceList.reverse().map((aPerformance) => {
+        const temp = res.data.data.performanceList.map((aPerformance) => {
           return (aPerformance.performanceScore)
         });
         setYData(temp);
@@ -293,6 +301,9 @@ function Details(props) {
             variant="outlined"
             size="small"
             value={response.data.data.recentPerformance}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -303,6 +314,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerAvailability}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -313,6 +327,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerPosPreference}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -323,6 +340,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerPreferTeammates}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
@@ -333,6 +353,9 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerNotPreferTeammates}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
           {editing === false && <Button onClick={() => {setEditing(true)}}>Edit</Button>}
           {editing === true && 
@@ -357,6 +380,7 @@ function PerformanceControl(props) {
   const [random, setRandom] = useState(Math.random());
   const reRender = () => {setRandom(Math.random())};
   const [dialogOpen, setDialogOpen] = useState(false);
+  const history = useHistory()
 
   const [createPerformance, setCreatePerformance] = useState("");
   const [createDate, setCreateDate] = useState("2020-01-01T00:00:00.00Z");
@@ -486,6 +510,7 @@ function PerformanceControl(props) {
           alert("Performance created"); 
           props.performanceUpdate()
           reRender()
+          history.go(0)
         }
       })
     )

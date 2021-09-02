@@ -34,17 +34,19 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Access-Token");
         String email = request.getHeader("Email");
         User user = null;
-        if(token != null){
-            user = ssoService.checkToken(email, token);
-            permissionService.checkPermission(uri, user);
-            // 1. check uri, whether in BOWLS_CLUB.t_api_permission
-            // 1.1 False, Pass
-            // 1.2 True, check token and check create date
-                // 2.1 False, throw Business Exception TOKEN_CHECK_ERROR
-                // 2.2 True, check permission
-                    // 3.1 False, throw Business Exception PERMISSION_DENIED
-                    // 3.2 True, pass
-        }
+        // 1. check uri, whether in BOWLS_CLUB.t_api_permission
+        // 1.1 False, Pass
+        // 1.2 True, check token and check create date
+        // 2.1 False, throw Business Exception TOKEN_CHECK_ERROR
+        // 2.2 True, check permission
+        // 3.1 False, throw Business Exception PERMISSION_DENIED
+        // 3.2 True, pass
+
+//        if(token != null){
+//            user = ssoService.checkToken(email, token);
+//            permissionService.checkPermission(uri, user);
+//
+//        }
 //        permissionService.checkPermission(uri, user);
         return true;
     }

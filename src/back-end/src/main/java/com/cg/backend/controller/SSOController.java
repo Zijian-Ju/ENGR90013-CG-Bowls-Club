@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -46,4 +47,10 @@ public class SSOController {
     public boolean deleteUser(@RequestBody User user){
         return userService.deleteUser(user);
     }
+
+    @RequestMapping(value="/sso/getAllUser", method= RequestMethod.GET, produces="application/json")
+    public List<User> getAllUser(){
+        return this.userService.getAllUser();
+    }
+
 }
