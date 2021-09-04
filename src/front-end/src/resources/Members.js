@@ -16,6 +16,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Login from './Login'
+
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -119,7 +121,7 @@ function Members() {
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                    <Login/>
                 </div>
             </div>
             <div className={toolbarStyles.toolbar}>

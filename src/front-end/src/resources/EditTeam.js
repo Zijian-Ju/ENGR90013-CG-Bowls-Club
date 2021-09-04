@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import Login from './Login'
 import styles from './css/navbar.module.css';
 import editTeamsStyles from './css/editteam.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
@@ -207,7 +207,7 @@ const HomeTitle = () => {
           <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
       </div>
       <div className={styles.logout}>
-          <Button onClick={placeholderAlert}>LOG OUT</Button>
+        <Login/>
       </div>
     </div>
     </>

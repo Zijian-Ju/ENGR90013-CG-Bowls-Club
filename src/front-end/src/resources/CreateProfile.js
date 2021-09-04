@@ -6,6 +6,8 @@ import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
+import Login from './Login'
+
 
 function CreateProfile() {
     const [playerName, setPlayerName] = useState("");
@@ -59,7 +61,7 @@ function CreateProfile() {
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                  <Login/>
                 </div>
             </div>
       

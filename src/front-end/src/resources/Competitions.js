@@ -5,6 +5,8 @@ import mcclogo from './img/mcc-logo.png';
 import toolbarStyles from  './css/toolbar.module.css';
 import teamsStyles from './css/teams.module.css';
 import competitionStyles from './css/competitions.module.css'
+import Login from './Login'
+
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -545,7 +547,7 @@ function Competitions() {
                     <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                    <Login/>
                 </div>
             </div>
             <div className={toolbarStyles.toolbar}>
