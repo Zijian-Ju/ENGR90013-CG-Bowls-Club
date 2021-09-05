@@ -238,6 +238,10 @@ function Teams() {
         setDialogOpen(false);
     }
 
+    function committeeHandleClick() {
+        history.push("/committee")
+    }
+
     function createTeam() {
         axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
             .then(res => {
@@ -324,7 +328,7 @@ function Teams() {
                     <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
                     <Login/>

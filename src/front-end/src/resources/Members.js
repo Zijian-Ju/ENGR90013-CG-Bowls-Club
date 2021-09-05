@@ -61,6 +61,10 @@ function Members() {
         history.push("/competitions")
     }
 
+    function committeeHandleClick() {
+        history.push("/committee")
+    }
+
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}})
             .then(res => {
@@ -118,7 +122,7 @@ function Members() {
                     <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
                     <Login/>

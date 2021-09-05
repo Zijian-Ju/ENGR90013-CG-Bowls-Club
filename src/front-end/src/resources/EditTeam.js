@@ -194,6 +194,11 @@ const HomeTitle = () => {
   function placeholderAlert() {
     return alert("Unsupported");
   }
+
+  function committeeHandleClick() {
+    history.push("/committee")
+}
+
   return (
     <>
     <div className={styles.body}>
@@ -204,7 +209,7 @@ const HomeTitle = () => {
           <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
           <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
           <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-          <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+          <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
       </div>
       <div className={styles.logout}>
         <Login/>

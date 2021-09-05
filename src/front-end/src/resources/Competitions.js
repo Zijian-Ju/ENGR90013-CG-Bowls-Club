@@ -492,6 +492,10 @@ function Competitions() {
         history.push("/competitions")
     }
 
+    function committeeHandleClick() {
+        history.push("/committee")
+    }
+
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
             .then(res => {
@@ -544,7 +548,7 @@ function Competitions() {
                     <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
                     <Login/>
