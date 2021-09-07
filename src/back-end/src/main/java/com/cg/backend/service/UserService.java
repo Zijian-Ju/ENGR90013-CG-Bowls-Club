@@ -70,7 +70,11 @@ public class UserService {
     }
 
     public List<User> getAllUser(){
-        return userMapper.selectAll();
+        List<User> allUsers = userMapper.selectAll();
+        for (int i = 0;i < allUsers.size();i++) {
+            allUsers.get(i).setPassword("");
+        }
+        return allUsers;
     }
 
 
