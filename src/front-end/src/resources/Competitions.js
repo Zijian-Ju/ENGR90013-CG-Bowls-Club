@@ -5,6 +5,8 @@ import mcclogo from './img/mcc-logo.png';
 import toolbarStyles from  './css/toolbar.module.css';
 import teamsStyles from './css/teams.module.css';
 import competitionStyles from './css/competitions.module.css'
+import Login from './Login'
+
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -490,6 +492,10 @@ function Competitions() {
         history.push("/competitions")
     }
 
+    function committeeHandleClick() {
+        history.push("/committee")
+    }
+
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
             .then(res => {
@@ -542,10 +548,10 @@ function Competitions() {
                     <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                    <Login/>
                 </div>
             </div>
             <div className={toolbarStyles.toolbar}>

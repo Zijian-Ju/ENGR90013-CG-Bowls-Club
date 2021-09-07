@@ -7,7 +7,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import profilepic from  './img/profile.png';
 import axios from 'axios';
-import { useParams } from "react-router-dom";import NativeSelect from '@material-ui/core/NativeSelect';
+import { useParams } from "react-router-dom";
+import NativeSelect from '@material-ui/core/NativeSelect';
 import { Line } from 'react-chartjs-2';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -28,7 +29,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-// import moment from 'moment';
+import Login from './Login'
+
 
 function CustomTableRow(props) {
   const [season, setSeason] = useState(props.data.season);
@@ -580,6 +582,10 @@ function Profile() {
     history.push("/competitions")
   }
 
+  function committeeHandleClick() {
+    history.push("/committee")
+  }
+
   function deletePlayer() {
     axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: id})
     .then(res => {
@@ -600,10 +606,10 @@ function Profile() {
               <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
               <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
               <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-              <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+              <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
           </div>
           <div className={styles.logout}>
-              <Button onClick={placeholderAlert}>LOG OUT</Button>
+            <Login/>
           </div>
       </div>
       <div className={profileStyles.body}>

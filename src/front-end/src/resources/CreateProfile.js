@@ -6,6 +6,8 @@ import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
+import Login from './Login'
+
 
 function CreateProfile() {
     const [playerName, setPlayerName] = useState("");
@@ -46,6 +48,10 @@ function CreateProfile() {
       history.push("/competitions")
     }
 
+    function committeeHandleClick() {
+      history.push("/committee")
+  }
+
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
             <div className={styles.body}>
@@ -56,10 +62,10 @@ function CreateProfile() {
                     <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                  <Login/>
                 </div>
             </div>
       

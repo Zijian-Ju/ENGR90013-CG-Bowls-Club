@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import Login from './Login'
 import styles from './css/navbar.module.css';
 import editTeamsStyles from './css/editteam.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
@@ -194,6 +194,11 @@ const HomeTitle = () => {
   function placeholderAlert() {
     return alert("Unsupported");
   }
+
+  function committeeHandleClick() {
+    history.push("/committee")
+}
+
   return (
     <>
     <div className={styles.body}>
@@ -204,10 +209,10 @@ const HomeTitle = () => {
           <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
           <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
           <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-          <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+          <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
       </div>
       <div className={styles.logout}>
-          <Button onClick={placeholderAlert}>LOG OUT</Button>
+        <Login/>
       </div>
     </div>
     </>

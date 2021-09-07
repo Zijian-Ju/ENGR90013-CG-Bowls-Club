@@ -16,6 +16,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Login from './Login'
+
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -57,6 +59,10 @@ function Members() {
 
     function competitionsHandleClick() {
         history.push("/competitions")
+    }
+
+    function committeeHandleClick() {
+        history.push("/committee")
     }
 
     useEffect(() => {
@@ -116,10 +122,10 @@ function Members() {
                     <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
                     <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
                     <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
+                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
                 </div>
                 <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+                    <Login/>
                 </div>
             </div>
             <div className={toolbarStyles.toolbar}>
