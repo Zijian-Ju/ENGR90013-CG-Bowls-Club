@@ -13,8 +13,9 @@ public enum ResponseCode {
     EMAIL_OR_PASWORD_ERROR(20006, "The email or password is wrong."),
     EMAIL_ALREADY_EXISTED(20007, "The email is already existed."),
     EMAIL_IS_NOT_EXISTED(20008, "The email is not existed."),
-    TOKEN_CHECK_ERROR(21001, "The user is not logged in or the login has expired."),
+    TOKEN_CHECK_ERROR(21001, "The user is not logged in or the login has expired. Please login again"),
     PERMISSION_DENIED(21002, "The user is not authorized to perform this operation."),
+
     SYSTEM_ERROR(10000, "System Error, Please Contact Admin.");
 
 
