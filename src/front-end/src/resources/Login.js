@@ -4,10 +4,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
 import axios from 'axios';
-import { useHistory } from "react-router-dom";
 import Cookies from 'universal-cookie'
-import MuiAlert from '@material-ui/lab/Alert';
-
 
 function Login() {
     const [anchorEl, setAnchorEl] = useState(null);

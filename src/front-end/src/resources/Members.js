@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styles from './css/navbar.module.css';
 import bodyStyles from './css/body.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
-import mcclogo from './img/mcc-logo.png';
 import profilepic from  './img/profile.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
@@ -16,8 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import Login from './Login'
-
+import NavBar from './NavBar';
 
 function placeholderAlert() {
     return alert("Unsupported");
@@ -43,26 +40,6 @@ function Members() {
 
     function handleCreateProfileClick() {
         history.push("/members/create");
-    }
-
-    function membersHandleClick() {
-        history.push("/members");
-    };
-
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    }
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
-    }
-
-    function committeeHandleClick() {
-        history.push("/committee")
     }
 
     useEffect(() => {
@@ -114,20 +91,7 @@ function Members() {
 
     return (
         <>
-            <div className={styles.body}>
-                <div className={styles.logotext} >
-                    <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
-                </div>
-                <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
-                </div>
-                <div className={styles.logout}>
-                    <Login/>
-                </div>
-            </div>
+            <NavBar/>
             <div className={toolbarStyles.toolbar}>
                 <div className={toolbarStyles.newUserContainer}>
                     <Button variant="contained" color="primary" onClick={handleCreateProfileClick}>New Member</Button>

@@ -1,13 +1,9 @@
 import { useHistory } from "react-router-dom";
-import styles from './css/navbar.module.css';
 import Button from '@material-ui/core/Button';
-import mcclogo from './img/mcc-logo.png';
 import toolbarStyles from  './css/toolbar.module.css';
 import teamsStyles from './css/teams.module.css';
 import competitionStyles from './css/competitions.module.css'
-import Login from './Login'
-
-
+import NavBar from './NavBar';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { TextField } from '@material-ui/core';
@@ -476,26 +472,6 @@ function Competitions() {
         setDialogOpen(false);
     }
 
-    function membersHandleClick() {
-        history.push("/members");
-    };
-
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    }
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
-    }
-
-    function committeeHandleClick() {
-        history.push("/committee")
-    }
-
     useEffect(() => {
         axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
             .then(res => {
@@ -540,20 +516,7 @@ function Competitions() {
 
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-            <div className={styles.body}>
-                <div className={styles.logotext} >
-                    <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
-                </div>
-                <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
-                </div>
-                <div className={styles.logout}>
-                    <Login/>
-                </div>
-            </div>
+            <NavBar/>
             <div className={toolbarStyles.toolbar}>
                 <div className={toolbarStyles.newUserContainer}>
                     <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Competition</Button>
