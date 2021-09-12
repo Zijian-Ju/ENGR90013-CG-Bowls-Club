@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import NavBar from './NavBar';
-
+import Cookies from 'universal-cookie'
 
 function CreateProfile() {
     const [playerName, setPlayerName] = useState("");
@@ -17,12 +17,21 @@ function CreateProfile() {
     const [playerNotPreferredTM, setPlayerNotPreferredTM] = useState("");
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
     const history = useHistory();
+    const cookies = new Cookies();
 
     function onSubmit() {
-      axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: "", playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM, recentPerformance: 0, id: 0})
+      axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: "", playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM, recentPerformance: 0, id: 0}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
       .then(res => {
-        alert("Player Created"); 
-        history.push("/members");
+        if (res.status !== 200) {
+          alert("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          alert(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
+          alert("Player Created"); 
+          history.push("/members");
+        }
       })
     }
 

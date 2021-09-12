@@ -28,6 +28,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
+import Cookies from 'universal-cookie'
+import { alertClasses } from '@material-ui/core';
 
 function CustomTableRow(props) {
   const [season, setSeason] = useState(props.data.season);
@@ -39,8 +41,8 @@ function CustomTableRow(props) {
   const [editing, setEditing] = useState(false);
   const [deleted, setDeleted] = useState(false)
   const history = useHistory()
-  console.log(props.data.competitionId)
-  console.log(props.competitions)
+  const cookies = new Cookies();
+
 
   function resetFields() {
     setSeason(props.data.season);
@@ -52,9 +54,15 @@ function CustomTableRow(props) {
   }
 
   function deletePerformance() {
-    axios.post(`http://128.199.253.108:8082/player/deleteMatchPerformanceById`, {competitionId: props.data.competitionId, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId})
+    axios.post(`http://128.199.253.108:8082/player/deleteMatchPerformanceById`, {competitionId: props.data.competitionId, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
       .then(res => {
-        if (res.status === 200) {
+        if (res.status !== 200) {
+          alert("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          alert(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
           alert("Success")
           props.performanceUpdate()
           props.performanceTableUpdate()
@@ -64,11 +72,16 @@ function CustomTableRow(props) {
   }
 
   function updatePerformance() {
-    axios.post(`http://128.199.253.108:8082/player/updateMatchPerformance`, {competitionId: competitionId, competitionName: competitionName, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId, position: position, season: season})
+    axios.post(`http://128.199.253.108:8082/player/updateMatchPerformance`, {competitionId: competitionId, competitionName: competitionName, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId, position: position, season: season}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
       .then(res => {
-        if (res.status === 200) {
+        if (res.status !== 200) {
+          alert("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          alert(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
           alert("Success")
-          alert(JSON.stringify(res))
           props.performanceUpdate()
           history.go(0)
         }
@@ -119,77 +132,98 @@ function CustomTableRow(props) {
 
 function LineChartControl(props) {
   const [response, setResponse] = useState({});
+  const [status, setStatus] = useState("...Loading");
   const [year, setYear] = useState("");
   const [competition, setCompetition] = useState("");
+  const cookies = new Cookies();
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
+    axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then((res) => {
+      if (res.status !== 200) {
+        setStatus("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        setStatus(res.data.message)
+      }
       if (res.status === 200 && res.data.statusCode === 200) {
-        setResponse(res)
+        setResponse(res);
       }
     })
-  },[props.updateVar]);
+  }, [props.updateVar]);
 
-  return (
-    <div className={profileStyles.performanceGraphContainer}>
-      <div className={profileStyles.chartControlContainer}>
-        <FormControl style={{minWidth: '300px', marginRight: '5%'}}>
-          <InputLabel id="demo-simple-select-label">Year</InputLabel>
-          <Select
-            id="competition year"
-            label="Year"
-            value={year}
-            onChange={(e) => {setYear(e.target.value)}}
-            size="small"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={2019}>2019</MenuItem>
-            <MenuItem value={2020}>2020</MenuItem>
-            <MenuItem value={2021}>2021</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl style={{minWidth: '300px'}}>
-          <InputLabel id="age-native-label-placeholder">Competition</InputLabel>
-          <Select
-            label="Competition"
-            id="competition"
-            value={competition}
-            onChange={(e) => {setCompetition(e.target.value)}}
-            size="small"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {response.status === 200 && response.data.statusCode === 200 &&
-              response.data.data.competitionList.map(function(comp, index) {
-                return (
-                  <MenuItem key={`compdropdown${comp}${index}`} value={comp.id}>{`${comp.competitionName} (#${comp.id})`}</MenuItem>
-                )
-              })
-            }
-          </Select>
-        </FormControl>
+  if (Object.keys(response).length === 0 || response.constructor !== Object) {
+    return (
+        <div>{status}</div>
+    )
+  } else {
+    return (
+      <div className={profileStyles.performanceGraphContainer}>
+        <div className={profileStyles.chartControlContainer}>
+          <FormControl style={{minWidth: '300px', marginRight: '5%'}}>
+            <InputLabel id="demo-simple-select-label">Year</InputLabel>
+            <Select
+              id="competition year"
+              label="Year"
+              value={year}
+              onChange={(e) => {setYear(e.target.value)}}
+              size="small"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={2019}>2019</MenuItem>
+              <MenuItem value={2020}>2020</MenuItem>
+              <MenuItem value={2021}>2021</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl style={{minWidth: '300px'}}>
+            <InputLabel id="age-native-label-placeholder">Competition</InputLabel>
+            <Select
+              label="Competition"
+              id="competition"
+              value={competition}
+              onChange={(e) => {setCompetition(e.target.value)}}
+              size="small"
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {response.status === 200 && response.data.statusCode === 200 &&
+                response.data.data.competitionList.map(function(comp, index) {
+                  return (
+                    <MenuItem key={`compdropdown${comp}${index}`} value={comp.id}>{`${comp.competitionName} (#${comp.id})`}</MenuItem>
+                  )
+                })
+              }
+            </Select>
+          </FormControl>
+        </div>
+        <div className={profileStyles.chartContainer}>
+          {competition !== "" && year !== "" && <LineChart performanceVar={props.performanceVar} playerId={props.playerId} compId={competition} year={year}/>}
+        </div>
       </div>
-      <div className={profileStyles.chartContainer}>
-        {competition !== "" && year !== "" && <LineChart performanceVar={props.performanceVar} playerId={props.playerId} compId={competition} year={year}/>}
-      </div>
-    </div>
-    
-  )
+      
+    )
+  }
 }
 
 function LineChart(props) {
   const [loaded, setLoaded] = useState(false)
   const [yData, setYData] = useState([])
+  const [status, setStatus] = useState("...Loading");
+  const cookies = new Cookies();
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/player/getUserPerformancesByFilter`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {competitionId: props.compId, season: props.year, playerId: props.playerId}})
+    axios.post(`http://128.199.253.108:8082/player/getUserPerformancesByFilter`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {competitionId: props.compId, season: props.year, playerId: props.playerId}}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then((res) => {
-      if (res.status === 200 & res.data.statusCode === 200) {
-        console.log(res)
+      if (res.status !== 200) {
+        setStatus("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        setStatus(res.data.message)
+      }
+      if (res.status === 200 && res.data.statusCode === 200) {
         setLoaded(true)
         const temp = res.data.data.performanceList.map((aPerformance) => {
           return (aPerformance.performanceScore)
@@ -221,7 +255,7 @@ function LineChart(props) {
   } else {
     return (
       <>
-        ...Loading
+        {status}
       </>
     )
   }
@@ -230,12 +264,14 @@ function LineChart(props) {
 function Details(props) {
 
   const [response, setResponse] = useState({});
+  const [status, setStatus] = useState("...Loading");
   const [editableFields, setEditableFields] = useState({});
   const [editing, setEditing] = useState(false);
   const playerId = props.playerId;
   const [random, setRandom] = useState(Math.random());
   const reRender = () => {setRandom(Math.random())};
-  
+  const cookies = new Cookies();
+
   function objectNotEmpty(obj) {
     if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
       return true
@@ -246,9 +282,15 @@ function Details(props) {
 
   function updatePlayer() {
     const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, recentPerformance: response.data.data.recentPerformance}
-    axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {...editableFields, ...additionalProps})
+    axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {...editableFields, ...additionalProps}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then(res => {
-      if (res.status === 200) {
+      if (res.status !== 200) {
+        alert("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        alert(res.data.message)
+      }
+      if (res.status === 200 && res.data.statusCode === 200) {
         alert("Saved")
       }
       setEditing(false);
@@ -256,8 +298,14 @@ function Details(props) {
   }
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId})
+    axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then((res) => {
+      if (res.status !== 200) {
+        setStatus("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        setStatus(res.data.message)
+      }
       if (res.status === 200 && res.data.statusCode === 200) {
         setResponse(res)
         setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, playerPreferTeammates: res.data.data.playerPreferTeammates, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
@@ -350,7 +398,7 @@ function Details(props) {
       </div>
     )
   } else {
-    return <div style={{height: '100%'}}>...Loading</div>
+    return <div style={{height: '100%'}}>{status}</div>
   }
 
 }
@@ -363,7 +411,8 @@ function PerformanceControl(props) {
   const reRender = () => {setRandom(Math.random())};
   const [dialogOpen, setDialogOpen] = useState(false);
   const history = useHistory()
-
+  const cookies = new Cookies();
+  const [status, setStatus] = useState("...Loading");
   const [createPerformance, setCreatePerformance] = useState("");
   const [createDate, setCreateDate] = useState("2020-01-01T00:00:00.00Z");
   const [createSeason, setCreateSeason] = useState("");
@@ -486,9 +535,15 @@ function PerformanceControl(props) {
 
   function dialogSubmit() {
     return (
-      axios.post(`http://128.199.253.108:8082/player/addMatchPerformance`, {competitionId: JSON.parse(createCompetition).id, competitionName:JSON.parse(createCompetition).name, matchTime: createDate, performanceScore: createPerformance, playerId: playerId, position: createPosition, season: createSeason})
+      axios.post(`http://128.199.253.108:8082/player/addMatchPerformance`, {competitionId: JSON.parse(createCompetition).id, competitionName:JSON.parse(createCompetition).name, matchTime: createDate, performanceScore: createPerformance, playerId: playerId, position: createPosition, season: createSeason}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
       .then(res => {
-        if (res.status === 200) {
+        if (res.status !== 200) {
+          alert("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          alert(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
           alert("Performance created"); 
           props.performanceUpdate()
           reRender()
@@ -499,14 +554,18 @@ function PerformanceControl(props) {
   }
 
   useEffect(() => {
-    const post1 = axios.post(`http://128.199.253.108:8082/player/getUserPerformances`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {playerId: playerId}})
-    const post2 = axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {});
+    const post1 = axios.post(`http://128.199.253.108:8082/player/getUserPerformances`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {playerId: playerId}}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
+    const post2 = axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}});
     axios.all([post1, post2])
     .then(axios.spread(function(res1, res2) {
-      if (res1.status === 200 & res1.data.statusCode === 200) {
-        setPerformanceResponse(res1)
+      if (res1.status !== 200 || res2.status !== 200) {
+        setStatus("Network error, please try again later")
       }
-      if (res2.status === 200 & res2.data.statusCode === 200) {
+      if ((res1.status === 200 && res1.data.statusCode !== 200) || (res2.status === 200 && res2.data.statusCode !== 200)) {
+        setStatus(`Code 1: ${res1.data.message} Code 2: ${res2.data.message}`)
+      }
+      if (res1.status === 200 && res1.data.statusCode === 200 && res2.status === 200 && res2.data.statusCode === 200) {
+        setPerformanceResponse(res1)
         setCompetitionResponse(res2)
       }
     }))
@@ -519,7 +578,7 @@ function PerformanceControl(props) {
       </>
     )
   } else {
-    return <div>...Loading</div>
+    return <div>{status}</div>
   }
 }
 
@@ -540,36 +599,57 @@ function Performances(props) {
 
 function Profile() {
   const history = useHistory();
+  const [status, setStatus] = useState({});
   const { id } = useParams();
+  const cookies = new Cookies();
+
 
   function deletePlayer() {
-    axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: id})
+    axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: id}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then(res => {
-      if (res.status === 200) {
+      if (res.status !== 200) {
+        alert("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        alert(res.data.message)
+      }
+      if (res.status === 200 && res.data.statusCode === 200) {
         alert("Player deleted"); 
         history.push('/members');
       }
     })
   };
 
+  function body() {
+    if (cookies.get("token") === undefined || cookies.get("email") === undefined) {
+      return (
+          <div>Please log in</div>
+      )
+    } else {
+      return (
+        <div className={profileStyles.body}>
+          <div className={profileStyles.playerDetailsColumn}>
+            <div className={profileStyles.playerDetailsEditContainer}>
+              <Details playerId={id}/>
+            </div>
+            <div className={profileStyles.playerDetailsDeleteContainer}>
+              <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                <Button onClick={() => {deletePlayer()}}>Delete Player</Button>
+              </div>
+            </div>
+          </div>
+          <div className={profileStyles.performanceColumn}>
+            <Performances playerId={id}/>
+          </div>
+        </div>
+      )
+    }
+  }
+
   return (
     <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
       <NavBar/>
-      <div className={profileStyles.body}>
-        <div className={profileStyles.playerDetailsColumn}>
-          <div className={profileStyles.playerDetailsEditContainer}>
-            <Details playerId={id}/>
-          </div>
-          <div className={profileStyles.playerDetailsDeleteContainer}>
-            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-              <Button onClick={() => {deletePlayer()}}>Delete Player</Button>
-            </div>
-          </div>
-        </div>
-        <div className={profileStyles.performanceColumn}>
-          <Performances playerId={id}/>
-        </div>
-      </div>
+      {body()}
     </div>
   )
 };

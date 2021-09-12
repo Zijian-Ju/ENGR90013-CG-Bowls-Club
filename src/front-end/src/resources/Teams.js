@@ -23,33 +23,43 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-
-
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Cookies from 'universal-cookie'
 
-function placeholderAlert() {
-    return alert("Unsupported");
-}
 
 function Player(props) {
     const [response, setResponse] = useState({})
     const history = useHistory();
-    
+    const [status, setStatus] = useState("");
+    const cookies = new Cookies();
+
+   
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: props.player})
+        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: props.player}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
                 if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
                     setResponse(res);
                 }
             })
     }, [props.player]);
 
-    if (Object.keys(response).length !== 0 && response.constructor === Object && response.data.data !== null) {
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            null
+        )
+    } else {
         return (
             <TableRow key={response.data.data.id}>
                 <TableCell component="th" scope="row">
@@ -75,8 +85,6 @@ function Player(props) {
                 </TableCell>
             </TableRow>
         )
-    } else {
-        return null
     }
 }
 
@@ -84,7 +92,8 @@ function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props);
     const history = useHistory();
-    
+    const cookies = new Cookies();
+
     function calculatePlayerIds(team) {
         var count = [];
         Object.entries(team.row).map(([key, value]) => { 
@@ -155,9 +164,15 @@ function Row(props) {
     }
 
     function deleteTeam(id) {
-        axios.post(`http://128.199.253.108:8082/team/deleteTeam`, {id: id, teamName: props.row.teamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
+        axios.post(`http://128.199.253.108:8082/team/deleteTeam`, {id: id, teamName: props.row.teamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                if (res.status === 200) {
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
                     alert("Team deleted")
                     history.push("/teams");
                     props.parentRefresh()
@@ -206,7 +221,8 @@ function Teams() {
     const [teamSearchText, setTeamSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newTeamName, setNewTeamName] = useState("");
-    const history = useHistory();
+    const [status, setStatus] = useState("");
+    const cookies = new Cookies();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
 
@@ -219,9 +235,15 @@ function Teams() {
     }
 
     function createTeam() {
-        axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
+        axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                if (res.status === 200) {
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
                     alert("Team created")
                 }
             })
@@ -288,24 +310,40 @@ function Teams() {
     }
 
     useEffect(() => {
-        axios.get(`http://128.199.253.108:8082/team/getAllTeam`)
+        axios.get(`http://128.199.253.108:8082/team/getAllTeam`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                setResponse(res);
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
             })
     }, [random]);
 
-    return (
-        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-            <NavBar/>
-            <div className={toolbarStyles.toolbar}>
-                {renderSearchBarContainer()}
+
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            <div>{status}</div>
+        )
+    } else {
+        return (
+            <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
+                <NavBar/>
+                <div className={toolbarStyles.toolbar}>
+                    {renderSearchBarContainer()}
+                </div>
+                <div className={teamsStyles.body}>
+                    {Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && renderTable()}
+                    {Object.keys(response).length === 0 && response.constructor === Object && <div>...Loading</div>}
+                </div>
             </div>
-            <div className={teamsStyles.body}>
-                {Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && renderTable()}
-                {Object.keys(response).length === 0 && response.constructor === Object && <div>...Loading</div>}
-            </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default Teams;
