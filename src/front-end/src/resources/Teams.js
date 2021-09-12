@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-import styles from './css/navbar.module.css';
+import NavBar from './NavBar';
 import teamsStyles from './css/teams.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
-import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import profilepic from  './img/profile.png';
@@ -14,8 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
-import Login from './Login'
-
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
@@ -214,32 +210,12 @@ function Teams() {
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
 
-    function membersHandleClick() {
-        history.push("/members");
-    };
-
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    } 
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
-    }
-
     function handleDialogClickOpen() {
         setDialogOpen(true);
     }
 
     function handleDialogClickClose() {
         setDialogOpen(false);
-    }
-
-    function committeeHandleClick() {
-        history.push("/committee")
     }
 
     function createTeam() {
@@ -320,20 +296,7 @@ function Teams() {
 
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-            <div className={styles.body}>
-                <div className={styles.logotext} >
-                    <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
-                </div>
-                <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
-                </div>
-                <div className={styles.logout}>
-                    <Login/>
-                </div>
-            </div>
+            <NavBar/>
             <div className={toolbarStyles.toolbar}>
                 {renderSearchBarContainer()}
             </div>

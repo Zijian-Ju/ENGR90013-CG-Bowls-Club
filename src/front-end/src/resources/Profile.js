@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from './css/navbar.module.css';
 import profileStyles from './css/profile.module.css';
-import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -29,8 +27,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
-import Login from './Login'
-
+import NavBar from './NavBar';
 
 function CustomTableRow(props) {
   const [season, setSeason] = useState(props.data.season);
@@ -92,23 +89,6 @@ function CustomTableRow(props) {
       </TableCell>
       <TableCell>
         <Input disabled value={competitionName}/>
-        {/* <NativeSelect
-          id="competition"
-          disabled={!editing}
-          onChange={(e) => {setCompetitionId(JSON.parse(e.target.value).id); setCompetitionName(JSON.parse(e.target.value).name)}}
-          label="Competition"
-          style={{minWidth: '200px'}}
-          disableUnderline={!editing}
-        >
-          <option key={`rowcompetitionlist${competitionName}${competitionId}`} value={JSON.stringify({id: competitionId, name: competitionName})}>{`${competitionName} (#${competitionId})`}</option>
-          {props.competitions.status === 200 && props.competitions.data.statusCode === 200 &&
-            props.competitions.data.data.competitionList.map(function(comp,index) {
-              return (
-                <option key={`rowcompetitionlist${comp}${index}`} value={JSON.stringify({id: comp.id, name:comp.competitionName})}>{`${comp.competitionName} (#${comp.id})`}</option>
-              )
-            })
-          }
-        </NativeSelect> */}
       </TableCell>
       <TableCell>
         <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setPosition(e.target.value)}  disableUnderline value={position}/>
@@ -562,30 +542,6 @@ function Profile() {
   const history = useHistory();
   const { id } = useParams();
 
-  function placeholderAlert() {
-    return alert("Unsupported");
-  }; 
-
-  function membersHandleClick() {
-    history.push("/members");
-  };
-
-  function homeHandleClick() {
-    history.push("/home");
-  }
-
-  function teamsHandleClick() {
-    history.push("/teams")
-  };
-
-  function competitionsHandleClick() {
-    history.push("/competitions")
-  }
-
-  function committeeHandleClick() {
-    history.push("/committee")
-  }
-
   function deletePlayer() {
     axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: id})
     .then(res => {
@@ -598,20 +554,7 @@ function Profile() {
 
   return (
     <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-      <div className={styles.body}>
-          <div className={styles.logotext} >
-              <img className={styles.mcclogo} src={mcclogo} onClick={homeHandleClick} alt="Logo" />
-          </div>
-          <div className={styles.linktabs}>
-              <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-              <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-              <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-              <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
-          </div>
-          <div className={styles.logout}>
-            <Login/>
-          </div>
-      </div>
+      <NavBar/>
       <div className={profileStyles.body}>
         <div className={profileStyles.playerDetailsColumn}>
           <div className={profileStyles.playerDetailsEditContainer}>
