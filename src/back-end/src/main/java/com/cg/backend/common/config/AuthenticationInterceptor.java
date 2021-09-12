@@ -59,7 +59,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         user = ssoService.checkToken(email, token);
-        if (permission.getRole().equals(PermissionService.ADMIN_ROLE)) {
+        if (permission.getRole().contains(PermissionService.ADMIN_ROLE)) {
             return true;
         }
 

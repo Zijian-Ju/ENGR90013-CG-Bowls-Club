@@ -20,7 +20,7 @@ public class PermissionService {
 
     @Resource
     private APIPermissionMapper permissionMapper;
-    public final static String ADMIN_ROLE = "role";
+    public final static String ADMIN_ROLE = "admin";
     public final static String GUEST = "guest";
 
 
