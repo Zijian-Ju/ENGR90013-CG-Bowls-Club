@@ -2,8 +2,11 @@ package com.cg.backend.service;
 
 import com.cg.backend.common.enums.ResponseCode;
 import com.cg.backend.common.exceptions.BusinessException;
+import com.cg.backend.common.utils.Paging;
+import com.cg.backend.dao.PerformanceMapper;
 import com.cg.backend.dao.PlayerMapper;
 import com.cg.backend.model.Order;
+import com.cg.backend.model.Performance;
 import com.cg.backend.model.Player;
 
 import java.util.*;
@@ -12,6 +15,7 @@ import javax.annotation.Resource;
 import com.cg.backend.model.PlayerFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 
 @Service("playerService")
@@ -20,6 +24,9 @@ public class PlayerService {
 
   @Resource
   private PlayerMapper playerMapper;
+
+  @Resource
+  private PerformanceMapper performanceMapper;
 
   // Get all players by filtering conditions
   public List<Player> getPlayersByFilter(PlayerFilter filter) {
@@ -87,6 +94,13 @@ public class PlayerService {
 
   public void deletePlayerById(Player player) {
     this.playerMapper.deleteByPrimaryKey(player);
+
+    if (player != null && player.getId() > 0) {
+      Example example = new Example(Performance.class);
+      Example.Criteria criteria = example.createCriteria();
+      criteria.andEqualTo("playerId", player.getId());
+      performanceMapper.deleteByExample(example);
+    }
   }
 
   public Player selectPlayerById(Player player) {
