@@ -1,38 +1,186 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import NavBar from './NavBar';
+import Cookies from 'universal-cookie'
+import axios from 'axios';
+import committeeStyles from  './css/committee.module.css';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import FormControl from '@material-ui/core/FormControl';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { Select, TextField } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
 
 
-function Committee() {
-
+function SelectorTable(props) {
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
+    const [role, setRole] = useState("")
+    const cookies = new Cookies();
     const history = useHistory();
 
-    function membersHandleClick() {
-        history.push("/members");
-    };
 
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    };
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
+    function handleDialogClickOpen() {
+        setDialogOpen(true);
     }
 
-    function committeeHandleClick() {
-        history.push("/committee")
+    function handleDialogClickClose() {
+        setDialogOpen(false);
     }
+
+    function createSelector() {
+        axios.post(`http://128.199.253.108:8082/sso/addUser`, {email: email, id: 0, password: "", realName: name, role: role, token: "", tokenCreateDate: "2021-09-12T13:09:05.760Z", userName: username}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
+        .then(res => {
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                history.go(0)
+            }
+        })
+    }
+
+    return (
+        <div className={committeeStyles.body}>
+            <Button onClick={handleDialogClickOpen}>Add Selector</Button>
+            <Dialog className={committeeStyles.dialog} open={dialogOpen} onClose={handleDialogClickClose}>
+                <DialogTitle>Create a selector</DialogTitle>
+                <DialogContent style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+                    <FormControl style={{width: '100%'}}> 
+                        <TextField onChange={(e) => setName(e.target.value)} style={{margin: '2.5%', marginTop: '5%', width: '75%'}} label="Name"/>
+                        <TextField onChange={(e) => setEmail(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Email"/>
+                        <TextField onChange={(e) => setUsername(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Username"/>
+                    </FormControl>
+                    <FormControl style={{width: '100%'}}>
+                        <InputLabel id="demo-simple-select-filled-label">Role</InputLabel>
+                        <Select
+                            name="role"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            label="Role"
+                            style={{margin: '2.5%', width: '75%'}}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value="selector">Selector</MenuItem>
+                            <MenuItem value="admin">Admin</MenuItem>
+                        </Select>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClickClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={() => {createSelector(); handleDialogClickClose()}} color="primary">
+                        Submit
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <TableContainer component={Paper}>
+                <Table aria-label="collapsible table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell/>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Username</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Role</TableCell>
+                            <TableCell/>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {props.data.data.data.map((user) => {
+                            return (
+                                <Row key={`selector${user.id}`} row={user}/>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
+    )
+}
+
+function Row(props) {
+    const cookies = new Cookies();
+    const history = useHistory();
+
+    function deleteUser(row) {
+        axios.post(`http://128.199.253.108:8082/sso/deleteUser`, row, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
+        .then(res => {
+            if (res.status === 200) {
+                alert("Success")
+                history.go(0)
+            }
+        })
+    }
+
+    return (
+        <TableRow>
+            <TableCell>
+                {props.row.id}
+            </TableCell>
+            <TableCell>
+                {props.row.realName}
+            </TableCell>
+            <TableCell>
+                {props.row.userName}
+            </TableCell>
+            <TableCell>
+                {props.row.email}
+            </TableCell>
+            <TableCell>
+                {props.row.role}
+            </TableCell>
+            <TableCell>
+                <Button onClick={() => deleteUser(props.row)}>Delete</Button>
+            </TableCell>
+        </TableRow>
+    )
+}
+
+function Committee() {
+    const [response, setResponse] = useState({});
+    const cookies = new Cookies();
+    const [status, setStatus] = useState("");
+
+    useEffect(() => {
+        axios.get(`http://128.199.253.108:8082/sso/getAllUser`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
+            .then(res => {
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
+            })
+    }, [cookies.get("token"), cookies.get("email")]);
 
     return (
         <>
             <NavBar/>
-            <div>
-                Selection Committee
-            </div>
+            {Object.keys(response).length !== 0 && response.constructor === Object ? <SelectorTable data={response}/> : <div>{status}</div>}
         </>
     );
 };

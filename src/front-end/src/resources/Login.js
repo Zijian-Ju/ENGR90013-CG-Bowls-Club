@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
 import axios from 'axios';
 import Cookies from 'universal-cookie'
+import { useHistory } from "react-router-dom";
 
 function Login() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -12,7 +13,8 @@ function Login() {
     const [password, setPassword] = useState("");
     const [text, setText] = useState("Hello! Please login");
     const cookies = new Cookies();
-
+    const history = useHistory();
+    
     useEffect(() => {
         if (cookies.get("token") !== undefined && cookies.get("email") !== undefined) {
             axios.get(`http://128.199.253.108:8082/sso/getUserPermession`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
@@ -23,7 +25,7 @@ function Login() {
                     }
                 })
         }
-    }, []);
+    }, [cookies.get("token"), cookies.get("email")]);
 
     function login() {
         axios.post(`http://128.199.253.108:8082/sso/login`, {email: username, id: 0, password: password, realName: "string", role: "string", token: "string", tokenCreateDate: "2021-09-08T12:07:26.992Z", userName: "string"})
@@ -37,14 +39,16 @@ function Login() {
                 cookies.set("token", res.data.data.token, {path: '/'})
                 cookies.set("email", res.data.data.user.email, {path: '/'})
                 setText("Success!")
+                history.go(0)
             }
         })
     }
 
     function logout() {
-        cookies.remove("token");
-        cookies.remove("email");
+        cookies.remove("token", { path: '/' });
+        cookies.remove("email", { path: '/' });
         setText("Hello! Please login")
+        history.go(0)
         return null
     }
 

@@ -29,11 +29,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Collapse from '@material-ui/core/Collapse';
 import Box from '@material-ui/core/Box';
-
-
-function placeholderAlert() {
-    return alert("Unsupported");
-};
+import Cookies from 'universal-cookie'
 
 function isObjectEmpty(input) {
     var out = true;
@@ -49,21 +45,39 @@ function RenderTeam(props) {
     const [competitionDays, setCompetitionDays] = useState([]);
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
+    const [status, setStatus] = useState("")
+    const cookies = new Cookies();
 
     function deleteCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id})
+        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
         .then(res => {
-            alert("Success")
-            props.parentRefresh();
-            props.resetSelectedComp({})
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                props.parentRefresh();
+                props.resetSelectedComp({})
+            }
         })
     }
 
     function unassociateTeam() {
-        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: 0, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName})
+        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: 0, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
         .then(res => {
-            alert("Success")
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
             props.parentRefresh();
+            }
         })
     }
 
@@ -72,10 +86,17 @@ function RenderTeam(props) {
         setCompetitionDays(props.comp.competitionDays)
         setNewCompetitionDays(props.comp.competitionDays)
         setNewCompetitionName(props.comp.competitionName)
-        axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: props.teamId})
+        axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: props.teamId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
                 if (res.status === 200 && res.data.statusCode === 200) {
-                    setResponse(res)
+                    setStatus("...Loading")
+                    setResponse(res);
                 }
             })
     }, [props.comp, props.teamId]);
@@ -104,111 +125,142 @@ function RenderTeam(props) {
             alert("No changes detected")
             return null
         } else {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName})
+            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                alert("Success")
-                setCompetitionName(newCompetitionName)
-                setCompetitionDays(newCompetitionDays)
-                props.parentRefresh()
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    alert("Success")
+                    setCompetitionName(newCompetitionName)
+                    setCompetitionDays(newCompetitionDays)
+                    props.parentRefresh()
+                }
             })
         }
     }
 
-    return (
-        <div className={competitionStyles.renderTeamContainer}>
-            <div className={competitionStyles.renderTeamControlsContainer}>
-                <div className={competitionStyles.renderTeamsControlsTextfield}>
-                    <div className={competitionStyles.renderTeamControlsTextfieldInput}>
-                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                            <TextField
-                                style={{width: '95%'}}
-                                id="standard-basic" 
-                                size="small"
-                                label="Edit Competition Name"
-                                value={newCompetitionName}
-                                onChange={(e) => setNewCompetitionName(e.target.value)}
-                            />
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            <div>{status}</div>
+        )
+    } else {
+        return (
+            <div className={competitionStyles.renderTeamContainer}>
+                <div className={competitionStyles.renderTeamControlsContainer}>
+                    <div className={competitionStyles.renderTeamsControlsTextfield}>
+                        <div className={competitionStyles.renderTeamControlsTextfieldInput}>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <TextField
+                                    style={{width: '95%'}}
+                                    id="standard-basic" 
+                                    size="small"
+                                    label="Edit Competition Name"
+                                    value={newCompetitionName}
+                                    onChange={(e) => setNewCompetitionName(e.target.value)}
+                                />
+                            </div>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <FormControl style={{width: '95%'}}>
+                                    <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
+                                    <Select
+                                        size = "small"
+                                        id="competition days"
+                                        label="Edit Competition Days"
+                                        multiple
+                                        value={newCompetitionDays}
+                                        onChange={(e) => {setNewCompetitionDays(e.target.value)}}
+                                    >
+                                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                            <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
                         </div>
-                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                            <FormControl style={{width: '95%'}}>
-                                <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
-                                <Select
-                                    size = "small"
-                                    id="competition days"
-                                    label="Edit Competition Days"
-                                    multiple
-                                    value={newCompetitionDays}
-                                    onChange={(e) => {setNewCompetitionDays(e.target.value)}}
-                                >
-                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                        <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
+                        <div>
+                            <Button onClick={() => changeCompetition()}>Save</Button>
                         </div>
                     </div>
-                    <div>
-                        <Button onClick={() => changeCompetition()}>Save</Button>
+                    <div className={competitionStyles.renderTeamsControlsButtons}>
+                        <div style={{width: '100%', textAlign: 'center'}}>
+                            Team Id {props.teamId} and competition id {props.comp.id}
+                        </div>
+                        <div style={{width: '100%'}}>
+                            <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
+                            <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                        </div>
                     </div>
                 </div>
-                <div className={competitionStyles.renderTeamsControlsButtons}>
-                    <div style={{width: '100%', textAlign: 'center'}}>
-                        Team Id {props.teamId} and competition id {props.comp.id}
-                    </div>
-                    <div style={{width: '100%'}}>
-                        <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
-                        <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
-                    </div>
-                </div>
+                <div style={{width: '100%'}}>
+                    <Table style={{width: '100%'}} size="small">
+                        <TableHead style={{width: '100%'}}>
+                            <TableCell>Player Name</TableCell>
+                            <TableCell>Performance</TableCell>
+                            <TableCell>Availability</TableCell>
+                            <TableCell>Fav. Position</TableCell>
+                            <TableCell>Pref. Teammates</TableCell>
+                            <TableCell/>
+                        </TableHead>
+                        <TableBody style={{width: '100%'}}>
+                            {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
+                        </TableBody>
+                    </Table>
+                </div> 
             </div>
-            <div style={{width: '100%'}}>
-                <Table style={{width: '100%'}} size="small">
-                    <TableHead style={{width: '100%'}}>
-                        <TableCell>Player Name</TableCell>
-                        <TableCell>Performance</TableCell>
-                        <TableCell>Availability</TableCell>
-                        <TableCell>Fav. Position</TableCell>
-                        <TableCell>Pref. Teammates</TableCell>
-                        <TableCell/>
-                    </TableHead>
-                    <TableBody style={{width: '100%'}}>
-                        {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
-                    </TableBody>
-                </Table>
-            </div> 
-        </div>
-    )
+        )
+    }
 }
 
 function SelectTeam(props) {
     const [response, setResponse] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState("");
     const [competitionName, setCompetitionName] = useState("");
     const [competitionDays, setCompetitionDays] = useState([]);
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
+    const cookies = new Cookies();
 
     function changeCompetition() {
         if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
             alert("No changes detected")
             return null
         } else {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName})
+            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                alert("Success")
-                setCompetitionName(newCompetitionName)
-                setCompetitionDays(newCompetitionDays)
-                props.parentRefresh()
-            })
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    alert("Success")
+                    setCompetitionName(newCompetitionName)
+                    setCompetitionDays(newCompetitionDays)
+                    props.parentRefresh()
+                }
+            })  
         }
     }
 
     function deleteCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id})
+        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
         .then(res => {
-            alert("Success")
-            props.parentRefresh()
-            props.resetSelectedComp({})
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                props.parentRefresh()
+                props.resetSelectedComp({})
+            }
         })
     }
 
@@ -217,14 +269,26 @@ function SelectTeam(props) {
         setCompetitionDays(props.comp.competitionDays)
         setNewCompetitionDays(props.comp.competitionDays)
         setNewCompetitionName(props.comp.competitionName)
-        axios.get(`http://128.199.253.108:8082/team/getAllTeam`)
+        axios.get(`http://128.199.253.108:8082/team/getAllTeam`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                setResponse(res);
-                setLoading(false)
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
             })
     }, [props.comp]);
 
-    if (loading === false) {
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            <div>{status}</div>
+        )
+    } else {
         return (
             <div style={{width: '100%'}}>
                 <div className={competitionStyles.renderTeamControlsContainer}>
@@ -283,25 +347,21 @@ function SelectTeam(props) {
                         </TableHead>
                         <TableBody>
                             {response.data.data.teamList.map((team) => {
-                                if (true) {
-                                    return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={`selectTeamRender${team.teamName}`} row={team}/>)
-                                } else {
-                                    return null;
-                                }
+                                return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={`selectTeamRender${team.teamName}`} row={team}/>)
                             })}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </div>
         )
-    } else {
-        return null
     }
 }
 
 function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props);
+    const cookies = new Cookies();
+
     
     function calculatePlayerIds(team) {
         var count = [];
@@ -365,9 +425,15 @@ function Row(props) {
     } 
     
     function selectTeam(teamId) {
-        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName})
+        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                if (res.status === 200) {
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
                     alert("Success")
                     props.parentRefresh()
                 }
@@ -410,23 +476,34 @@ function Row(props) {
 
 function Player(props) {
     const [response, setResponse] = useState({})
+    const [status, setStatus] = useState("");
+    const [loaded, setLoaded] = useState(false)
     const history = useHistory();
     const playerId = props.player
-    
+    const cookies = new Cookies();
+
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId})
+        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
                 if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
                     setResponse(res);
                 }
+                setLoaded(true)
             })
     }, [playerId]);
 
-    if (!isObjectEmpty(response) && response.data.data !== null) {
+    if (loaded && !isObjectEmpty(response) && response.data.data !== null) {
         return (
             <TableRow key={response.data.data.id}>
                 <TableCell component="th" scope="row">
@@ -449,8 +526,29 @@ function Player(props) {
                 </TableCell>
             </TableRow>
         )
+    } else if (loaded) {
+        return (
+            <TableRow>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    {`${status} Player ID: ${playerId} - please replace`}
+                </TableCell>
+                <TableCell/>
+            </TableRow>
+        )
     } else {
-        return null
+        return null;
     }
 }
 
@@ -463,6 +561,8 @@ function Competitions() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newCompName, setNewCompName] = useState("")
     const [newCompDay, setNewCompDay] = useState("")
+    const [status, setStatus] = useState("");
+    const cookies = new Cookies();
 
     function handleDialogClickOpen() {
         setDialogOpen(true);
@@ -473,9 +573,18 @@ function Competitions() {
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
+        axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                setResponse(res);
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
             })
     }, [random]);
 
@@ -506,64 +615,86 @@ function Competitions() {
     }
 
     function createNewCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/addCompetition`, {competitionDay: [newCompDay], competitionDays: [newCompDay], competitionName: newCompName, teamId: 0})
+        axios.post(`http://128.199.253.108:8082/competition/addCompetition`, {competitionDay: [newCompDay], competitionDays: [newCompDay], competitionName: newCompName, teamId: 0}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                alert("success")
-                reRender()
-                setSelectedComp({})
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    alert("Success")
+                    reRender()
+                    setSelectedComp({})
+                }
             })
+    }
+
+    function body() {
+        if (Object.keys(response).length === 0 || response.constructor !== Object) {
+            return (
+                <div>{status}</div>
+            )
+        } else {
+            return (
+                <>
+                    <div className={toolbarStyles.toolbar}>
+                        <div className={toolbarStyles.newUserContainer}>
+                            <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Competition</Button>
+                            <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleDialogClickClose}>
+                                <DialogTitle>Create a competition</DialogTitle>
+                                <DialogContent className={toolbarStyles.filterDialogContent}>
+                                    <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
+                                        <TextField style={{width: '100%', marginTop: '10px'}} variant="outlined" label="Enter Competition Name" onChange={(e) => {setNewCompName(e.target.value)}}/>
+                                    </FormControl>
+                                </DialogContent>
+                                <DialogContent className={toolbarStyles.fullDialogContent}>
+                                    <FormControl className={toolbarStyles.availabilityFormControl}>
+                                    <InputLabel id="competition day">Competition Day</InputLabel>
+                                    <Select
+                                        labelId="competition day label"
+                                        id="competition day"
+                                        value={newCompDay}
+                                        label="Competition Day"
+                                        onChange={(e) => {setNewCompDay(e.target.value)}}
+                                    >
+                                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                            <MenuItem id={day} key={`dialogcompday${day}`} value={day}>{day}</MenuItem>
+                                        ))}
+                                    </Select>
+                                    </FormControl>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button onClick={handleDialogClickClose} color="primary">
+                                        Cancel
+                                    </Button>
+                                    <Button onClick={() => {createNewCompetition(); handleDialogClickClose()}} color="primary">
+                                        Submit
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </div>
+                    </div>
+                    <div className={competitionStyles.body}>
+                        <div className={competitionStyles.selectCompetitionContainer}>
+                            {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
+                        </div>
+                        <div className={competitionStyles.displayCompetitionsContainer}>
+                            {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam key={`renderTeamfor${selectedComp}`} comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
+                            {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam key={`selectTeamfor${selectedComp}`} resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
+                            {isObjectEmpty(selectedComp) && <div>Select a team</div>}
+                        </div>
+                    </div>
+                </>
+            )
+        }
     }
 
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
             <NavBar/>
-            <div className={toolbarStyles.toolbar}>
-                <div className={toolbarStyles.newUserContainer}>
-                    <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Competition</Button>
-                    <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleDialogClickClose}>
-                        <DialogTitle>Create a competition</DialogTitle>
-                        <DialogContent className={toolbarStyles.filterDialogContent}>
-                            <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
-                                <TextField style={{width: '100%', marginTop: '10px'}} variant="outlined" label="Enter Competition Name" onChange={(e) => {setNewCompName(e.target.value)}}/>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.fullDialogContent}>
-                            <FormControl className={toolbarStyles.availabilityFormControl}>
-                            <InputLabel id="competition day">Competition Day</InputLabel>
-                            <Select
-                                labelId="competition day label"
-                                id="competition day"
-                                value={newCompDay}
-                                label="Competition Day"
-                                onChange={(e) => {setNewCompDay(e.target.value)}}
-                            >
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <MenuItem id={day} key={`dialogcompday${day}`} value={day}>{day}</MenuItem>
-                                ))}
-                            </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleDialogClickClose} color="primary">
-                                Cancel
-                            </Button>
-                            <Button onClick={() => {createNewCompetition(); handleDialogClickClose()}} color="primary">
-                                Submit
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </div>
-            </div>
-            <div className={competitionStyles.body}>
-                <div className={competitionStyles.selectCompetitionContainer}>
-                    {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
-                </div>
-                <div className={competitionStyles.displayCompetitionsContainer}>
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam key={`renderTeamfor${selectedComp}`} comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam key={`selectTeamfor${selectedComp}`} resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
-                    {isObjectEmpty(selectedComp) && <div>Select a team</div>}
-                </div>
-            </div>
+            {cookies.get('token') !== undefined && cookies.get('email') !== undefined ? body() : <div>Please log in</div>}
         </div>
     )
 }
