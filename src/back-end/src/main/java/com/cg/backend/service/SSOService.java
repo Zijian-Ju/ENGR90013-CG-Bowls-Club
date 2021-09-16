@@ -95,6 +95,15 @@ public class SSOService {
             return guest;
         }
         User user = userList.get(0);
+        Date createDate = user.getTokenCreateDate();
+        Date currDate = new Date(); //Current DateTime
+
+        Calendar createCalendar = new GregorianCalendar();
+        createCalendar.setTime(createDate);
+        createCalendar.add(createCalendar.DATE, 1);
+        createDate = createCalendar.getTime();
+        if(createDate.compareTo(currDate) < 0)
+            return guest;
         user.setPassword("");
         return user;
     }

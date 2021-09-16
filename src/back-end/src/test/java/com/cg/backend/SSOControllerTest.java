@@ -1,28 +1,23 @@
 package com.cg.backend;
 
-import com.cg.backend.controller.CompetitionController;
+import com.cg.backend.common.exceptions.BusinessException;
 import com.cg.backend.controller.SSOController;
-import com.cg.backend.model.Competition;
-import com.cg.backend.model.CompetitionVO;
+import com.cg.backend.dao.APIPermissionMapper;
+import com.cg.backend.model.APIPermission;
 import com.cg.backend.model.User;
-import com.cg.backend.service.CompetitionService;
+import com.cg.backend.service.PermissionService;
 import com.cg.backend.service.SSOService;
-import com.cg.backend.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -31,6 +26,24 @@ public class SSOControllerTest {
     SSOController ssoController;
     @Resource
     SSOService ssoService;
+    @Resource
+    APIPermissionMapper permissionMapper;
+    @Resource
+    PermissionService permissionService;
+    // Test Delete User
+    @Test
+    public void TestDeleteUser() {
+        List<User> prevUsers = ssoController.getAllUser();
+        int countDelete = 0;
+        for (int i = 0;i < prevUsers.size();i++) {
+            if (prevUsers.get(i).getEmail().equals("TestUser")) {
+                ssoController.deleteUser(prevUsers.get(i));
+                countDelete ++;
+            }
+        }
+        List<User> allUsers = ssoController.getAllUser();
+        assertEquals(prevUsers.size() -countDelete, allUsers.size());
+    }
 
     // Test Add User
     @Test
@@ -44,22 +57,91 @@ public class SSOControllerTest {
         ssoController.addUser(user);
         List<User> allUsers = ssoController.getAllUser();
         assertEquals(userCount + 1, allUsers.size());
-    }
 
-    // Test Delete User
-    @Test
-    public void TestDeleteUser() {
-        List<User> prevUsers = ssoController.getAllUser();
-        int countDelete = 0;
-        for (int i = 0;i < prevUsers.size();i++) {
-            if (prevUsers.get(i).getEmail().equals("TestUser")) {
-                User deletedUser = new User();
-                deletedUser.setId(prevUsers.get(i).getId());
-                ssoController.deleteUser(deletedUser);
-                countDelete ++;
+        for (int i = 0;i < allUsers.size();i++) {
+            if (allUsers.get(i).getEmail().equals("TestUser")) {
+                ssoController.deleteUser(allUsers.get(i));
             }
         }
-        List<User> allUsers = ssoController.getAllUser();
-        assertEquals(prevUsers.size() -countDelete, allUsers.size());
+    }
+
+
+    @Test
+    public void TestAdminLogin() {
+        String email = "admin";
+        String password = "admin";
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        Map<String, Object> result = ssoController.login(user);
+
+        User returnedUser = (User) result.get("user");
+
+        assertEquals(returnedUser.getRole(), PermissionService.ADMIN_ROLE);
+    }
+    @Test
+    public void TestSelectorLogin() {
+        String email = "zijianj";
+        String password = "123456";
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        Map<String, Object> result = ssoController.login(user);
+
+        User returnedUser = (User) result.get("user");
+
+        assertEquals(returnedUser.getRole(), PermissionService.SELECTOR);
+    }
+
+
+    @Test
+    public void TestAdminCheckPermission(){
+        String email = "admin";
+        String password = "admin";
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        Map<String, Object> result = ssoController.login(user);
+
+
+        User returnedUser = (User) result.get("user");
+        String token = (String) result.get("token");
+
+        List<APIPermission> allUrl = permissionMapper.selectAll();
+        for (int i = 0;i < allUrl.size();i++) {
+            assertTrue(permissionService.checkPermission(allUrl.get(i).getUri(), returnedUser));
+        }
+    }
+
+    @Test
+    public void TestSelectorCheckPermission(){
+        String email = "zijianj";
+        String password = "123456";
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        Map<String, Object> result = ssoController.login(user);
+
+
+        User returnedUser = (User) result.get("user");
+        String token = (String) result.get("token");
+
+        List<APIPermission> allUrl = permissionMapper.selectAll();
+        for (int i = 0;i < allUrl.size();i++) {
+            if (allUrl.get(i).getRole().equals("selector")) {
+                assertTrue(permissionService.checkPermission(allUrl.get(i).getUri(), returnedUser));
+            }else {
+                assertFalse(permissionService.checkPermission(allUrl.get(i).getUri(), returnedUser));
+            }
+        }
+    }
+    @Test
+    public void TestGuestCheckPermission() {
+        User user = new User();
+        user.setRole("guest");
+        List<APIPermission> allUrl = permissionMapper.selectAll();
+        for (int i = 0;i < allUrl.size();i++) {
+            assertFalse(permissionService.checkPermission(allUrl.get(i).getUri(), user));
+        }
     }
 }

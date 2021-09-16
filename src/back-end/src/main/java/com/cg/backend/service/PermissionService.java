@@ -22,6 +22,7 @@ public class PermissionService {
     private APIPermissionMapper permissionMapper;
     public final static String ADMIN_ROLE = "admin";
     public final static String GUEST = "guest";
+    public final static String SELECTOR = "selector";
 
 
 
@@ -38,14 +39,14 @@ public class PermissionService {
             return true;
 
         if (user == null)
-            throw new BusinessException(ResponseCode.PERMISSION_DENIED);
+            return false;
 
         APIPermission permission = permissionList.get(0);
-        if (permission.getRole().equals(ADMIN_ROLE)) {
+        if (user.getRole().contains(ADMIN_ROLE)) {
             return true;
         }
         if (!permission.getRole().contains(user.getRole()))
-            throw new BusinessException(ResponseCode.PERMISSION_DENIED);
+            return false;
 
         return true;
     }
