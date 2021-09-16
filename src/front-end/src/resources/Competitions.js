@@ -156,20 +156,22 @@ function RenderTeam(props) {
                             <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
                                 <TextField
                                     style={{width: '95%'}}
+                                    disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
                                     id="standard-basic" 
                                     size="small"
-                                    label="Edit Competition Name"
+                                    label="Competition Name"
                                     value={newCompetitionName}
                                     onChange={(e) => setNewCompetitionName(e.target.value)}
                                 />
                             </div>
                             <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
                                 <FormControl style={{width: '95%'}}>
-                                    <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
+                                    <InputLabel shrink id="competition day label">Competition Days</InputLabel>
                                     <Select
+                                        disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
                                         size = "small"
                                         id="competition days"
-                                        label="Edit Competition Days"
+                                        label="Competition Days"
                                         multiple
                                         value={newCompetitionDays}
                                         onChange={(e) => {setNewCompetitionDays(e.target.value)}}
@@ -182,7 +184,7 @@ function RenderTeam(props) {
                             </div>
                         </div>
                         <div>
-                            <Button onClick={() => changeCompetition()}>Save</Button>
+                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button onClick={() => changeCompetition()}>Save</Button>}
                         </div>
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
@@ -190,8 +192,8 @@ function RenderTeam(props) {
                             Team Id {props.teamId} and competition id {props.comp.id}
                         </div>
                         <div style={{width: '100%'}}>
-                            <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
-                            <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>}
+                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>}
                         </div>
                     </div>
                 </div>
@@ -288,6 +290,10 @@ function SelectTeam(props) {
         return (
             <div>{status}</div>
         )
+    } else if (cookies.get('role') !== 'admin' && cookies.get('role') !== 'selector') {
+        return (
+            <div>No team selected, please check back later</div>
+        )
     } else {
         return (
             <div style={{width: '100%'}}>
@@ -296,21 +302,23 @@ function SelectTeam(props) {
                         <div className={competitionStyles.renderTeamControlsTextfieldInput}>
                             <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
                                 <TextField
+                                    disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
                                     style={{width: '95%'}}
                                     id="standard-basic" 
                                     size="small"
-                                    label="Edit Competition Name"
+                                    label="Competition Name"
                                     value={newCompetitionName}
                                     onChange={(e) => setNewCompetitionName(e.target.value)}
                                 />
                             </div>
                             <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
                                 <FormControl style={{width: '95%'}}>
-                                    <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
+                                    <InputLabel shrink id="competition day label">Competition Days</InputLabel>
                                     <Select
+                                        disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
                                         size = "small"
                                         id="competition days"
-                                        label="Edit Competition Days"
+                                        label="Competition Days"
                                         multiple
                                         value={newCompetitionDays}
                                         onChange={(e) => {setNewCompetitionDays(e.target.value)}}
@@ -542,7 +550,7 @@ function Player(props) {
                     N/A
                 </TableCell>
                 <TableCell>
-                    {`${status} Player ID: ${playerId} - please replace`}
+                    {`${status}`}
                 </TableCell>
                 <TableCell/>
             </TableRow>
@@ -631,6 +639,48 @@ function Competitions() {
             })
     }
 
+    function toolbar() {
+        return (
+            <div className={toolbarStyles.toolbar}>
+                <div className={toolbarStyles.newUserContainer}>
+                    <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Competition</Button>
+                    <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleDialogClickClose}>
+                        <DialogTitle>Create a competition</DialogTitle>
+                        <DialogContent className={toolbarStyles.filterDialogContent}>
+                            <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
+                                <TextField style={{width: '100%', marginTop: '10px'}} variant="outlined" label="Enter Competition Name" onChange={(e) => {setNewCompName(e.target.value)}}/>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogContent className={toolbarStyles.fullDialogContent}>
+                            <FormControl className={toolbarStyles.availabilityFormControl}>
+                            <InputLabel id="competition day">Competition Day</InputLabel>
+                            <Select
+                                labelId="competition day label"
+                                id="competition day"
+                                value={newCompDay}
+                                label="Competition Day"
+                                onChange={(e) => {setNewCompDay(e.target.value)}}
+                            >
+                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                    <MenuItem id={day} key={`dialogcompday${day}`} value={day}>{day}</MenuItem>
+                                ))}
+                            </Select>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleDialogClickClose} color="primary">
+                                Cancel
+                            </Button>
+                            <Button onClick={() => {createNewCompetition(); handleDialogClickClose()}} color="primary">
+                                Submit
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+            </div>
+        )
+    }
+
     function body() {
         if (Object.keys(response).length === 0 || response.constructor !== Object) {
             return (
@@ -639,43 +689,7 @@ function Competitions() {
         } else {
             return (
                 <>
-                    <div className={toolbarStyles.toolbar}>
-                        <div className={toolbarStyles.newUserContainer}>
-                            <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Competition</Button>
-                            <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleDialogClickClose}>
-                                <DialogTitle>Create a competition</DialogTitle>
-                                <DialogContent className={toolbarStyles.filterDialogContent}>
-                                    <FormControl style={{width: '100%'}} className={toolbarStyles.filterFormControl}>
-                                        <TextField style={{width: '100%', marginTop: '10px'}} variant="outlined" label="Enter Competition Name" onChange={(e) => {setNewCompName(e.target.value)}}/>
-                                    </FormControl>
-                                </DialogContent>
-                                <DialogContent className={toolbarStyles.fullDialogContent}>
-                                    <FormControl className={toolbarStyles.availabilityFormControl}>
-                                    <InputLabel id="competition day">Competition Day</InputLabel>
-                                    <Select
-                                        labelId="competition day label"
-                                        id="competition day"
-                                        value={newCompDay}
-                                        label="Competition Day"
-                                        onChange={(e) => {setNewCompDay(e.target.value)}}
-                                    >
-                                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                            <MenuItem id={day} key={`dialogcompday${day}`} value={day}>{day}</MenuItem>
-                                        ))}
-                                    </Select>
-                                    </FormControl>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleDialogClickClose} color="primary">
-                                        Cancel
-                                    </Button>
-                                    <Button onClick={() => {createNewCompetition(); handleDialogClickClose()}} color="primary">
-                                        Submit
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-                        </div>
-                    </div>
+                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && toolbar()}
                     <div className={competitionStyles.body}>
                         <div className={competitionStyles.selectCompetitionContainer}>
                             {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
@@ -694,7 +708,7 @@ function Competitions() {
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
             <NavBar/>
-            {cookies.get('token') !== undefined && cookies.get('email') !== undefined ? body() : <div>Please log in</div>}
+            {body()}
         </div>
     )
 }

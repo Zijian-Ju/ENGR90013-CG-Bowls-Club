@@ -334,9 +334,11 @@ function Teams() {
         return (
             <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
                 <NavBar/>
-                <div className={toolbarStyles.toolbar}>
-                    {renderSearchBarContainer()}
-                </div>
+                {cookies.get('token') !== undefined && cookies.get('email') !== undefined && (cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                    <div className={toolbarStyles.toolbar}>
+                        {renderSearchBarContainer()}
+                    </div>
+                }
                 <div className={teamsStyles.body}>
                     {Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && renderTable()}
                     {Object.keys(response).length === 0 && response.constructor === Object && <div>...Loading</div>}

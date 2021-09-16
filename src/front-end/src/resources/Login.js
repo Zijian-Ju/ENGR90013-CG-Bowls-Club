@@ -20,8 +20,9 @@ function Login() {
             axios.get(`http://128.199.253.108:8082/sso/getUserPermession`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
                 .then(res => {
                     if (res.data.data.role === "guest") {
-                        cookies.remove("token");
-                        cookies.remove("email");
+                        cookies.remove("token", { path: '/' });
+                        cookies.remove("email", { path: '/' });
+                        cookies.remove("role", { path: '/' });
                     }
                 })
         }
@@ -38,6 +39,7 @@ function Login() {
             } else if (res.status === 200 && res.data.statusCode == 200) {
                 cookies.set("token", res.data.data.token, {path: '/'})
                 cookies.set("email", res.data.data.user.email, {path: '/'})
+                cookies.set("role", res.data.data.user.role, {path: '/'})
                 setText("Success!")
                 history.go(0)
             }
@@ -47,6 +49,7 @@ function Login() {
     function logout() {
         cookies.remove("token", { path: '/' });
         cookies.remove("email", { path: '/' });
+        cookies.remove("role", { path: '/' });
         setText("Hello! Please login")
         history.go(0)
         return null
