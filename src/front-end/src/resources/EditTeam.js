@@ -19,159 +19,159 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Cookies from 'universal-cookie'
 import {Close} from '@material-ui/icons';
 
 
-const Toolbar = (props) => {
-  const [userSearchText, setUserSearchText] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [minPerformance, setMinPerformance] = useState(0);
-  const [maxPerformance, setMaxPerformance] = useState(10);
-  const [availability, setAvailability] = useState([]);
-  const [favPosition, setFavPosition] = useState([]);
-  const [sort, setSort] = useState("");
-  const [sortOrder, setSortOrder] = useState("");
-  const [random, setRandom] = useState(Math.random());
-  const reRender = () => setRandom(Math.random());
-
-  function handleFilterClickOpen() {
-    setDialogOpen(true);
-  }
-  function handleFilterClickClose() {
-  setDialogOpen(false);
-  }
+// const Toolbar = (props) => {
+//   const [response, setResponse] = useState({});
+//   const [userSearchText, setUserSearchText] = useState("");
+//   const [dialogOpen, setDialogOpen] = useState(false);
+//   const [minPerformance, setMinPerformance] = useState(0);
+//   const [maxPerformance, setMaxPerformance] = useState(10);
+//   const [availability, setAvailability] = useState([]);
+//   const [favPosition, setFavPosition] = useState([]);
+//   const [sort, setSort] = useState("");
+//   const [sortOrder, setSortOrder] = useState("");
+//   const [random, setRandom] = useState(Math.random());
+//   const reRender = () => setRandom(Math.random());
   
-  return (
-    <div className={toolbarStyles.toolbar} style={{justifyContent: 'space-between'}}>
-      <div> </div>
-      <div className={toolbarStyles.searchBarContainer}>
-          <div className={toolbarStyles.searchBar}>
-            <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value); props.searchUser(e.target.value)}} variant="outlined" label="Search User"/>
-          </div>
-          <div className={toolbarStyles.filter}>
-              <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
-              <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
-                  <DialogTitle>Filters Results</DialogTitle>
-                  <DialogContent className={toolbarStyles.filterDialogContent}>
-                      <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                      <InputLabel shrink id="sort label">Sort</InputLabel>
-                          <Select
-                              label="Sort"
-                              id="sort"
-                              value={sort}
-                              displayEmpty
-                              onChange={(e) => {setSort(e.target.value)}}
-                          >
-                              <MenuItem value={'name'}>Name</MenuItem>
-                              <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
-                          </Select>
-                      </FormControl>
-                      <FormControl className={toolbarStyles.filterFormControl}>
-                      <InputLabel shrink id="sort order label">Sort Order</InputLabel>
-                          <Select
-                              label="Sort order"
-                              id="sort-order"
-                              value={sortOrder}
-                              displayEmpty
-                              onChange={(e) => {setSortOrder(e.target.value)}}
-                          >
-                              <MenuItem value={'asc'}>Ascending</MenuItem>
-                              <MenuItem value={'desc'}>Descending</MenuItem>
-                          </Select>
-                      </FormControl>
-                  </DialogContent>
-                  <DialogContent className={toolbarStyles.filterDialogContent}>
-                      <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                      <InputLabel shrink id="min performance label">Min Performance</InputLabel>
-                          <Select
-                              label="Minimum"
-                              id="performance-min"
-                              value={minPerformance}
-                              displayEmpty
-                              onChange={(e) => {setMinPerformance(e.target.value)}}
-                          >
-                              <MenuItem value={0}>0</MenuItem>
-                              <MenuItem value={1}>1</MenuItem>
-                              <MenuItem value={2}>2</MenuItem>
-                              <MenuItem value={3}>3</MenuItem>
-                              <MenuItem value={4}>4</MenuItem>
-                              <MenuItem value={5}>5</MenuItem>
-                              <MenuItem value={6}>6</MenuItem>
-                              <MenuItem value={7}>7</MenuItem>
-                              <MenuItem value={8}>8</MenuItem>
-                              <MenuItem value={9}>9</MenuItem>
-                              <MenuItem value={10}>10</MenuItem>
-                          </Select>
-                      </FormControl>
-                      <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
-                          <InputLabel shrink id="availability label">Max Performance</InputLabel>
-                          <Select
-                              id="availability select"
-                              value={maxPerformance}
-                              onChange={(e) => {setMaxPerformance(e.target.value)}}
-                              displayEmpty
-                          >
-                              {(() => {
-                                  const options = [];
-                                  for (let i = minPerformance; i<=10; i++) {
-                                      options.push(<MenuItem key={i} value={i}>{i}</MenuItem>)
-                                  }
-                                  return options;
-                              }
-                              )()}
-                          </Select>
-                      </FormControl>
-                  </DialogContent>
-                  <DialogContent className={toolbarStyles.fullDialogContent}>
-                      <FormControl className={toolbarStyles.availabilityFormControl}>
-                      <InputLabel shrink id="availability label">Availabilities</InputLabel>
-                      <Select
-                          labelId="availability label"
-                          id="availability"
-                          multiple
-                          value={availability}
-                          onChange={(e) => {setAvailability(e.target.value)}}
-                      >
-                          {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
-                            return (
-                              <MenuItem key={`day${day}${index}`} value={day}>{day}</MenuItem>
-                            )
-                          })}
-                      </Select>
-                      </FormControl>
-                  </DialogContent>
-                  <DialogContent className={toolbarStyles.fullDialogContent}>
-                      <FormControl className={toolbarStyles.favPositionFormControl}>
-                      <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
-                      <Select
-                          labelId=" fav position label"
-                          id="favourite position"
-                          multiple
-                          value={favPosition}
-                          onChange={(e) => {setFavPosition(e.target.value)}}
-                      >
-                          {["Skip","Second","Third","Lead"].map(function(position, index) {
-                            return (
-                              <MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>
-                            )
-                          })}
-                      </Select>
-                      </FormControl>
-                  </DialogContent>
-                  <DialogActions>
-                      <Button onClick={handleFilterClickClose} color="primary">
-                          Go Back
-                      </Button>
-                      <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
-                          Submit
-                      </Button>
-                  </DialogActions>
-              </Dialog>
-          </div>
-      </div>
-  </div>
-  )
-}
+
+
+  
+  
+//   return (
+//     <div className={toolbarStyles.toolbar} style={{justifyContent: 'space-between'}}>
+     
+//       <div className={toolbarStyles.searchBarContainer}>
+//           <div className={toolbarStyles.searchBar}>
+//             <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value); props.searchUser(e.target.value)}} variant="outlined" label="Search User"/>
+//           </div>
+//           <div className={toolbarStyles.filter}>
+//               <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
+//               <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
+//                   <DialogTitle>Filters Results</DialogTitle>
+//                   <DialogContent className={toolbarStyles.filterDialogContent}>
+//                                 <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%", marginRight: "10%"}}>
+//                                 <InputLabel id="sort label">Sort</InputLabel>
+//                                 <Select
+//                                     label="Sort"
+//                                     labelId="Sort"
+//                                     id="sort"
+//                                     value={sort}
+//                                     displayEmpty
+//                                     onChange={(e) => {setSort(e.target.value)}}
+//                                 >
+//                                     <MenuItem value={'name'}>Name</MenuItem>
+//                                     <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
+//                                 </Select>
+//                                 </FormControl>
+//                                 <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%"}}>
+//                                 <InputLabel id="sort order label">Sort Order</InputLabel>
+//                                     <Select
+//                                         label="Sort order"
+//                                         id="sort-order"
+//                                         value={sortOrder}
+//                                         displayEmpty
+//                                         onChange={(e) => {setSortOrder(e.target.value)}}
+//                                     >
+//                                         <MenuItem value={'asc'}>Ascending</MenuItem>
+//                                         <MenuItem value={'desc'}>Descending</MenuItem>
+//                                     </Select>
+//                                 </FormControl>
+//                             </DialogContent>
+//                   <DialogContent className={toolbarStyles.filterDialogContent}>
+//                       <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
+//                       <InputLabel shrink id="min performance label">Min Performance</InputLabel>
+//                           <Select
+//                               label="Minimum"
+//                               id="performance-min"
+//                               value={minPerformance}
+//                               displayEmpty
+//                               onChange={(e) => {setMinPerformance(e.target.value)}}
+//                           >
+//                               <MenuItem value={0}>0</MenuItem>
+//                               <MenuItem value={1}>1</MenuItem>
+//                               <MenuItem value={2}>2</MenuItem>
+//                               <MenuItem value={3}>3</MenuItem>
+//                               <MenuItem value={4}>4</MenuItem>
+//                               <MenuItem value={5}>5</MenuItem>
+//                               <MenuItem value={6}>6</MenuItem>
+//                               <MenuItem value={7}>7</MenuItem>
+//                               <MenuItem value={8}>8</MenuItem>
+//                               <MenuItem value={9}>9</MenuItem>
+//                               <MenuItem value={10}>10</MenuItem>
+//                           </Select>
+//                       </FormControl>
+//                       <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
+//                           <InputLabel shrink id="availability label">Max Performance</InputLabel>
+//                           <Select
+//                               id="availability select"
+//                               value={maxPerformance}
+//                               onChange={(e) => {setMaxPerformance(e.target.value)}}
+//                               displayEmpty
+//                           >
+//                               {(() => {
+//                                   const options = [];
+//                                   for (let i = minPerformance; i<=10; i++) {
+//                                       options.push(<MenuItem key={i} value={i}>{i}</MenuItem>)
+//                                   }
+//                                   return options;
+//                               }
+//                               )()}
+//                           </Select>
+//                       </FormControl>
+//                   </DialogContent>
+//                   <DialogContent className={toolbarStyles.fullDialogContent}>
+//                       <FormControl className={toolbarStyles.availabilityFormControl}>
+//                       <InputLabel shrink id="availability label">Availabilities</InputLabel>
+//                       <Select
+//                           labelId="availability label"
+//                           id="availability"
+//                           multiple
+//                           value={availability}
+//                           onChange={(e) => {setAvailability(e.target.value)}}
+//                       >
+//                           {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
+//                             return (
+//                               <MenuItem key={`day${day}${index}`} value={day}>{day}</MenuItem>
+//                             )
+//                           })}
+//                       </Select>
+//                       </FormControl>
+//                   </DialogContent>
+//                   <DialogContent className={toolbarStyles.fullDialogContent}>
+//                       <FormControl className={toolbarStyles.favPositionFormControl}>
+//                       <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
+//                       <Select
+//                           labelId=" fav position label"
+//                           id="favourite position"
+//                           multiple
+//                           value={favPosition}
+//                           onChange={(e) => {setFavPosition(e.target.value)}}
+//                       >
+//                           {["Skip","Second","Third","Lead"].map(function(position, index) {
+//                             return (
+//                               <MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>
+//                             )
+//                           })}
+//                       </Select>
+//                       </FormControl>
+//                   </DialogContent>
+//                   <DialogActions>
+//                       <Button onClick={handleFilterClickClose} color="primary">
+//                           Go Back
+//                       </Button>
+//                       <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
+//                           Submit
+//                       </Button>
+//                   </DialogActions>
+//               </Dialog>
+//           </div>
+//       </div>
+//   </div>
+//   )
+// }
 
 
 const HomeTitle = () => {
@@ -220,13 +220,28 @@ const HomeTitle = () => {
 }
 
 const EditTeam = () => {
-  const history = useHistory();
+  const [response, setResponse] = useState({});
+    const [userSearchText, setUserSearchText] = useState("");
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [minPerformance, setMinPerformance] = useState(0);
+    const [maxPerformance, setMaxPerformance] = useState(10);
+    const [availability, setAvailability] = useState([]);
+    const [favPosition, setFavPosition] = useState([]);
+    const [sort, setSort] = useState("");
+    const [sortOrder, setSortOrder] = useState("");
+    const history = useHistory();
+    const [random, setRandom] = useState(Math.random());
+    const reRender = () => setRandom(Math.random());
+    const cookies = new Cookies();
+
+  // const history = useHistory();
   function teamsHandleClick() {
     history.push("/teams")
 }
   const onDragEnd = (e) => {
     const {draggableId,destination} = e
     const data = payerList.find(item => item.id === parseInt(draggableId))
+    if(!destination){return data}
     if (data) {
       const id = `${destination.droppableId}BowlerId${destination.index > 4 ? 4 : destination.index}`
       const name = `${destination.droppableId}BowlerName${destination.index > 4 ? 4 : destination.index}`
@@ -243,18 +258,26 @@ const EditTeam = () => {
   const teamList = ['skip','third','second','lead']
   const arr = [1,2,3,4]
 
+//   useEffect(() => {
+//     axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}})
+//         .then(res => {
+//             setResponse(res);
+//         })
+// }, []);
+
+
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: [], maxScore: 10, minScore: 0, order: {direction: '', sortField: ''}, position: []}})
+    axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then((list) => {
       setPayList(list.data.data.playerList)
       setCopyPayerList(list.data.data.playerList)
       setCopyPayerListOne(list.data.data.playerList)
     })
-    axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: history.location.state})
+    axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: history.location.state}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     .then((detail) => {
       setTeamDetail(detail.data.data)
     })
-  }, [history.location.state])
+  }, [history.location.state,random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder])
 
   const getPlayerDetail = (item,i) => {
     const id = teamDetail[`${item}BowlerId${i}`]
@@ -264,7 +287,7 @@ const EditTeam = () => {
     }
   }
   const onSave = async() => {
-    await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail)
+    await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
     teamsHandleClick()
   }
   const searchUser =  (name) => {
@@ -289,10 +312,150 @@ const EditTeam = () => {
     setCopyPayerList([...copyPayerList,data])
     setTeamDetail({...teamDetail,[id]: -1,[name]: ''})
   }
+  function handleFilterClickClose() {
+    setDialogOpen(false);
+    }
+    function handleFilterClickOpen() {
+      setDialogOpen(true);
+    }
+    function handleFilterClickClose() {
+    setDialogOpen(false);
+    }
   return (
   <>
     <HomeTitle />
-    <Toolbar searchUser={searchUser}/>
+    <div className={toolbarStyles.toolbar} style={{justifyContent: 'flex-end'}}>
+     
+     <div 
+     className={toolbarStyles.searchBarContainer}
+     >
+         <div className={toolbarStyles.searchBar}>
+           <TextField style={{width: '100%'}} onChange={(e) => {setUserSearchText(e.target.value); searchUser(e.target.value)}} variant="outlined" label="Search User"/>
+         </div>
+         <div className={toolbarStyles.filter}>
+             <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
+             <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
+                 <DialogTitle>Filters Results</DialogTitle>
+                 <DialogContent className={toolbarStyles.filterDialogContent}>
+                               <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%", marginRight: "10%"}}>
+                               <InputLabel id="sort label">Sort</InputLabel>
+                               <Select
+                                   label="Sort"
+                                   labelId="Sort"
+                                   id="sort"
+                                   value={sort}
+                                   displayEmpty
+                                   onChange={(e) => {setSort(e.target.value)}}
+                               >
+                                   <MenuItem value={'name'}>Name</MenuItem>
+                                   <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
+                               </Select>
+                               </FormControl>
+                               <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%"}}>
+                               <InputLabel id="sort order label">Sort Order</InputLabel>
+                                   <Select
+                                       label="Sort order"
+                                       id="sort-order"
+                                       value={sortOrder}
+                                       displayEmpty
+                                       onChange={(e) => {setSortOrder(e.target.value)}}
+                                   >
+                                       <MenuItem value={'asc'}>Ascending</MenuItem>
+                                       <MenuItem value={'desc'}>Descending</MenuItem>
+                                   </Select>
+                               </FormControl>
+                           </DialogContent>
+                 <DialogContent className={toolbarStyles.filterDialogContent}>
+                     <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
+                     <InputLabel shrink id="min performance label">Min Performance</InputLabel>
+                         <Select
+                             label="Minimum"
+                             id="performance-min"
+                             value={minPerformance}
+                             displayEmpty
+                             onChange={(e) => {setMinPerformance(e.target.value)}}
+                         >
+                             <MenuItem value={0}>0</MenuItem>
+                             <MenuItem value={1}>1</MenuItem>
+                             <MenuItem value={2}>2</MenuItem>
+                             <MenuItem value={3}>3</MenuItem>
+                             <MenuItem value={4}>4</MenuItem>
+                             <MenuItem value={5}>5</MenuItem>
+                             <MenuItem value={6}>6</MenuItem>
+                             <MenuItem value={7}>7</MenuItem>
+                             <MenuItem value={8}>8</MenuItem>
+                             <MenuItem value={9}>9</MenuItem>
+                             <MenuItem value={10}>10</MenuItem>
+                         </Select>
+                     </FormControl>
+                     <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
+                         <InputLabel shrink id="availability label">Max Performance</InputLabel>
+                         <Select
+                             id="availability select"
+                             value={maxPerformance}
+                             onChange={(e) => {setMaxPerformance(e.target.value)}}
+                             displayEmpty
+                         >
+                             {(() => {
+                                 const options = [];
+                                 for (let i = minPerformance; i<=10; i++) {
+                                     options.push(<MenuItem key={i} value={i}>{i}</MenuItem>)
+                                 }
+                                 return options;
+                             }
+                             )()}
+                         </Select>
+                     </FormControl>
+                 </DialogContent>
+                 <DialogContent className={toolbarStyles.fullDialogContent}>
+                     <FormControl className={toolbarStyles.availabilityFormControl}>
+                     <InputLabel shrink id="availability label">Availabilities</InputLabel>
+                     <Select
+                         labelId="availability label"
+                         id="availability"
+                         multiple
+                         value={availability}
+                         onChange={(e) => {setAvailability(e.target.value)}}
+                     >
+                         {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
+                           return (
+                             <MenuItem key={`day${day}${index}`} value={day}>{day}</MenuItem>
+                           )
+                         })}
+                     </Select>
+                     </FormControl>
+                 </DialogContent>
+                 <DialogContent className={toolbarStyles.fullDialogContent}>
+                     <FormControl className={toolbarStyles.favPositionFormControl}>
+                     <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
+                     <Select
+                         labelId=" fav position label"
+                         id="favourite position"
+                         multiple
+                         value={favPosition}
+                         onChange={(e) => {setFavPosition(e.target.value)}}
+                     >
+                         {["Skip","Second","Third","Lead"].map(function(position, index) {
+                           return (
+                             <MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>
+                           )
+                         })}
+                     </Select>
+                     </FormControl>
+                 </DialogContent>
+                 <DialogActions>
+                     <Button onClick={handleFilterClickClose} color="primary">
+                         Go Back
+                     </Button>
+                     <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
+                         Submit
+                     </Button>
+                 </DialogActions>
+             </Dialog>
+         </div>
+     </div>
+ </div>
+
     <div className={editTeamsStyles.teamName}>
       <span>
       Team Name：
