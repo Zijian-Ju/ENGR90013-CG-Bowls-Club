@@ -27,6 +27,7 @@ function SelectorTable(props) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const [role, setRole] = useState("")
     const cookies = new Cookies();
     const history = useHistory();
@@ -41,7 +42,7 @@ function SelectorTable(props) {
     }
 
     function createSelector() {
-        axios.post(`http://128.199.253.108:8082/sso/addUser`, {email: email, id: 0, password: "", realName: name, role: role, token: "", tokenCreateDate: "2021-09-12T13:09:05.760Z", userName: username}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
+        axios.post(`http://128.199.253.108:8082/sso/addUser`, {email: email, id: 0, password: password, realName: name, role: role, token: "", tokenCreateDate: "2021-09-12T13:09:05.760Z", userName: username}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
         .then(res => {
             if (res.status !== 200) {
                 alert("Network error, please try again later")
@@ -66,6 +67,7 @@ function SelectorTable(props) {
                         <TextField onChange={(e) => setName(e.target.value)} style={{margin: '2.5%', marginTop: '5%', width: '75%'}} label="Name"/>
                         <TextField onChange={(e) => setEmail(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Email"/>
                         <TextField onChange={(e) => setUsername(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Username"/>
+                        <TextField onChange={(e) => setPassword(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Password"/>
                     </FormControl>
                     <FormControl style={{width: '100%'}}>
                         <InputLabel id="demo-simple-select-filled-label">Role</InputLabel>
@@ -97,7 +99,6 @@ function SelectorTable(props) {
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                            <TableCell/>
                             <TableCell>Name</TableCell>
                             <TableCell>Username</TableCell>
                             <TableCell>Email</TableCell>
@@ -134,9 +135,6 @@ function Row(props) {
 
     return (
         <TableRow>
-            <TableCell>
-                {props.row.id}
-            </TableCell>
             <TableCell>
                 {props.row.realName}
             </TableCell>

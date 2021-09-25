@@ -9,7 +9,7 @@ import { useHistory } from "react-router-dom";
 
 function Login() {
     const [anchorEl, setAnchorEl] = useState(null);
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [text, setText] = useState("Hello! Please login");
     const cookies = new Cookies();
@@ -29,7 +29,7 @@ function Login() {
     }, [cookies.get("token"), cookies.get("email")]);
 
     function login() {
-        axios.post(`http://128.199.253.108:8082/sso/login`, {email: username, id: 0, password: password, realName: "string", role: "string", token: "string", tokenCreateDate: "2021-09-08T12:07:26.992Z", userName: "string"})
+        axios.post(`http://128.199.253.108:8082/sso/login`, {email: email, id: 0, password: password, realName: "string", role: "string", token: "string", tokenCreateDate: "2021-09-08T12:07:26.992Z", userName: "string"})
         .then(res => {
             if (res.status !== 200) {
                 alert("Network error");
@@ -75,7 +75,7 @@ function Login() {
                     <div className={loginStyles.loginMenu}>
                         <div className={loginStyles.loginMenuRow}>{text}</div>
                         <div className={loginStyles.loginMenuRow}>
-                            <TextField error={text === "Wrong login"} label="Username" onChange={(e) => setUsername(e.target.value)}></TextField>
+                            <TextField error={text === "Wrong login"} label="Email" onChange={(e) => setEmail(e.target.value)}></TextField>
                         </div>
                         <div className={loginStyles.loginMenuRow}>
                             <TextField error={text === "Wrong login"} type="password" label="Password" onChange={(e) => setPassword(e.target.value)}></TextField>
