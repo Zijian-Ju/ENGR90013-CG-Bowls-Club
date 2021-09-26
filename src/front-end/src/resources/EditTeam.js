@@ -20,8 +20,20 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Cookies from 'universal-cookie'
-import { Close } from '@material-ui/icons';
+import { Close, Details } from '@material-ui/icons';
 import product from "immer"
+
+
+function getDate(playerList, detail) {
+  const detailArr = Object.values(detail);
+  let newplayerList = [];
+  for (let i = 0; i < playerList.length; i++) {
+    if (!detailArr.includes(playerList[i].id)) {
+      newplayerList.push(playerList[i]);
+    }
+  }
+  return newplayerList;
+}
 
 
 const HomeTitle = () => {
@@ -88,7 +100,7 @@ const EditTeam = () => {
   function teamsHandleClick() {
     history.push("/teams")
   }
-const onDragEnd = (e) => {
+  const onDragEnd = (e) => {
     const { draggableId, destination } = e
     const dataIndex=payerList.findIndex(item => item.id === parseInt(draggableId))
     const data = payerList[dataIndex]
@@ -135,23 +147,26 @@ const onDragEnd = (e) => {
 
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, { searching: { availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: { direction: sortOrder, sortField: sort }, position: favPosition } }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
-      .then((list) => {
-        console.log(list.data.data.playerList,"list.data.data.playerList");
-     	setPayList(list?.data?.data?.playerList||[])
-        setCopyPayerList(list?.data?.data?.playerList||[])
-        setCopyPayerListOne(list?.data?.data?.playerList||[])
-      })
+
+
     axios.post(`http://128.199.253.108:8082/team/getTeamById`, { id: history.location.state }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
-      .then((detail) => {
-        setTeamDetail(detail.data.data)
+      .then((res) => {
+        const detail = res.data.data;
+        setTeamDetail(detail)
+        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, { searching: { availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: { direction: sortOrder, sortField: sort }, position: favPosition } }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
+          .then((list) => {
+            let playerList = list?.data?.data?.playerList;
+            setPayList(getDate(playerList||[], detail))
+            setCopyPayerList(list?.data?.data?.playerList||[])
+            setCopyPayerListOne(list?.data?.data?.playerList||[])
+          })
       })
   }, [history.location.state, random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder])
 
   const getPlayerDetail = (item, i) => {
     const id = teamDetail[`${item}BowlerId${i}`]
     const detail = copyPayerList.find(item => item.id === id)
-    console.log(id,detail);
+    console.log(id, detail);
     if (detail) {
       setUserDetail(detail)
     }
@@ -180,14 +195,14 @@ const onDragEnd = (e) => {
     const name = `${item}BowlerName${i > 4 ? 4 : i}`
     const data = copyPayerListOne.find(item => item.id === teamDetail[id])
     // setCopyPayerList([...copyPayerList, data])
-    const isFind=payerList.findIndex(item=>item.id===data.id);
+    const isFind = payerList.findIndex(item => item.id === data.id);
 
-      setPayList(product(payerList,draft=>{
-        if(isFind==-1){
-          console.error(1111);
-          draft.push(data)
-        }
-      }))
+    setPayList(product(payerList, draft => {
+      if (isFind == -1) {
+        console.error(1111);
+        draft.push(data)
+      }
+    }))
 
     setTeamDetail({ ...teamDetail, [id]: -1, [name]: '' })
   }
@@ -357,13 +372,13 @@ const onDragEnd = (e) => {
                       {arr.map((i, l) => (
                         <Draggable key={item + i} draggableId={item + i} index={l + 1} isDragDisabled>
                           {(provided, snapshot) => (
-                            <div 
-                            className={[editTeamsStyles.rightGridItem, editTeamsStyles.rightGridEdit].join(' ')} 
-                            onClick={() => { getPlayerDetail(item, i) }} 
-                            ref={provided.innerRef}  
-                            {...provided.draggableProps} 
-                             {...provided.dragHandleProps}
-                             >
+                            <div
+                              className={[editTeamsStyles.rightGridItem, editTeamsStyles.rightGridEdit].join(' ')}
+                              onClick={() => { getPlayerDetail(item, i) }}
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
                               <div className={bodyStyles.userCardImageContainer} style={{ margin: 'auto', padding: '10px 5px', width: '100%', borderRadius: '4px', textAlign: 'left', flexDirection: 'row', justifyContent: 'space-between', }}>
                                 {teamDetail[`${item}BowlerName${i}`] && (
                                   <>
