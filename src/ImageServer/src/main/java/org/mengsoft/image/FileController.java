@@ -30,9 +30,15 @@ public class FileController {
         if(!file.isEmpty()) {
             try {
                 String base = "http://128.199.253.108:9091/";
-                String filepath = "/home/blog/filebed/frontend/";
+                String filepath = "/home/teamcg/filebed/frontend/";
+
+                // Create path if not exists
+                File dir = new File(filepath);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
                 @SuppressWarnings("static-access")
-//                String k =new String().valueOf((int)((Math.random()*9+1)*100000));
                 String newfilename = UUID.randomUUID().toString() + ".";
                 String fileName = file.getOriginalFilename();// Filename
                 String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);//File  Suffix
