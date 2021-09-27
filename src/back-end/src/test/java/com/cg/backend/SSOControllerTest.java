@@ -32,7 +32,7 @@ public class SSOControllerTest {
     PermissionService permissionService;
     // Test Delete User
     @Test
-    public void TestDeleteUser() {
+    public void testDeleteUser() {
         List<User> prevUsers = ssoController.getAllUser();
         int countDelete = 0;
         for (int i = 0;i < prevUsers.size();i++) {
@@ -47,7 +47,7 @@ public class SSOControllerTest {
 
     // Test Add User
     @Test
-    public void TestAddUser() {
+    public void testAddUser() {
         int userCount = ssoController.getAllUser().size();
         User user = new User();
         user.setUserName("TestUser");
@@ -67,7 +67,7 @@ public class SSOControllerTest {
 
 
     @Test
-    public void TestAdminLogin() {
+    public void testAdminLogin() {
         String email = "admin";
         String password = "admin";
         User user = new User();
@@ -80,7 +80,7 @@ public class SSOControllerTest {
         assertEquals(returnedUser.getRole(), PermissionService.ADMIN_ROLE);
     }
     @Test
-    public void TestSelectorLogin() {
+    public void testSelectorLogin() {
         String email = "zijianj";
         String password = "123456";
         User user = new User();
@@ -95,7 +95,7 @@ public class SSOControllerTest {
 
 
     @Test
-    public void TestAdminCheckPermission(){
+    public void testAdminCheckPermission(){
         String email = "admin";
         String password = "admin";
         User user = new User();
@@ -114,7 +114,7 @@ public class SSOControllerTest {
     }
 
     @Test
-    public void TestSelectorCheckPermission(){
+    public void testSelectorCheckPermission(){
         String email = "zijianj";
         String password = "123456";
         User user = new User();
@@ -136,7 +136,7 @@ public class SSOControllerTest {
         }
     }
     @Test
-    public void TestGuestCheckPermission() {
+    public void testGuestCheckPermission() {
         User user = new User();
         user.setRole("guest");
         List<APIPermission> allUrl = permissionMapper.selectAll();
