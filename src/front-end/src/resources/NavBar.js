@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import Login from './Login'
 import Cookies from 'universal-cookie'
+
 function NavBar() {
 
     const history = useHistory();
