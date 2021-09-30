@@ -59,7 +59,9 @@ function SelectorTable(props) {
 
     return (
         <div className={committeeStyles.body}>
-            <Button onClick={handleDialogClickOpen}>Add Selector</Button>
+            <div>
+                <Button style={{margin: '1%'}} variant="contained" onClick={handleDialogClickOpen}>Add Selector</Button>
+            </div>
             <Dialog className={committeeStyles.dialog} open={dialogOpen} onClose={handleDialogClickClose}>
                 <DialogTitle>Create a selector</DialogTitle>
                 <DialogContent style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
@@ -99,10 +101,10 @@ function SelectorTable(props) {
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Role</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Name</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Username</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Email</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Role</TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -147,8 +149,8 @@ function Row(props) {
             <TableCell>
                 {props.row.role}
             </TableCell>
-            <TableCell>
-                <Button onClick={() => deleteUser(props.row)}>Delete</Button>
+            <TableCell style={{display: 'flex', justifyContent: 'flex-end'}}>
+                <Button variant="outlined" onClick={() => deleteUser(props.row)}>Delete</Button>
             </TableCell>
         </TableRow>
     )

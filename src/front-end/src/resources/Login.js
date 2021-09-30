@@ -51,7 +51,7 @@ function Login() {
         cookies.remove("email", { path: '/' });
         cookies.remove("role", { path: '/' });
         setText("Hello! Please login")
-        history.go(0)
+        history.push("/home");
         return null
     }
 

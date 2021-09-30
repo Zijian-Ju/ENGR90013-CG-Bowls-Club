@@ -131,7 +131,7 @@ function Members() {
                                             displayEmpty
                                             onChange={(e) => {setSort(e.target.value)}}
                                         >
-                                            <MenuItem value={'name'}>Name</MenuItem>
+                                            
                                             <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
                                         </Select>
                                         </FormControl>
