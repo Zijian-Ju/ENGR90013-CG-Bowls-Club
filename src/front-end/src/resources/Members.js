@@ -4,7 +4,6 @@ import toolbarStyles from  './css/toolbar.module.css';
 import profilepic from  './img/profile.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import axios from 'axios';
 import { TextField } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -16,6 +15,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
 import Cookies from 'universal-cookie'
+import { API } from "./API";
 
 
 function Members() {
@@ -43,9 +43,9 @@ function Members() {
     }
 
     useEffect(() => {
-        
-        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, {searching: {availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: {direction: sortOrder, sortField: sort}, position: favPosition}}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        (async function () {
+            try {
+                const res = await API.getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sort, favPosition, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -56,7 +56,10 @@ function Members() {
                     setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder]);
 
     function handleFilterClickOpen() {

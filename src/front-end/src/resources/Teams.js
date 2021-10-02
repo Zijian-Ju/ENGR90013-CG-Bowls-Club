@@ -26,6 +26,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Cookies from 'universal-cookie'
+import { API } from "./API";
 
 
 function Player(props) {
@@ -40,8 +41,9 @@ function Player(props) {
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: props.player}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        (async function () {
+            try {
+                const res = API.getPlayerById(props.player, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -52,7 +54,10 @@ function Player(props) {
                     setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [props.player]);
 
     if (Object.keys(response).length === 0 || response.constructor !== Object) {
@@ -163,21 +168,23 @@ function Row(props) {
         return (null)
     }
 
-    function deleteTeam(id) {
-        axios.post(`http://128.199.253.108:8082/team/deleteTeam`, {id: id, teamName: props.row.teamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
-                if (res.status !== 200) {
-                    alert("Network error, please try again later")
-                }
-                if (res.status === 200 && res.data.statusCode !== 200) {
-                    alert(res.data.message)
-                }
-                if (res.status === 200 && res.data.statusCode === 200) {
-                    alert("Team deleted")
-                    history.push("/teams");
-                    props.parentRefresh()
-                }
-            })
+    async function deleteTeam(id) {
+        try {
+            const res = await API.deleteTeam(id, props.row.teamName, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Team deleted")
+                history.push("/teams");
+                props.parentRefresh()
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
      
     return (
@@ -234,20 +241,22 @@ function Teams() {
         setDialogOpen(false);
     }
 
-    function createTeam() {
-        axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
-                if (res.status !== 200) {
-                    alert("Network error, please try again later")
-                }
-                if (res.status === 200 && res.data.statusCode !== 200) {
-                    alert(res.data.message)
-                }
-                if (res.status === 200 && res.data.statusCode === 200) {
-                    alert("Team created")
-                }
-            })
-            .then(x => reRender())
+    async function createTeam() {
+        try {
+            const res = await API.createTeam(newTeamName, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Team created")
+            }
+            reRender()
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     function renderSearchBarContainer() {
@@ -310,19 +319,19 @@ function Teams() {
     }
 
     useEffect(() => {
-        axios.get(`http://128.199.253.108:8082/team/getAllTeam`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
-                if (res.status !== 200) {
-                    setStatus("Network error, please try again later")
-                }
-                if (res.status === 200 && res.data.statusCode !== 200) {
-                    setStatus(res.data.message)
-                }
-                if (res.status === 200 && res.data.statusCode === 200) {
-                    setStatus("...Loading")
-                    setResponse(res);
-                }
-            })
+        (async function () {
+            const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                setStatus("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                setStatus(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                setStatus("...Loading")
+                setResponse(res);
+            }
+        })();
     }, [random]);
 
 

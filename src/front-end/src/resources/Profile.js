@@ -29,7 +29,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
 import Cookies from 'universal-cookie'
-import { alertClasses } from '@material-ui/core';
+import { API } from "./API";
 
 function CustomTableRow(props) {
   const [season, setSeason] = useState(props.data.season);
@@ -53,39 +53,43 @@ function CustomTableRow(props) {
     setPerformance(props.data.performanceScore);
   }
 
-  function deletePerformance() {
-    axios.post(`http://128.199.253.108:8082/player/deleteMatchPerformanceById`, {competitionId: props.data.competitionId, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-      .then(res => {
-        if (res.status !== 200) {
-          alert("Network error, please try again later")
-        }
-        if (res.status === 200 && res.data.statusCode !== 200) {
-          alert(res.data.message)
-        }
-        if (res.status === 200 && res.data.statusCode === 200) {
-          alert("Success")
-          props.performanceUpdate()
-          props.performanceTableUpdate()
-          history.go(0)
-        }
-      })
+  async function deletePerformance() {
+    try {
+      const res = await API.deletePerformanceById(props.data.competitionId, props.data.id, date, performance, props.data.playerId, cookies.get("token"), cookies.get("email"))
+      if (res.status !== 200) {
+        alert("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        alert(res.data.message)
+      }
+      if (res.status === 200 && res.data.statusCode === 200) {
+        alert("Success")
+        props.performanceUpdate()
+        props.performanceTableUpdate()
+        history.go(0)
+      }
+    } catch (e) {
+      console.log(e)
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
   }
 
-  function updatePerformance() {
-    axios.post(`http://128.199.253.108:8082/player/updateMatchPerformance`, {competitionId: competitionId, competitionName: competitionName, id: props.data.id, matchTime: date, performanceScore: performance, playerId: props.data.playerId, position: position, season: season}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-      .then(res => {
-        if (res.status !== 200) {
-          alert("Network error, please try again later")
-        }
-        if (res.status === 200 && res.data.statusCode !== 200) {
-          alert(res.data.message)
-        }
-        if (res.status === 200 && res.data.statusCode === 200) {
-          alert("Success")
-          props.performanceUpdate()
-          history.go(0)
-        }
-      })
+  async function updatePerformance() {
+    try {
+      const res = await API.updatePerformance(competitionId, competitionName, props.data.id, date, performance, props.data.playerId, position, season, cookies.get("token"), cookies.get("email"))
+      if (res.status !== 200) {
+        alert("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        alert(res.data.message)
+      }
+      if (res.status === 200 && res.data.statusCode === 200) {
+        alert("Success")
+        props.performanceUpdate()
+        history.go(0)
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   if (deleted === true) {
@@ -138,18 +142,22 @@ function LineChartControl(props) {
   const cookies = new Cookies();
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-    .then((res) => {
-      if (res.status !== 200) {
-        setStatus("Network error, please try again later")
+    (async function () {
+      try {
+        const res = API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+        if (res.status !== 200) {
+          setStatus("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          setStatus(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
+          setResponse(res);
+        }
+      } catch (e) {
+        console.log(e)
       }
-      if (res.status === 200 && res.data.statusCode !== 200) {
-        setStatus(res.data.message)
-      }
-      if (res.status === 200 && res.data.statusCode === 200) {
-        setResponse(res);
-      }
-    })
+    })();
   }, [props.updateVar]);
 
   if (Object.keys(response).length === 0 || response.constructor !== Object) {
@@ -215,22 +223,26 @@ function LineChart(props) {
   const cookies = new Cookies();
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/player/getUserPerformancesByFilter`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {competitionId: props.compId, season: props.year, playerId: props.playerId}}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-    .then((res) => {
-      if (res.status !== 200) {
-        setStatus("Network error, please try again later")
+    (async function () {
+      try {
+        const res = await API.getFilteredUserPerformances(props.compId, props.year, props.playerId, cookies.get("token"), cookies.get("email"))
+        if (res.status !== 200) {
+          setStatus("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          setStatus(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
+          setLoaded(true)
+          const temp = res.data.data.performanceList.map((aPerformance) => {
+            return (aPerformance.performanceScore)
+          });
+          setYData(temp);
+        }
+      } catch (e) {
+        console.log(e)
       }
-      if (res.status === 200 && res.data.statusCode !== 200) {
-        setStatus(res.data.message)
-      }
-      if (res.status === 200 && res.data.statusCode === 200) {
-        setLoaded(true)
-        const temp = res.data.data.performanceList.map((aPerformance) => {
-          return (aPerformance.performanceScore)
-        });
-        setYData(temp);
-      }
-    })
+    })();
   },[props.playerId, props.year, props.compId, props.performanceVar]);
   
   const xData = Array.from(Array(10).keys())
@@ -280,10 +292,10 @@ function Details(props) {
     }
   }
 
-  function updatePlayer() {
-    const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, recentPerformance: response.data.data.recentPerformance}
-    axios.post(`http://128.199.253.108:8082/player/updatePlayer`, {...editableFields, ...additionalProps}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-    .then(res => {
+  async function updatePlayer() {
+    try {
+      const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, recentPerformance: response.data.data.recentPerformance}
+      const res = API.updatePlayer({...editableFields, ...additionalProps}, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -294,12 +306,14 @@ function Details(props) {
         alert("Saved")
       }
       setEditing(false);
-    })
+    } catch (e) {
+      console.log(e)
+    } 
   }
 
   useEffect(() => {
-    axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-    .then((res) => {
+    (async function () {
+      const res = API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         setStatus("Network error, please try again later")
       }
@@ -310,7 +324,7 @@ function Details(props) {
         setResponse(res)
         setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, playerPreferTeammates: res.data.data.playerPreferTeammates, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
       }
-    })
+    })();
   }, [playerId, random])
 
   if (objectNotEmpty(response)) {
@@ -554,21 +568,24 @@ function PerformanceControl(props) {
   }
 
   useEffect(() => {
-    const post1 = axios.post(`http://128.199.253.108:8082/player/getUserPerformances`, {paging: {currentPage: 0, pageSize: 0, total:0}, searching: {playerId: playerId}}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-    const post2 = axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}});
-    axios.all([post1, post2])
-    .then(axios.spread(function(res1, res2) {
-      if (res1.status !== 200 || res2.status !== 200) {
-        setStatus("Network error, please try again later")
+    (async function () {
+      try {
+        const res1 = await API.getAllPlayerPerformances(playerId, cookies.get("token"), cookies.get("email"))
+        const res2 = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+        if (res1.status !== 200 || res2.status !== 200) {
+          setStatus("Network error, please try again later")
+        }
+        if ((res1.status === 200 && res1.data.statusCode !== 200) || (res2.status === 200 && res2.data.statusCode !== 200)) {
+          setStatus(`Code 1: ${res1.data.message} Code 2: ${res2.data.message}`)
+        }
+        if (res1.status === 200 && res1.data.statusCode === 200 && res2.status === 200 && res2.data.statusCode === 200) {
+          setPerformanceResponse(res1)
+          setCompetitionResponse(res2)
+        }
+      } catch (e) {
+        console.log(e)
       }
-      if ((res1.status === 200 && res1.data.statusCode !== 200) || (res2.status === 200 && res2.data.statusCode !== 200)) {
-        setStatus(`Code 1: ${res1.data.message} Code 2: ${res2.data.message}`)
-      }
-      if (res1.status === 200 && res1.data.statusCode === 200 && res2.status === 200 && res2.data.statusCode === 200) {
-        setPerformanceResponse(res1)
-        setCompetitionResponse(res2)
-      }
-    }))
+    })();
   }, [playerId, random, props.updateVar])
 
   if (objectNotEmpty(performanceResponse)) {
@@ -603,10 +620,9 @@ function Profile() {
   const { id } = useParams();
   const cookies = new Cookies();
 
-
-  function deletePlayer() {
-    axios.post(`http://128.199.253.108:8082/player/deletePlayerById`, {id: id}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-    .then(res => {
+  async function deletePlayer() {
+    try {
+      const res = API.deletePlayerById(id, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -617,7 +633,9 @@ function Profile() {
         alert("Player deleted"); 
         history.push('/members');
       }
-    })
+    } catch (e) {
+      console.log(e)
+    }
   };
 
   function body() {

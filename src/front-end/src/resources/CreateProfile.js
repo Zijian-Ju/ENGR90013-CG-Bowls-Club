@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import NavBar from './NavBar';
 import Cookies from 'universal-cookie'
+import { API } from "./API";
 
 function CreateProfile() {
     const [playerName, setPlayerName] = useState("");
@@ -19,9 +20,9 @@ function CreateProfile() {
     const history = useHistory();
     const cookies = new Cookies();
 
-    function onSubmit() {
-      axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: "", playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM, recentPerformance: 0, id: 0}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-      .then(res => {
+    async function onSubmit() {
+      try {
+        const res = await API.createBowler("", playerAvailability, playerEmail, playerGender, playerName, playerNotPreferredTM, playerPhone, playerPreference, playerPreferredTM, cookies.get("token"), cookies.get("email"))
         if (res.status !== 200) {
           alert("Network error, please try again later")
         }
@@ -32,7 +33,9 @@ function CreateProfile() {
           alert("Player Created"); 
           history.push("/members");
         }
-      })
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     return (
