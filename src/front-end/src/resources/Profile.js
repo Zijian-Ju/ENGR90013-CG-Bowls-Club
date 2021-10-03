@@ -144,7 +144,7 @@ function LineChartControl(props) {
   useEffect(() => {
     (async function () {
       try {
-        const res = API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+        const res = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
         if (res.status !== 200) {
           setStatus("Network error, please try again later")
         }
@@ -295,7 +295,7 @@ function Details(props) {
   async function updatePlayer() {
     try {
       const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, recentPerformance: response.data.data.recentPerformance}
-      const res = API.updatePlayer({...editableFields, ...additionalProps}, cookies.get("token"), cookies.get("email"))
+      const res = await API.updatePlayer({...editableFields, ...additionalProps}, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -313,7 +313,7 @@ function Details(props) {
 
   useEffect(() => {
     (async function () {
-      const res = API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
+      const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         setStatus("Network error, please try again later")
       }
@@ -622,7 +622,7 @@ function Profile() {
 
   async function deletePlayer() {
     try {
-      const res = API.deletePlayerById(id, cookies.get("token"), cookies.get("email"))
+      const res = await API.deletePlayerById(id, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }

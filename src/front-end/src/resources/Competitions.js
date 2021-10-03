@@ -87,10 +87,10 @@ function RenderTeam(props) {
     }
 
     useEffect(() => {
-        setCompetitionName(props.comp.competitionName)
-        setCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionName(props.comp.competitionName)
+        setCompetitionName(props.comp.competitionName);
+        setCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionName(props.comp.competitionName);
         (async function() {
             try {
                 const res = await API.getTeamById(props.teamId, cookies.get("token"), cookies.get("email"))
@@ -282,10 +282,10 @@ function SelectTeam(props) {
     }
 
     useEffect(() => {
-        setCompetitionName(props.comp.competitionName)
-        setCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionName(props.comp.competitionName)
+        setCompetitionName(props.comp.competitionName);
+        setCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionName(props.comp.competitionName);
         (async function () {
             try {
                 const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
@@ -311,7 +311,7 @@ function SelectTeam(props) {
         )
     } else if (cookies.get('role') !== 'admin' && cookies.get('role') !== 'selector') {
         return (
-            <div>No team selected, please check back later</div>
+            <div>No team selected for this competition, please check back later</div>
         )
     } else {
         return (
@@ -355,7 +355,7 @@ function SelectTeam(props) {
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
                         <div style={{width: '100%', textAlign: 'center'}}>
-                            Selecting a team for competition ${props.comp.competitionName} which has id:${props.comp.id}:
+                            Selecting for {props.comp.competitionName} (id:{props.comp.id})
                         </div>
                         <div style={{width: '100%'}}>
                             <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
