@@ -30,6 +30,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Collapse from '@material-ui/core/Collapse';
 import Box from '@material-ui/core/Box';
 import Cookies from 'universal-cookie'
+import { API } from "./API";
 
 function isObjectEmpty(input) {
     var out = true;
@@ -48,9 +49,9 @@ function RenderTeam(props) {
     const [status, setStatus] = useState("")
     const cookies = new Cookies();
 
-    function deleteCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-        .then(res => {
+    async function deleteCompetition() {
+        try {
+            const res = await API.deleteCompetition(props.comp.id, cookies.get("token"), cookies.get("email"))
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -62,12 +63,14 @@ function RenderTeam(props) {
                 props.parentRefresh();
                 props.resetSelectedComp({})
             }
-        })
+        } catch (e) {
+            console.log(e);
+        }
     }
 
-    function unassociateTeam() {
-        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: 0, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-        .then(res => {
+    async function unassociateTeam() {
+        try {
+            const res = await API.unassociateTeamFromCompetition(props.comp.id, props.comp.competitionDays, props.comp.competitionName, cookies.get("token"), cookies.get("email"))
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -76,18 +79,21 @@ function RenderTeam(props) {
             }
             if (res.status === 200 && res.data.statusCode === 200) {
                 alert("Success")
-            props.parentRefresh();
+                props.parentRefresh();
             }
-        })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     useEffect(() => {
-        setCompetitionName(props.comp.competitionName)
-        setCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionName(props.comp.competitionName)
-        axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: props.teamId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        setCompetitionName(props.comp.competitionName);
+        setCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionName(props.comp.competitionName);
+        (async function() {
+            try {
+                const res = await API.getTeamById(props.teamId, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -98,7 +104,10 @@ function RenderTeam(props) {
                     setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();  
     }, [props.comp, props.teamId]);
 
     function renderPlayerDetailed(player) {
@@ -120,13 +129,13 @@ function RenderTeam(props) {
        )
     }
 
-    function changeCompetition() {
+    async function changeCompetition() {
         if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
             alert("No changes detected")
             return null
         } else {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+            try {
+                const res = await API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     alert("Network error, please try again later")
                 }
@@ -139,7 +148,9 @@ function RenderTeam(props) {
                     setCompetitionDays(newCompetitionDays)
                     props.parentRefresh()
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 
@@ -226,13 +237,13 @@ function SelectTeam(props) {
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
     const cookies = new Cookies();
 
-    function changeCompetition() {
+    async function changeCompetition() {
         if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
             alert("No changes detected")
             return null
         } else {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: newCompetitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+            try {
+                const res = API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     alert("Network error, please try again later")
                 }
@@ -245,13 +256,15 @@ function SelectTeam(props) {
                     setCompetitionDays(newCompetitionDays)
                     props.parentRefresh()
                 }
-            })  
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 
-    function deleteCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-        .then(res => {
+    async function deleteCompetition() {
+        try {
+            const res = await API.deleteCompetition(props.comp.id, cookies.get("token"), cookies.get("email"))
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -263,16 +276,19 @@ function SelectTeam(props) {
                 props.parentRefresh()
                 props.resetSelectedComp({})
             }
-        })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     useEffect(() => {
-        setCompetitionName(props.comp.competitionName)
-        setCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionName(props.comp.competitionName)
-        axios.get(`http://128.199.253.108:8082/team/getAllTeam`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        setCompetitionName(props.comp.competitionName);
+        setCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionName(props.comp.competitionName);
+        (async function () {
+            try {
+                const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -283,7 +299,10 @@ function SelectTeam(props) {
                     setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [props.comp]);
 
     if (Object.keys(response).length === 0 || response.constructor !== Object) {
@@ -292,7 +311,7 @@ function SelectTeam(props) {
         )
     } else if (cookies.get('role') !== 'admin' && cookies.get('role') !== 'selector') {
         return (
-            <div>No team selected, please check back later</div>
+            <div>No team selected for this competition, please check back later</div>
         )
     } else {
         return (
@@ -336,7 +355,7 @@ function SelectTeam(props) {
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
                         <div style={{width: '100%', textAlign: 'center'}}>
-                            Selecting a team for competition ${props.comp.competitionName} which has id:${props.comp.id}:
+                            Selecting for {props.comp.competitionName} (id:{props.comp.id})
                         </div>
                         <div style={{width: '100%'}}>
                             <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
@@ -495,8 +514,9 @@ function Player(props) {
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        (async function () {
+            try {
+                const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -508,7 +528,10 @@ function Player(props) {
                     setResponse(res);
                 }
                 setLoaded(true)
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [playerId]);
 
     if (loaded && !isObjectEmpty(response) && response.data.data !== null) {
@@ -581,8 +604,9 @@ function Competitions() {
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        (async function () {
+            try {
+                const res = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -593,7 +617,10 @@ function Competitions() {
                     setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [random]);
 
     function renderCompetitionList() {
@@ -622,21 +649,23 @@ function Competitions() {
         return x;
     }
 
-    function createNewCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/addCompetition`, {competitionDay: [newCompDay], competitionDays: [newCompDay], competitionName: newCompName, teamId: 0}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
-                if (res.status !== 200) {
-                    alert("Network error, please try again later")
-                }
-                if (res.status === 200 && res.data.statusCode !== 200) {
-                    alert(res.data.message)
-                }
-                if (res.status === 200 && res.data.statusCode === 200) {
-                    alert("Success")
-                    reRender()
-                    setSelectedComp({})
-                }
-            })
+    async function createNewCompetition() {
+        try {
+            const res = await API.createNewCompetition([newCompDay], [newCompDay], newCompName,cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                reRender()
+                setSelectedComp({})
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     function toolbar() {
