@@ -124,7 +124,12 @@ export const API = {
     },
 
     async uploadImage(formData) {
-        const response = axios.post("http://128.199.253.108:9092/upload", formData)
+        const response = await axios.post("http://128.199.253.108:9092/upload", formData)
         return response;
+    },
+
+    async getTeamMembersPhotoURL(team, accessToken, accessEmail) {
+        const response = await axios.post("http://128.199.253.108:8082/team/getTeamPlayerPhotos", team, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
+        return response
     }
 }

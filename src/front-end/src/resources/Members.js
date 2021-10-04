@@ -207,9 +207,10 @@ function Members() {
                                             value={availability}
                                             onChange={(e) => {setAvailability(e.target.value)}}
                                         >
-                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                                <MenuItem key={day} value={day}>{day}</MenuItem>
-                                            ))}
+                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
+                                                return (<MenuItem key={`${index}${day}`} value={day}>{day}</MenuItem>)
+                                            }
+                                            )}
                                         </Select>
                                         </FormControl>
                                     </DialogContent>
@@ -224,9 +225,9 @@ function Members() {
                                             value={favPosition}
                                             onChange={(e) => {setFavPosition(e.target.value)}}
                                         >
-                                            {["Skip","Second","Third","Lead"].map((position) => (
-                                                <MenuItem key={position} value={position}>{position}</MenuItem>
-                                            ))}
+                                            {["Skip","Second","Third","Lead"].map(function(position, index) {
+                                                return(<MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>)
+                                            })}
                                         </Select>
                                         </FormControl>
                                     </DialogContent>

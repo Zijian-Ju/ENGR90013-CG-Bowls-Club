@@ -27,6 +27,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Cookies from 'universal-cookie'
 import { API } from "./API";
+import { __RouterContext } from 'react-router';
 
 
 function Player(props) {
@@ -94,15 +95,34 @@ function Player(props) {
 
 function Row(props) {
     const [open, setOpen] = useState(false);
+    const [response, setResponse] = useState({})
     const playerIds = calculatePlayerIds(props);
     const history = useHistory();
     const cookies = new Cookies();
+
+    useEffect(() => {
+        (async function () {
+            try {
+                const res = await API.getTeamMembersPhotoURL(props.row, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert('Network error')
+                } else if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                    console.log(res)
+                } else {
+                    alert('Server error')
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
+    }, [])
 
     function calculatePlayerIds(team) {
         var count = [];
         Object.entries(team.row).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                count.push([key, key.replace("Id", "Name")])
+                count.push([key, key.replace("Id", "Name"), value])
             }
             return null;
         })
@@ -110,13 +130,21 @@ function Row(props) {
     }
 
     function renderPlayerIcons(team) {
+        if (Object.entries(response).length === 0 || response.constructor !== Object) {
+            return null;
+        }
+        console.log(playerIds)
         return (
             <div className={teamsStyles.collapsedPlayerIconRow}>
-                {playerIds.map(function([playerId, playerName], index) {
+                {playerIds.map(function([positionName, playerName, playerId], index) {
                     return (
-                        <Tooltip key={`playerIcons${playerId}${index}`} id={playerId} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
-                            <img style={{objectFit: 'contain', maxHeight: '50px'}} src={profilepic} alt="Logo" />
-                        </Tooltip>
+                        <div key={`playerIcons${positionName}${index}`} className={teamsStyles.collapsedPlayerIcon}>
+                            <Tooltip placement="top" title={team[playerName]}>
+                                <div>
+                                    <Image url={response.data.data[playerId]}/>
+                                </div>
+                            </Tooltip>
+                        </div>
                     )
                 })}
             </div>
@@ -193,14 +221,14 @@ function Row(props) {
                     <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
-                </TableCell>
+                </TableCell >
                 <TableCell component="th" scope="row">
                     {props.row.teamName}
                 </TableCell>
-                <TableCell>
+                <TableCell >
                     {playerIds.length}/16
                 </TableCell>
-                <TableCell style={{Width: '50%'}}>
+                <TableCell>
                     {renderPlayerIcons(props.row)}
                 </TableCell>
                 <TableCell>

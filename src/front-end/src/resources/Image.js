@@ -2,13 +2,15 @@ import profilepic from  './img/profile.png';
 
 function Image(props) {
 
-    if (props.url === null) {
+    console.log(props.url)
+
+    if (props.url === null || props.url === "") {
         return (
-            <img style={{margin: '2.5%', objectFit: 'contain', maxHeight: '90%', maxWidth: '90%'}} src={profilepic} alt="Logo" />
+            <img style={{display:'inline-block',  objectFit: 'contain', width: '100%', height: '100%'}} src={profilepic} alt="Defaultogo" />
         )
     } else {
         return (
-            <img style={{margin: '2.5%', objectFit: 'contain', maxHeight: '90%', maxWidth: '90%'}} src={props.url} alt="Logo" />
+            <img style={{display:'inline-block', objectFit: 'contain', width: '100%', height: '100%'}} src={props.url} alt="urlLogo" />
         )
     }
 }

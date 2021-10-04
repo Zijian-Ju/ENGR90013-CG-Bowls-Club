@@ -31,8 +31,9 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    height: 20%;
+    height: 19%;
     width: 100%;
+    margin-top: 1%;
 }
 
 .playerDetailsUpdateImage {
