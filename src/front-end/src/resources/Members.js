@@ -16,6 +16,7 @@ import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
 import Cookies from 'universal-cookie'
 import { API } from "./API";
+import Image from './Image'
 
 
 function Members() {
@@ -80,7 +81,7 @@ function Members() {
                             <div key={`userarray${user}${index}`} id={user.playerName} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                                 <div className={bodyStyles.userCardImageContainer}>
                                     <div className={bodyStyles.userCardImage}>
-                                        <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                                        <Image url={user.photoUrl}/>
                                     </div>
                                     <div className={bodyStyles.userName}>
                                         {user.playerName}

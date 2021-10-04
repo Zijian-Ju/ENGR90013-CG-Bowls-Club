@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import Image from './Image'
 import NavBar from './NavBar';
 import teamsStyles from './css/teams.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
@@ -35,7 +35,6 @@ function Player(props) {
     const [status, setStatus] = useState("");
     const cookies = new Cookies();
 
-   
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
     }
@@ -43,7 +42,7 @@ function Player(props) {
     useEffect(() => {
         (async function () {
             try {
-                const res = API.getPlayerById(props.player, cookies.get("token"), cookies.get("email"))
+                const res = await API.getPlayerById(props.player, cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -220,7 +219,6 @@ function Row(props) {
             </TableRow>
         </>
     )
-
 }
 
 function Teams() {

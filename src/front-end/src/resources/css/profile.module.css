@@ -31,7 +31,23 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    height: 20%
+    height: 20%;
+    width: 100%;
+}
+
+.playerDetailsUpdateImage {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 2.5%;
+    height: 10%;
+}
+
+.playerDetailsUpdateImageButton {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 .playerDetailsName {
@@ -49,7 +65,7 @@
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 70%;
+    height: 60%;
 }
 
 .performanceColumn{
