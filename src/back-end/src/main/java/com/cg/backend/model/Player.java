@@ -52,6 +52,8 @@ public class Player {
     @Column(name = "recent_performance")
     private Double recentPerformance;
 
+    private String notes;
+
     /**
      * @return id
      */
@@ -224,5 +226,19 @@ public class Player {
      */
     public void setRecentPerformance(Double recentPerformance) {
         this.recentPerformance = recentPerformance;
+    }
+
+    /**
+     * @return notes
+     */
+    public String getNotes() {
+        return notes;
+    }
+
+    /**
+     * @param notes
+     */
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
