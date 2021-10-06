@@ -6,6 +6,7 @@ import Menu from '@material-ui/core/Menu';
 import axios from 'axios';
 import Cookies from 'universal-cookie'
 import { useHistory } from "react-router-dom";
+import { API } from "./API";
 
 function Login() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -14,25 +15,31 @@ function Login() {
     const [text, setText] = useState("Hello! Please login");
     const cookies = new Cookies();
     const history = useHistory();
+
+    
     
     useEffect(() => {
-        if (cookies.get("token") !== undefined && cookies.get("email") !== undefined) {
-            axios.get(`http://128.199.253.108:8082/sso/getUserPermession`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-                .then(res => {
+        (async function() {
+            try {
+                if (cookies.get("token") !== undefined && cookies.get("email") !== undefined) {
+                    const res = await API.getPermissions(cookies.get("token"), cookies.get("email"));
                     if (res.data.data.role === "guest") {
                         cookies.remove("token", { path: '/' });
                         cookies.remove("email", { path: '/' });
                         cookies.remove("role", { path: '/' });
                     }
-                })
-        }
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [cookies.get("token"), cookies.get("email")]);
 
-    function login() {
-        axios.post(`http://128.199.253.108:8082/sso/login`, {email: email, id: 0, password: password, realName: "string", role: "string", token: "string", tokenCreateDate: "2021-09-08T12:07:26.992Z", userName: "string"})
-        .then(res => {
+    async function login() {
+        try {
+            const res = await API.login(email, 0, password, "string", "string", "string", "2021-09-08T12:07:26.992Z", "string");
             if (res.status !== 200) {
-                alert("Network error");
+                        alert("Network error");
             }
             if (res.status === 200 && res.data.statusCode == 20006) {
                 setText("Wrong login")
@@ -43,7 +50,9 @@ function Login() {
                 setText("Success!")
                 history.go(0)
             }
-        })
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     function logout() {
@@ -51,7 +60,7 @@ function Login() {
         cookies.remove("email", { path: '/' });
         cookies.remove("role", { path: '/' });
         setText("Hello! Please login")
-        history.go(0)
+        history.push("/home");
         return null
     }
 

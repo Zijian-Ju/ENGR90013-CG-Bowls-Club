@@ -20,7 +20,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { Select, TextField } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
-
+import { API } from "./API";
 
 function SelectorTable(props) {
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -41,25 +41,25 @@ function SelectorTable(props) {
         setDialogOpen(false);
     }
 
-    function createSelector() {
-        axios.post(`http://128.199.253.108:8082/sso/addUser`, {email: email, id: 0, password: password, realName: name, role: role, token: "", tokenCreateDate: "2021-09-12T13:09:05.760Z", userName: username}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-        .then(res => {
-            if (res.status !== 200) {
-                alert("Network error, please try again later")
-            }
-            if (res.status === 200 && res.data.statusCode !== 200) {
-                alert(res.data.message)
-            }
-            if (res.status === 200 && res.data.statusCode === 200) {
-                alert("Success")
-                history.go(0)
-            }
-        })
+    async function createSelector() {
+        const res = await API.createSelector(email, 0, password, name, role, "", "2021-09-12T13:09:05.760Z", username, cookies.get("token"), cookies.get("email"))
+        if (res.status !== 200) {
+            alert("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+            alert(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
+            alert("Success")
+            history.go(0)
+        }
     }
 
     return (
         <div className={committeeStyles.body}>
-            <Button onClick={handleDialogClickOpen}>Add Selector</Button>
+            <div>
+                <Button style={{margin: '1%'}} variant="contained" onClick={handleDialogClickOpen}>Add Selector</Button>
+            </div>
             <Dialog className={committeeStyles.dialog} open={dialogOpen} onClose={handleDialogClickClose}>
                 <DialogTitle>Create a selector</DialogTitle>
                 <DialogContent style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
@@ -99,10 +99,10 @@ function SelectorTable(props) {
                 <Table aria-label="collapsible table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Username</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Role</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Name</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Username</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Email</TableCell>
+                            <TableCell style={{fontWeight: 'bold'}}>Role</TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -123,14 +123,14 @@ function Row(props) {
     const cookies = new Cookies();
     const history = useHistory();
 
-    function deleteUser(row) {
-        axios.post(`http://128.199.253.108:8082/sso/deleteUser`, row, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-        .then(res => {
-            if (res.status === 200) {
-                alert("Success")
-                history.go(0)
-            }
-        })
+    async function deleteUser(row) {
+        const res = await API.deleteSelector(row, cookies.get("token"), cookies.get("email"))
+        if (res.status === 200) {
+            alert("Success")
+            history.go(0)
+        } else {
+            alert("Error, please try again later")
+        }
     }
 
     return (
@@ -147,8 +147,8 @@ function Row(props) {
             <TableCell>
                 {props.row.role}
             </TableCell>
-            <TableCell>
-                <Button onClick={() => deleteUser(props.row)}>Delete</Button>
+            <TableCell style={{display: 'flex', justifyContent: 'flex-end'}}>
+                <Button variant="outlined" onClick={() => deleteUser(props.row)}>Delete</Button>
             </TableCell>
         </TableRow>
     )
@@ -160,8 +160,9 @@ function Committee() {
     const [status, setStatus] = useState("");
 
     useEffect(() => {
-        axios.get(`http://128.199.253.108:8082/sso/getAllUser`, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
+        (async function() {
+            try {
+                const res = await API.getAllUser(cookies.get("token"), cookies.get("email"))
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -172,7 +173,10 @@ function Committee() {
                     setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [cookies.get("token"), cookies.get("email")]);
 
     return (
