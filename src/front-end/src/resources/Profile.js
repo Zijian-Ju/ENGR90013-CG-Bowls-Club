@@ -295,7 +295,7 @@ function Details(props) {
 
   async function updatePlayer() {
     try {
-      const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, recentPerformance: response.data.data.recentPerformance}
+      const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, playerPreferTeammates: response.data.data.playerPreferTeammates, recentPerformance: response.data.data.recentPerformance}
       const res = await API.updatePlayer({...editableFields, ...additionalProps}, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
@@ -371,7 +371,7 @@ function Details(props) {
       if (res.status === 200 && res.data.statusCode === 200) {
         setResponse(res)
         console.log(res)
-        setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, playerPreferTeammates: res.data.data.playerPreferTeammates, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
+        setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, notes: res.data.data.notes, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
       }
     })();
   }, [playerId, random])
@@ -429,19 +429,6 @@ function Details(props) {
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
-            id="Preferred Teammates"
-            label="Preferred Teammates"
-            variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, playerPreferTeammates: e.target.value}))}}
-            disabled={!editing}
-            size="small"
-            value={editableFields.playerPreferTeammates}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <TextField
-            style={{margin: '3%', width: '94%'}}
             id="Not Preferred Teammates"
             label="Not Preferred Teammates"
             variant="outlined"
@@ -449,6 +436,19 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerNotPreferTeammates}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            style={{margin: '3%', width: '94%'}}
+            id="Notes"
+            label="Notes"
+            variant="outlined"
+            onChange={(e) => {setEditableFields(prevState => ({...editableFields, notes: e.target.value}))}}
+            disabled={!editing}
+            size="small"
+            value={editableFields.notes}
             InputLabelProps={{
               shrink: true,
             }}

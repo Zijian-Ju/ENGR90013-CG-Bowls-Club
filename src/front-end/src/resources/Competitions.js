@@ -1,6 +1,7 @@
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import toolbarStyles from  './css/toolbar.module.css';
+import bodyStyles from './css/body.module.css';
 import teamsStyles from './css/teams.module.css';
 import competitionStyles from './css/competitions.module.css'
 import NavBar from './NavBar';
@@ -31,6 +32,7 @@ import Collapse from '@material-ui/core/Collapse';
 import Box from '@material-ui/core/Box';
 import Cookies from 'universal-cookie'
 import { API } from "./API";
+import Image from './Image'
 
 function isObjectEmpty(input) {
     var out = true;
@@ -39,6 +41,65 @@ function isObjectEmpty(input) {
     }
     return out;
 };
+
+function PlayerCard(props) {
+    const [response, setResponse] = useState({})
+    const [loaded, setLoaded] = useState(false)
+    const cookies = new Cookies();
+    const history = useHistory();
+
+    useEffect(() => {
+        (async function () {
+            const res = await API.getPlayerById(props.playerId, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error")
+            } else if (res.status === 200 && res.data.statusCode === 200) {
+                setResponse(res)
+                setLoaded(true);
+            } else {
+                console.log("Server error")
+            }
+        })();
+    }, []);
+
+    if (props.playerId === 0) {
+        return (
+            <div style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
+                Position Open
+            </div>
+        )
+    }
+
+    if (!loaded) {
+        return (
+            null
+        )
+    }
+
+    function handleUserProfileClick(id) {
+        if (cookies.get('role') === 'selector' || cookies.get('role') === 'admin') {
+            history.push("/members/" + id);
+        };
+    }
+    
+    return (
+        <div onClick={() => handleUserProfileClick(props.playerId)} style={{width: '100%', height: '110px'}} className={bodyStyles.userCard}>
+            <div className={bodyStyles.userCardImageContainer}>
+                <div className={bodyStyles.userCardImage}>
+                    <Image url={response.data.data.photoUrl}/>
+                </div>
+                <div className={bodyStyles.userName}>
+                    {response.data.data.playerName}
+                </div>
+            </div>
+            <div className={bodyStyles.userCardDescriptionContainer}>
+                <div className={bodyStyles.userCardDescriptionItem}>Performance: {response.data.data.recentPerformance}</div>
+                <div className={bodyStyles.userCardDescriptionItem}>Availability: {response.data.data.playerAvailability}</div>
+                <div className={bodyStyles.userCardDescriptionItem}>Favourite Position: {response.data.data.playerPosPreference}</div>
+            </div>
+        </div>
+    )
+}
 
 function RenderTeam(props) {
     const [response, setResponse] = useState({})
@@ -111,21 +172,106 @@ function RenderTeam(props) {
     }, [props.comp, props.teamId]);
 
     function renderPlayerDetailed(player) {
-        var x = []
-        Object.entries(player).map(([key, value]) => { 
-            if (key.includes("BowlerId") && value > 0) {
-                x.push(value)
-            }
-            return null
-        })
+  
+        if (isObjectEmpty(player)) {
+            return (
+                null
+            )
+        }
+
         return (
-            <>
-                {x.map(function(playerId, index) {
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column'}}>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row', marginTop: '10px'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Lead
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Second
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Skip
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Third
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 1
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.leadBowlerId1}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.secondBowlerId1}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.skipBowlerId1}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.thirdBowlerId1}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 2
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.leadBowlerId2}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.secondBowlerId2}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.skipBowlerId2}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.thirdBowlerId2}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 3
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.leadBowlerId3}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.secondBowlerId3}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.skipBowlerId3}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.thirdBowlerId3}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 4
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.leadBowlerId4}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.secondBowlerId4}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.skipBowlerId4}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard playerId={player.thirdBowlerId4}/> 
+                    </div>
+                </div>
+                {/* {x.map(function(playerId, index) {
                     return (
                         <Player key={`renderPlayer${playerId}${index}`} id={playerId} player={playerId}></Player>
                     )
-                })}
-            </>
+                })} */}
+            </div>
        )
     }
 
@@ -208,20 +354,8 @@ function RenderTeam(props) {
                         </div>
                     </div>
                 </div>
-                <div style={{width: '100%'}}>
-                    <Table style={{width: '100%'}} size="small">
-                        <TableHead style={{width: '100%'}}>
-                            <TableCell>Player Name</TableCell>
-                            <TableCell>Performance</TableCell>
-                            <TableCell>Availability</TableCell>
-                            <TableCell>Fav. Position</TableCell>
-                            <TableCell>Pref. Teammates</TableCell>
-                            <TableCell/>
-                        </TableHead>
-                        <TableBody style={{width: '100%'}}>
-                            {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
-                        </TableBody>
-                    </Table>
+                <div style={{width: '100%', height: '100%'}}>
+                    {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
                 </div> 
             </div>
         )

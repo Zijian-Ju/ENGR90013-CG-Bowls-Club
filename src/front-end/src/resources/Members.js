@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import bodyStyles from './css/body.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
-import profilepic from  './img/profile.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import { TextField } from '@material-ui/core';
@@ -91,7 +90,6 @@ function Members() {
                                     <div className={bodyStyles.userCardDescriptionItem}>Performance: {user.recentPerformance}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Favourite Position: {user.playerPosPreference}</div>
-                                    <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPreferTeammates}</div>
                                 </div>
                             </div>
                         )
