@@ -323,6 +323,7 @@ function Details(props) {
       } else if (res1.status === 200 && res1.data.code === 200) {
         const res2 = await API.updatePlayer({...response.data.data, 'photoUrl': res1.data.img}, cookies.get("token"), cookies.get("email"))
         alert('Image successfully updated')
+        setSelectedFile();
         reRender();
       } else {
         alert("Server error")
@@ -333,7 +334,12 @@ function Details(props) {
   }
 
   const onFileChange = (event) => {
-    setSelectedFile(event.target.files[0])
+    const validTypes = ["image/jpg", "image/jpeg", "image/png"]
+    if (validTypes.includes(event.target.files[0].type)) {
+      setSelectedFile(event.target.files[0])
+    } else {
+      alert("Invalid file type uploaded")
+    }
   }
 
   function imageUpload() {
@@ -370,7 +376,6 @@ function Details(props) {
       }
       if (res.status === 200 && res.data.statusCode === 200) {
         setResponse(res)
-        console.log(res)
         setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, notes: res.data.data.notes, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
       }
     })();
