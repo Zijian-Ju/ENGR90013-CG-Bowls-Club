@@ -38,6 +38,7 @@ function getDate(playerList, detail) {
 
 const HomeTitle = () => {
   const history = useHistory();
+  const cookies = new Cookies();
   function membersHandleClick() {
     history.push("/members");
   };
@@ -63,20 +64,20 @@ const HomeTitle = () => {
 
   return (
     <>
-      <div className={styles.body}>
-        <div className={styles.logotext} >
-          <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
+    <div className={styles.body}>
+            <div className={styles.logotext} >
+                <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
+            </div>
+            <div className={styles.linktabs}>
+                <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
+                {(cookies.get('role') === 'selector' || cookies.get('role') === 'admin') && <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>}
+                {(cookies.get('role') === 'selector' || cookies.get('role') === 'admin') && <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>}
+                {cookies.get('role') === 'admin' && <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>}
+            </div>
+            <div className={styles.logout}>
+                <Login/>
+            </div>
         </div>
-        <div className={styles.linktabs}>
-          <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-          <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-          <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-          <Button className={styles.linkbuttons} onClick={committeeHandleClick}>SELECTION COMMITTEE</Button>
-        </div>
-        <div className={styles.logout}>
-          <Login />
-        </div>
-      </div>
     </>
   )
 }
@@ -460,5 +461,6 @@ const EditTeam = () => {
       </div>
 
     </>)
+    
 }
 export default EditTeam
