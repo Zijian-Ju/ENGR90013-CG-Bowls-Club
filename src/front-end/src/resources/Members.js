@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import bodyStyles from './css/body.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
-import profilepic from  './img/profile.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import { TextField } from '@material-ui/core';
@@ -16,6 +15,7 @@ import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
 import Cookies from 'universal-cookie'
 import { API } from "./API";
+import Image from './Image'
 
 
 function Members() {
@@ -80,7 +80,7 @@ function Members() {
                             <div key={`userarray${user}${index}`} id={user.playerName} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                                 <div className={bodyStyles.userCardImageContainer}>
                                     <div className={bodyStyles.userCardImage}>
-                                        <img style={{width: '100%', objectFit: 'contain'}} src={profilepic} alt="Logo" />
+                                        <Image url={user.photoUrl}/>
                                     </div>
                                     <div className={bodyStyles.userName}>
                                         {user.playerName}
@@ -90,7 +90,6 @@ function Members() {
                                     <div className={bodyStyles.userCardDescriptionItem}>Performance: {user.recentPerformance}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Availability: {user.playerAvailability}</div>
                                     <div className={bodyStyles.userCardDescriptionItem}>Favourite Position: {user.playerPosPreference}</div>
-                                    <div className={bodyStyles.userCardDescriptionItem}>Preference: {user.playerPreferTeammates}</div>
                                 </div>
                             </div>
                         )
@@ -206,9 +205,10 @@ function Members() {
                                             value={availability}
                                             onChange={(e) => {setAvailability(e.target.value)}}
                                         >
-                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                                <MenuItem key={day} value={day}>{day}</MenuItem>
-                                            ))}
+                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
+                                                return (<MenuItem key={`${index}${day}`} value={day}>{day}</MenuItem>)
+                                            }
+                                            )}
                                         </Select>
                                         </FormControl>
                                     </DialogContent>
@@ -223,9 +223,9 @@ function Members() {
                                             value={favPosition}
                                             onChange={(e) => {setFavPosition(e.target.value)}}
                                         >
-                                            {["Skip","Second","Third","Lead"].map((position) => (
-                                                <MenuItem key={position} value={position}>{position}</MenuItem>
-                                            ))}
+                                            {["Skip","Second","Third","Lead"].map(function(position, index) {
+                                                return(<MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>)
+                                            })}
                                         </Select>
                                         </FormControl>
                                     </DialogContent>

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import profileStyles from './css/profile.module.css';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import profilepic from  './img/profile.png';
+import Image from './Image'
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import NativeSelect from '@material-ui/core/NativeSelect';
@@ -283,6 +283,7 @@ function Details(props) {
   const [random, setRandom] = useState(Math.random());
   const reRender = () => {setRandom(Math.random())};
   const cookies = new Cookies();
+  const [selectedFile, setSelectedFile] = useState();
 
   function objectNotEmpty(obj) {
     if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
@@ -294,7 +295,7 @@ function Details(props) {
 
   async function updatePlayer() {
     try {
-      const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, recentPerformance: response.data.data.recentPerformance}
+      const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, playerPreferTeammates: response.data.data.playerPreferTeammates, recentPerformance: response.data.data.recentPerformance}
       const res = await API.updatePlayer({...editableFields, ...additionalProps}, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
@@ -311,6 +312,53 @@ function Details(props) {
     } 
   }
 
+  const uploadSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile, selectedFile.name);
+      
+      const res1 = await API.uploadImage(formData);
+      if (res1.status !== 200) {
+        alert("Network error, please try again later")
+      } else if (res1.status === 200 && res1.data.code === 200) {
+        const res2 = await API.updatePlayer({...response.data.data, 'photoUrl': res1.data.img}, cookies.get("token"), cookies.get("email"))
+        alert('Image successfully updated')
+        reRender();
+      } else {
+        alert("Server error")
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const onFileChange = (event) => {
+    setSelectedFile(event.target.files[0])
+  }
+
+  function imageUpload() {
+    return (
+      <div className={profileStyles.playerDetailsUpdateImageButton}>
+        <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
+          <Button>
+            <label for="fileUpload">Upload Image</label>
+          </Button>
+          <input
+            id="fileUpload"
+            type="file"
+            name="file"
+            onChange={onFileChange}
+            style={{display: 'none'}}
+          />        
+          <Button disabled={selectedFile === undefined} onClick={uploadSubmit}>Save image</Button> 
+        </div>
+        <div style={{display: 'flex', flexDirection: 'row', width: '100%', overflow: 'hidden'}}>
+          {selectedFile !== undefined && <div>File:{selectedFile.name}</div>}
+        </div>
+      </div>
+    )
+  }
+
   useEffect(() => {
     (async function () {
       const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
@@ -322,7 +370,8 @@ function Details(props) {
       }
       if (res.status === 200 && res.data.statusCode === 200) {
         setResponse(res)
-        setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, playerPreferTeammates: res.data.data.playerPreferTeammates, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
+        console.log(res)
+        setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, notes: res.data.data.notes, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
       }
     })();
   }, [playerId, random])
@@ -331,7 +380,10 @@ function Details(props) {
     return (
       <div style={{height: '100%', width: '100%'}}>
         <div className={profileStyles.playerDetailsImage}>
-          <img style={{margin: '2.5%', objectFit: 'contain', height: '90%'}} src={profilepic} alt="Logo" />
+          <Image url={response.data.data.photoUrl}/>
+        </div>
+        <div className={profileStyles.playerDetailsUpdateImage}>
+          {imageUpload()}
         </div>
         <div className={profileStyles.playerDetailsName}>
           {response.data.data.playerName}
@@ -377,19 +429,6 @@ function Details(props) {
           />
           <TextField
             style={{margin: '3%', width: '94%'}}
-            id="Preferred Teammates"
-            label="Preferred Teammates"
-            variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, playerPreferTeammates: e.target.value}))}}
-            disabled={!editing}
-            size="small"
-            value={editableFields.playerPreferTeammates}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <TextField
-            style={{margin: '3%', width: '94%'}}
             id="Not Preferred Teammates"
             label="Not Preferred Teammates"
             variant="outlined"
@@ -397,6 +436,19 @@ function Details(props) {
             disabled={!editing}
             size="small"
             value={editableFields.playerNotPreferTeammates}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            style={{margin: '3%', width: '94%'}}
+            id="Notes"
+            label="Notes"
+            variant="outlined"
+            onChange={(e) => {setEditableFields(prevState => ({...editableFields, notes: e.target.value}))}}
+            disabled={!editing}
+            size="small"
+            value={editableFields.notes}
             InputLabelProps={{
               shrink: true,
             }}
