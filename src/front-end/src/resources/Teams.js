@@ -108,7 +108,6 @@ function Row(props) {
                     alert('Network error')
                 } else if (res.status === 200 && res.data.statusCode === 200) {
                     setResponse(res)
-                    console.log(res)
                 } else {
                     alert('Server error')
                 }
@@ -133,7 +132,6 @@ function Row(props) {
         if (Object.entries(response).length === 0 || response.constructor !== Object) {
             return null;
         }
-        console.log(playerIds)
         return (
             <div className={teamsStyles.collapsedPlayerIconRow}>
                 {playerIds.map(function([positionName, playerName, playerId], index) {

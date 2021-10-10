@@ -22,7 +22,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Cookies from 'universal-cookie'
 import { Close, Details } from '@material-ui/icons';
 import product from "immer"
-
+import Image from './Image'
 
 function getDate(playerList, detail) {
   const detailArr = Object.values(detail);
@@ -402,12 +402,12 @@ const EditTeam = () => {
               )}
               </Droppable>
             ))}
-
             <div style={{ gridColumn: '1 / 5' }}>
               {userDetail && (<div id={userDetail.playerName} className={bodyStyles.userCard} style={{ width: '400px' }} >
                 <div className={bodyStyles.userCardImageContainer}>
                   <div className={bodyStyles.userCardImage} style={{ height: 'auto' }}>
-                    <img style={{ width: '100%', objectFit: 'contain' }} src={profilepic} alt="Logo" />
+                    <Image url={userDetail.photoUrl}/>
+                    {console.log(userDetail.photoUrl)}
                   </div>
                   <div className={bodyStyles.userName}>
                     {userDetail.playerName}
@@ -435,7 +435,7 @@ const EditTeam = () => {
                       <div id={user.playerName} className={bodyStyles.userCard} style={{ width: '100%' }} ref={provided.innerRef}  {...provided.draggableProps}  {...provided.dragHandleProps}>
                         <div className={bodyStyles.userCardImageContainer}>
                           <div className={bodyStyles.userCardImage} style={{ height: 'auto' }}>
-                            <img style={{ width: '100%', objectFit: 'contain' }} src={profilepic} alt="Logo" />
+                            <Image url={user.photoUrl}/>
                           </div>
                           <div className={bodyStyles.userName}>
                             {user.playerName}

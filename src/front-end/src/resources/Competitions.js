@@ -24,7 +24,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
-import profilepic from  './img/profile.png';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -489,10 +488,10 @@ function SelectTeam(props) {
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
                         <div style={{width: '100%', textAlign: 'center'}}>
-                            Selecting for {props.comp.competitionName} (id:{props.comp.id})
+                            Selecting for competition {props.comp.competitionName} (id:{props.comp.id})
                         </div>
                         <div style={{width: '100%'}}>
-                            <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
+                            <Button style={{width: '100%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
                     </div>
                 </div>
                 <TableContainer style={{width: '100%'}} component={Paper}>
@@ -521,14 +520,31 @@ function SelectTeam(props) {
 function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props);
+    const [response, setResponse] = useState({})
     const cookies = new Cookies();
 
+    useEffect(() => {
+        (async function () {
+            try {
+                const res = await API.getTeamMembersPhotoURL(props.row, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert('Network error')
+                } else if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                } else {
+                    alert('Server error')
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
+    }, [])
     
     function calculatePlayerIds(team) {
         var count = [];
         Object.entries(team.row).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                count.push([key, key.replace("Id", "Name")])
+                count.push([key, key.replace("Id", "Name"), value])
             }
             return null;
         })
@@ -536,18 +552,24 @@ function Row(props) {
     }
 
     function renderPlayerIcons(team) {
+        if (Object.entries(response).length === 0 || response.constructor !== Object) {
+            return null;
+        }
         return (
-            <div style={{width: '100%', overflowX: 'scroll'}} className={teamsStyles.collapsedPlayerIconRow}>
-                {playerIds.map(([playerId, playerName]) => {
+            <div className={teamsStyles.collapsedPlayerIconRow}>
+                {playerIds.map(function([positionName, playerName, playerId], index) {
                     return (
-                        <Tooltip key={`${playerId}${playerName}`} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
-                            <img style={{objectFit: 'contain', maxHeight: '40px'}} src={profilepic} alt="Logo" />
-                        </Tooltip>
+                        <div key={`playerIcons${positionName}${index}`} className={teamsStyles.collapsedPlayerIcon}>
+                            <Tooltip placement="top" title={team[playerName]}>
+                                <div>
+                                    <Image url={response.data.data[playerId]}/>
+                                </div>
+                            </Tooltip>
+                        </div>
                     )
                 })}
             </div>
         )
-
     }
 
     function renderPlayerDetailed(player) {
