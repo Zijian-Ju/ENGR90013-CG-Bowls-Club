@@ -71,7 +71,9 @@ function PlayerCard(props) {
 
     if (!loaded) {
         return (
-            null
+            <div style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
+                Not available
+            </div>
         )
     }
 
