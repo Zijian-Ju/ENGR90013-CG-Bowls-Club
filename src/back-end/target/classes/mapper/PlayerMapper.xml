@@ -16,6 +16,7 @@
     <result column="player_not_prefer_teammates" jdbcType="VARCHAR" property="playerNotPreferTeammates" />
     <result column="photo_url" jdbcType="VARCHAR" property="photoUrl" />
     <result column="recent_performance" jdbcType="DOUBLE" property="recentPerformance" />
+    <result column="notes" jdbcType="VARCHAR" property="notes" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--
@@ -23,6 +24,6 @@
     -->
     id, player_name, player_email, player_gender, player_phone, player_availability, 
     player_pos_preference, player_prefer_teammates, player_not_prefer_teammates, photo_url, 
-    recent_performance
+    recent_performance, notes
   </sql>
 </mapper>
