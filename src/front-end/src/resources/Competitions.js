@@ -49,14 +49,19 @@ function PlayerCard(props) {
 
     useEffect(() => {
         (async function () {
-            const res = await API.getPlayerById(props.playerId, cookies.get("token"), cookies.get("email"))
-            if (res.status !== 200) {
-                alert("Network error")
-            } else if (res.status === 200 && res.data.statusCode === 200) {
-                setResponse(res)
-                setLoaded(true);
-            } else {
-                console.log("Server error")
+            try {
+                const res = await API.getPlayerById(props.playerId, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert("Network error")
+                } else if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                    setLoaded(true);
+                } else {
+                    console.log("Server error")
+                    console.log(res)
+                } 
+            } catch (e) {
+                console.log(e)
             }
         })();
     }, []);
@@ -71,7 +76,7 @@ function PlayerCard(props) {
 
     if (!loaded) {
         return (
-            <div style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
+            <div onClick={() => alert(props.playerId)} style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
                 Not available
             </div>
         )
@@ -129,6 +134,8 @@ function RenderTeam(props) {
             console.log(e);
         }
     }
+
+    console.log(response)
 
     async function unassociateTeam() {
         try {
@@ -267,11 +274,6 @@ function RenderTeam(props) {
                         <PlayerCard playerId={player.thirdBowlerId4}/> 
                     </div>
                 </div>
-                {/* {x.map(function(playerId, index) {
-                    return (
-                        <Player key={`renderPlayer${playerId}${index}`} id={playerId} player={playerId}></Player>
-                    )
-                })} */}
             </div>
        )
     }
