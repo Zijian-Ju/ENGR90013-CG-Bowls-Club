@@ -76,7 +76,7 @@ function PlayerCard(props) {
 
     if (!loaded) {
         return (
-            <div onClick={() => alert(props.playerId)} style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
+            <div style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
                 Not available
             </div>
         )
