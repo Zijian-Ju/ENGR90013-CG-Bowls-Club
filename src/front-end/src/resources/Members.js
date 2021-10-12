@@ -42,6 +42,15 @@ function Members() {
         history.push("/members/create");
     }
 
+    function clearFilters() {
+        setMinPerformance(0);
+        setMaxPerformance(10);
+        setAvailability([]);
+        setFavPosition([]);
+        setSort("");
+        setSortOrder("");
+    }
+
     useEffect(() => {
         (async function () {
             try {
@@ -60,7 +69,7 @@ function Members() {
                 console.log(e)
             }
         })();
-    }, [random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder]);
+    }, [random]);
 
     function handleFilterClickOpen() {
         setDialogOpen(true);
@@ -232,6 +241,9 @@ function Members() {
                                     <DialogActions>
                                         <Button onClick={handleFilterClickClose} color="primary">
                                             Go Back
+                                        </Button>
+                                        <Button onClick={() => clearFilters()} color="primary">
+                                            Clear
                                         </Button>
                                         <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
                                             Submit
