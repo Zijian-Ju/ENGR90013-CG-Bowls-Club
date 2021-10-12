@@ -135,8 +135,6 @@ function RenderTeam(props) {
         }
     }
 
-    console.log(response)
-
     async function unassociateTeam() {
         try {
             const res = await API.unassociateTeamFromCompetition(props.comp.id, props.comp.competitionDays, props.comp.competitionName, cookies.get("token"), cookies.get("email"))
