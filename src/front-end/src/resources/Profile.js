@@ -246,18 +246,19 @@ function LineChart(props) {
   },[props.playerId, props.year, props.compId, props.performanceVar]);
   
   const xData = Array.from(Array(10).keys())
-    const data = {
-      labels: xData,
-      datasets: [
-        {
-          label: 'Performance',
-          data: yData,
-          fill: false,
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgba(255, 99, 132, 0.2)',
-        },
-      ],
-    };
+
+  const data = {
+    labels: xData,
+    datasets: [
+      {
+        label: 'Performance',
+        data: yData.reverse(),
+        fill: false,
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgba(255, 99, 132, 0.2)',
+      },
+    ],
+  };
 
   
   if (loaded) {

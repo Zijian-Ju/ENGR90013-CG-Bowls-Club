@@ -58,7 +58,6 @@ function PlayerCard(props) {
                     setLoaded(true);
                 } else {
                     console.log("Server error")
-                    console.log(res)
                 } 
             } catch (e) {
                 console.log(e)
