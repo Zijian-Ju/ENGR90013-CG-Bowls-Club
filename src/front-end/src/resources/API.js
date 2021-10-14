@@ -73,8 +73,8 @@ export const API = {
         return response;
     },
 
-    async createBowler(photoURL, availability, email, gender, name, notPreferredTM, phone, posPref, preferredTM, accessToken, accessEmail) {
-        const response = await axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: photoURL, playerAvailability: availability, playerEmail: email, playerGender: gender, playerName : name, playerNotPreferTeammates: notPreferredTM, playerPhone: phone, playerPosPreference: posPref, playerPreferTeammates: preferredTM, recentPerformance: 0, id: 0}, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
+    async createBowler(photoURL, availability, email, gender, name, notPreferredTM, phone, posPref, preferredTM, notes, accessToken, accessEmail) {
+        const response = await axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: photoURL, playerAvailability: availability, playerEmail: email, playerGender: gender, playerName : name, playerNotPreferTeammates: notPreferredTM, playerPhone: phone, playerPosPreference: posPref, playerPreferTeammates: preferredTM, recentPerformance: 0, id: 0, notes: notes}, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
         return response;
     },
 
