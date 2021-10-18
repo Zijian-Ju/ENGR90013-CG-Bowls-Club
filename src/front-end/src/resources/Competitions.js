@@ -344,15 +344,17 @@ function RenderTeam(props) {
                             {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button onClick={() => changeCompetition()}>Save</Button>}
                         </div>
                     </div>
-                    <div className={competitionStyles.renderTeamsControlsButtons}>
-                        <div style={{width: '100%', textAlign: 'center'}}>
-                            Team Id {props.teamId} and competition id {props.comp.id}
+                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                        <div className={competitionStyles.renderTeamsControlsButtons}>
+                            <div style={{width: '100%', textAlign: 'center'}}>
+                                Team Id {props.teamId} and competition id {props.comp.id}
+                            </div>
+                            <div style={{width: '100%'}}>
+                                <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
+                                <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                            </div>
                         </div>
-                        <div style={{width: '100%'}}>
-                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>}
-                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>}
-                        </div>
-                    </div>
+                    }
                 </div>
                 <div style={{width: '100%', height: '100%'}}>
                     {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
