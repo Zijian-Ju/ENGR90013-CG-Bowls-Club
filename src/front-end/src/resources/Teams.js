@@ -266,6 +266,10 @@ function Teams() {
     }
 
     async function createTeam() {
+        if (newTeamName === "") {
+            alert("Enter a valid team name");
+            return;
+        }
         try {
             const res = await API.createTeam(newTeamName, cookies.get("token"), cookies.get("email"))
             if (res.status !== 200) {
@@ -277,6 +281,7 @@ function Teams() {
             if (res.status === 200 && res.data.statusCode === 200) {
                 alert("Team created")
             }
+            handleDialogClickClose()
             reRender()
         } catch (e) {
             console.log(e)
@@ -299,7 +304,7 @@ function Teams() {
                             <Button onClick={handleDialogClickClose} color="primary">
                                 Cancel
                             </Button>
-                            <Button onClick={() => {createTeam(); handleDialogClickClose()}} color="primary">
+                            <Button onClick={(e) => {createTeam()}} color="primary">
                                 Submit
                             </Button>
                         </DialogActions>

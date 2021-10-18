@@ -25,6 +25,11 @@ function CreateProfile() {
 
     async function onSubmit() {
       try {
+
+        if (playerName === "" || playerEmail === "" || playerPhone==="" || playerAvailability ==="" || playerGender === "") {
+          alert("Please fill name, email, phone, availability and gender");
+          return null;
+        }
         var imgUrl = ""
 
         if (selectedFile !== undefined) {

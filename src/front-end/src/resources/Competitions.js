@@ -807,6 +807,10 @@ function Competitions() {
     }
 
     async function createNewCompetition() {
+        if (newCompName==="" || newCompDay==="") {
+            alert("Please fill all fields")
+            return;
+        }
         try {
             const res = await API.createNewCompetition([newCompDay], [newCompDay], newCompName,cookies.get("token"), cookies.get("email"))
             if (res.status !== 200) {
