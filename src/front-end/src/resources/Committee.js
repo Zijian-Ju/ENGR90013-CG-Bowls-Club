@@ -42,6 +42,10 @@ function SelectorTable(props) {
     }
 
     async function createSelector() {
+        if (name === "" || email === "" || username === "" || password === "" || role === "") {
+            alert("Please fill all fields");
+            return null;
+        }
         const res = await API.createSelector(email, 0, password, name, role, "", "2021-09-12T13:09:05.760Z", username, cookies.get("token"), cookies.get("email"))
         if (res.status !== 200) {
             alert("Network error, please try again later")
@@ -53,6 +57,7 @@ function SelectorTable(props) {
             alert("Success")
             history.go(0)
         }
+        handleDialogClickClose();
     }
 
     return (
@@ -67,7 +72,7 @@ function SelectorTable(props) {
                         <TextField onChange={(e) => setName(e.target.value)} style={{margin: '2.5%', marginTop: '5%', width: '75%'}} label="Name"/>
                         <TextField onChange={(e) => setEmail(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Email"/>
                         <TextField onChange={(e) => setUsername(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Username"/>
-                        <TextField onChange={(e) => setPassword(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Password"/>
+                        <TextField type="password" onChange={(e) => setPassword(e.target.value)} style={{margin: '2.5%', width: '75%'}} label="Password"/>
                     </FormControl>
                     <FormControl style={{width: '100%'}}>
                         <InputLabel id="demo-simple-select-filled-label">Role</InputLabel>
@@ -90,7 +95,7 @@ function SelectorTable(props) {
                     <Button onClick={handleDialogClickClose} color="primary">
                         Close
                     </Button>
-                    <Button onClick={() => {createSelector(); handleDialogClickClose()}} color="primary">
+                    <Button onClick={() => {createSelector()}} color="primary">
                         Submit
                     </Button>
                 </DialogActions>

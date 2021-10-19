@@ -49,14 +49,18 @@ function PlayerCard(props) {
 
     useEffect(() => {
         (async function () {
-            const res = await API.getPlayerById(props.playerId, cookies.get("token"), cookies.get("email"))
-            if (res.status !== 200) {
-                alert("Network error")
-            } else if (res.status === 200 && res.data.statusCode === 200) {
-                setResponse(res)
-                setLoaded(true);
-            } else {
-                console.log("Server error")
+            try {
+                const res = await API.getPlayerById(props.playerId, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert("Network error")
+                } else if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                    setLoaded(true);
+                } else {
+                    console.log("Server error")
+                } 
+            } catch (e) {
+                console.log(e)
             }
         })();
     }, []);
@@ -267,11 +271,6 @@ function RenderTeam(props) {
                         <PlayerCard playerId={player.thirdBowlerId4}/> 
                     </div>
                 </div>
-                {/* {x.map(function(playerId, index) {
-                    return (
-                        <Player key={`renderPlayer${playerId}${index}`} id={playerId} player={playerId}></Player>
-                    )
-                })} */}
             </div>
        )
     }
@@ -345,15 +344,17 @@ function RenderTeam(props) {
                             {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button onClick={() => changeCompetition()}>Save</Button>}
                         </div>
                     </div>
-                    <div className={competitionStyles.renderTeamsControlsButtons}>
-                        <div style={{width: '100%', textAlign: 'center'}}>
-                            Team Id {props.teamId} and competition id {props.comp.id}
+                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                        <div className={competitionStyles.renderTeamsControlsButtons}>
+                            <div style={{width: '100%', textAlign: 'center'}}>
+                                Team Id {props.teamId} and competition id {props.comp.id}
+                            </div>
+                            <div style={{width: '100%'}}>
+                                <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
+                                <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                            </div>
                         </div>
-                        <div style={{width: '100%'}}>
-                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>}
-                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>}
-                        </div>
-                    </div>
+                    }
                 </div>
                 <div style={{width: '100%', height: '100%'}}>
                     {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
@@ -808,6 +809,10 @@ function Competitions() {
     }
 
     async function createNewCompetition() {
+        if (newCompName==="" || newCompDay==="") {
+            alert("Please fill all fields")
+            return;
+        }
         try {
             const res = await API.createNewCompetition([newCompDay], [newCompDay], newCompName,cookies.get("token"), cookies.get("email"))
             if (res.status !== 200) {

@@ -41,7 +41,8 @@
 .userName {
     height: 30%;
     width: 100%;
-    overflow: scroll
+    overflow: scroll;
+    text-align: center;
 }
 
 .userCardDescriptionContainer {

@@ -9,16 +9,17 @@
 .collapsedPlayerIconRow {
     display: flex;
     flex-direction: row;
-    height: '50px';
-    max-width: 100%;
-    align-items: center;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: scroll;
 }
 
 .collapsedPlayerIcon {
     display: flex;
     flex-direction: row;
     height: 50px;
-    width: 60px;
+    width: 5%;
+    min-width: 40px;
     margin-right: 1%;
 }
 

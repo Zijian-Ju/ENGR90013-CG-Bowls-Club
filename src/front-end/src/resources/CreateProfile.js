@@ -17,25 +17,80 @@ function CreateProfile() {
     const [playerGender, setPlayerGender] = useState("");
     const [playerNotPreferredTM, setPlayerNotPreferredTM] = useState("");
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
+    const [notes, setNotes] = useState("");
+    const [selectedFile, setSelectedFile] = useState();
+
     const history = useHistory();
     const cookies = new Cookies();
 
     async function onSubmit() {
       try {
-        const res = await API.createBowler("", playerAvailability, playerEmail, playerGender, playerName, playerNotPreferredTM, playerPhone, playerPreference, playerPreferredTM, cookies.get("token"), cookies.get("email"))
-        if (res.status !== 200) {
+
+        if (playerName === "" || playerEmail === "" || playerPhone==="" || playerAvailability ==="" || playerGender === "") {
+          alert("Please fill name, email, phone, availability and gender");
+          return null;
+        }
+        var imgUrl = ""
+
+        if (selectedFile !== undefined) {
+          const formData = new FormData();
+          formData.append("file", selectedFile, selectedFile.name);
+          const res1 = await API.uploadImage(formData);
+          if (res1.status !== 200) {
+            alert("Network error, please try again later")
+          } else if (res1.status === 200 && res1.data.code === 200) {
+            imgUrl = res1.data.img
+          } else {
+            alert("Image server error")
+          }
+        }
+
+        const res2 = await API.createBowler(imgUrl, playerAvailability, playerEmail, playerGender, playerName, playerNotPreferredTM, playerPhone, playerPreference, playerPreferredTM, notes, cookies.get("token"), cookies.get("email"))
+        if (res2.status !== 200) {
           alert("Network error, please try again later")
         }
-        if (res.status === 200 && res.data.statusCode !== 200) {
-          alert(res.data.message)
+        if (res2.status === 200 && res2.data.statusCode !== 200) {
+          alert(res2.data.message)
         }
-        if (res.status === 200 && res.data.statusCode === 200) {
+        if (res2.status === 200 && res2.data.statusCode === 200) {
           alert("Player Created"); 
           history.push("/members");
         }
       } catch (e) {
         console.log(e)
       }
+    }
+
+    const onFileChange = (event) => {
+      const validTypes = ["image/jpg", "image/jpeg", "image/png"]
+      if (validTypes.includes(event.target.files[0].type)) {
+        setSelectedFile(event.target.files[0])
+      } else {
+        alert("Invalid file type uploaded")
+      }
+    }
+
+    function imageUpload() {
+      return (
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center'}}>
+          <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
+            <Button>
+              <label for="fileUpload">Upload Image</label>
+            </Button>
+            <input
+              id="fileUpload"
+              type="file"
+              name="file"
+              onChange={onFileChange}
+              style={{display: 'none'}}
+            />
+            <Button disabled={selectedFile === undefined} onClick={() => setSelectedFile()}>Deselect Image</Button>        
+          </div>
+          <div style={{display: 'flex', flexDirection: 'row', width: '100%', overflow: 'hidden'}}>
+            {selectedFile !== undefined && <div style={{textAlign: 'center'}}>File:{selectedFile.name}</div>}
+          </div>
+        </div>
+      )
     }
 
     return (
@@ -111,6 +166,17 @@ function CreateProfile() {
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
                         <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Gender" variant="outlined" defaultValue={playerGender} onChange={(e) => {setPlayerGender(e.target.value)}}/>
                       </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Notes
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Notes" variant="outlined" defaultValue={notes} onChange={(e) => {setNotes(e.target.value)}}/>
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      {imageUpload()}
                     </div>
                   </div>
                   <div className = {bodyStyles.profilePageBasicInfoSubmit}>

@@ -72,25 +72,34 @@ function Login() {
         )
     }
 
+    const closeMenu = (e) => {
+        if (e.key === "Tab") {
+            e.preventDefault();
+        } else {
+            setAnchorEl(null)
+        }
+    }
+
     function loginButton() {
         return (
             <div>
                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={(e) => setAnchorEl(e.currentTarget)}>Login</Button>
                 <Menu
                     open={Boolean(anchorEl)}
-                    onClose={() => setAnchorEl(null)}
+                    onClose={closeMenu}
                     anchorEl={anchorEl}
+                    tabIndex="-1"       
                 >   
                     <div className={loginStyles.loginMenu}>
                         <div className={loginStyles.loginMenuRow}>{text}</div>
-                        <div className={loginStyles.loginMenuRow}>
-                            <TextField error={text === "Wrong login"} label="Email" onChange={(e) => setEmail(e.target.value)}></TextField>
+                        <div className={loginStyles.loginMenuRow}>  
+                            <TextField tabIndex="0" error={text === "Wrong login"} label="Email" onChange={(e) => setEmail(e.target.value)}></TextField>
                         </div>
                         <div className={loginStyles.loginMenuRow}>
-                            <TextField error={text === "Wrong login"} type="password" label="Password" onChange={(e) => setPassword(e.target.value)}></TextField>
+                            <TextField tabIndex="0" error={text === "Wrong login"} type="password" label="Password" onChange={(e) => setPassword(e.target.value)}></TextField>
                         </div>
                         <div className={loginStyles.loginMenuRow}>
-                            <Button onClick={() => login()}>Login</Button>
+                            <Button type="submit" onClick={() => login()}>Login</Button>
                         </div>
                     </div>
                 </Menu>

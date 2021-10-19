@@ -434,7 +434,7 @@ const EditTeam = () => {
                     {(provided, snapshot) => (
                       <div id={user.playerName} className={bodyStyles.userCard} style={{ width: '100%' }} ref={provided.innerRef}  {...provided.draggableProps}  {...provided.dragHandleProps}>
                         <div className={bodyStyles.userCardImageContainer}>
-                          <div className={bodyStyles.userCardImage} style={{ height: 'auto' }}>
+                          <div className={bodyStyles.userCardImage} style={{ height: '70%' , width: '100%'}}>
                             <Image url={user.photoUrl}/>
                           </div>
                           <div className={bodyStyles.userName}>
