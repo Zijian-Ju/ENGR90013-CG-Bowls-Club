@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import profileStyles from './css/profile.module.css';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Image from './Image'
-import axios from 'axios';
 import { useParams } from "react-router-dom";
 import NativeSelect from '@material-ui/core/NativeSelect';
 import { Line } from 'react-chartjs-2';
@@ -30,10 +29,12 @@ import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
 import Cookies from 'universal-cookie'
 import { API } from "./API";
+import dayjs from 'dayjs'
 
 function CustomTableRow(props) {
   const [season, setSeason] = useState(props.data.season);
-  const [date, setDate] = useState(props.data.matchTime);
+  const [date, setDate] = useState(dayjs(props.data.matchTime).format("YYYY-MM-DD"));
+  const [time, setTime] = useState(dayjs(props.data.matchTime).format("HH:mm"));
   const [competitionId, setCompetitionId] = useState(props.data.competitionId)
   const [competitionName, setCompetitionName] = useState(props.data.competitionName)
   const [position, setPosition] = useState(props.data.position);
@@ -55,7 +56,7 @@ function CustomTableRow(props) {
 
   async function deletePerformance() {
     try {
-      const res = await API.deletePerformanceById(props.data.competitionId, props.data.id, date, performance, props.data.playerId, cookies.get("token"), cookies.get("email"))
+      const res = await API.deletePerformanceById(props.data.competitionId, props.data.id, dayjs(date+time).toISOString(), performance, props.data.playerId, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -75,7 +76,7 @@ function CustomTableRow(props) {
 
   async function updatePerformance() {
     try {
-      const res = await API.updatePerformance(competitionId, competitionName, props.data.id, date, performance, props.data.playerId, position, season, cookies.get("token"), cookies.get("email"))
+      const res = await API.updatePerformance(competitionId, competitionName, props.data.id, dayjs(date+time).toISOString(), performance, props.data.playerId, position, season, cookies.get("token"), cookies.get("email"))
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -102,7 +103,10 @@ function CustomTableRow(props) {
         <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setSeason(e.target.value)} disableUnderline value={season}/>
       </TableCell>
       <TableCell>
-        <Input style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setDate(e.target.value)} disableUnderline value={date}/>
+        <Input type="date" style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setDate(e.target.value)} disableUnderline value={date}/>
+      </TableCell>
+      <TableCell>
+        <Input type="time" style={editing ? {border: '1px solid #cccccc', borderRadius: '5px'} : {}} disabled={!editing} onChange={(e) => setTime(e.target.value)} disableUnderline value={time}/>
       </TableCell>
       <TableCell>
         <Input disabled value={competitionName}/>
@@ -368,16 +372,20 @@ function Details(props) {
 
   useEffect(() => {
     (async function () {
-      const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
-      if (res.status !== 200) {
-        setStatus("Network error, please try again later")
-      }
-      if (res.status === 200 && res.data.statusCode !== 200) {
-        setStatus(res.data.message)
-      }
-      if (res.status === 200 && res.data.statusCode === 200) {
-        setResponse(res)
-        setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, notes: res.data.data.notes, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
+      try {
+        const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
+        if (res.status !== 200) {
+          setStatus("Network error, please try again later")
+        }
+        if (res.status === 200 && res.data.statusCode !== 200) {
+          setStatus(res.data.message)
+        }
+        if (res.status === 200 && res.data.statusCode === 200) {
+          setResponse(res)
+          setEditableFields({playerAvailability: res.data.data.playerAvailability, playerPosPreference: res.data.data.playerPosPreference, notes: res.data.data.notes, playerNotPreferTeammates: res.data.data.playerNotPreferTeammates})
+        }
+      } catch (e) {
+        console.log(e)
       }
     })();
   }, [playerId, random])
@@ -486,7 +494,8 @@ function PerformanceControl(props) {
   const cookies = new Cookies();
   const [status, setStatus] = useState("...Loading");
   const [createPerformance, setCreatePerformance] = useState("");
-  const [createDate, setCreateDate] = useState("2020-01-01T00:00:00.00Z");
+  const [createDate, setCreateDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [createTime, setCreateTime] = useState(dayjs().format("HH:mm"))
   const [createSeason, setCreateSeason] = useState("");
   const [createPosition, setCreatePosition] = useState("")
   const [createCompetition, setCreateCompetition] = useState("")
@@ -515,6 +524,7 @@ function PerformanceControl(props) {
             <TableRow>
               <TableCell>Season</TableCell>
               <TableCell>Date</TableCell>
+              <TableCell>Time</TableCell>
               <TableCell>Competition</TableCell>
               <TableCell>Position</TableCell>
               <TableCell>Performance</TableCell>
@@ -539,9 +549,6 @@ function PerformanceControl(props) {
                           </NativeSelect>
                       </FormControl>
                       <FormControl style={{width: '48%', marginTop: '5%', margin:'1%'}}>
-                          <TextField defaultValue={createDate} id="datetime-local" InputLabelProps={{shrink: true}} onChange={(e) => setCreateDate(e.target.value)} label="Date"/>   
-                      </FormControl>
-                      <FormControl style={{width: '48%', margin:'1%'}}>
                           <InputLabel shrink>Position</InputLabel>
                           <NativeSelect
                             id="season"
@@ -556,6 +563,14 @@ function PerformanceControl(props) {
                             <option value={"First"}>First</option>
                             <option value={"Second"}>Second</option>
                           </NativeSelect>
+                      </FormControl>
+                      <FormControl style={{width: '48%', margin:'1%'}}>
+                        <InputLabel shrink>Date</InputLabel>
+                          <TextField variant="standard" type="date" defaultValue={createDate} id="date-local" InputLabelProps={{shrink: true}} onChange={(e) => setCreateDate(e.target.value)} label=" "/>   
+                      </FormControl>
+                      <FormControl style={{width: '48%', margin:'1%'}}>
+                      <InputLabel shrink>Time</InputLabel>
+                          <TextField variant="standard" type="time" defaultValue={createTime} id="time-local" InputLabelProps={{shrink: true}} onChange={(e) => setCreateTime(e.target.value)} label=" "/>   
                       </FormControl>
                       <FormControl style={{width: '48%', margin:'1%'}}>
                           <InputLabel shrink>Competition</InputLabel>
@@ -605,24 +620,30 @@ function PerformanceControl(props) {
     )
   }
 
-  function dialogSubmit() {
-    return (
-      axios.post(`http://128.199.253.108:8082/player/addMatchPerformance`, {competitionId: JSON.parse(createCompetition).id, competitionName:JSON.parse(createCompetition).name, matchTime: createDate, performanceScore: createPerformance, playerId: playerId, position: createPosition, season: createSeason}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-      .then(res => {
-        if (res.status !== 200) {
-          alert("Network error, please try again later")
-        }
-        if (res.status === 200 && res.data.statusCode !== 200) {
-          alert(res.data.message)
-        }
-        if (res.status === 200 && res.data.statusCode === 200) {
-          alert("Performance created"); 
-          props.performanceUpdate()
-          reRender()
-          history.go(0)
-        }
-      })
-    )
+  async function dialogSubmit() {
+    if (createPerformance === "" || createDate === undefined || createTime === undefined || createSeason === "" || createPosition === "" || createCompetition === "") {
+      alert("Please fill all fields")
+      return null;
+    }
+
+    try {
+      const res = await API.addMatchPerformance(JSON.parse(createCompetition).id, JSON.parse(createCompetition).name, dayjs(createDate+createTime).toISOString(), createPerformance, playerId, createPosition, createSeason, cookies.get("token"), cookies.get("email"))
+
+      if (res.status !== 200) {
+        alert("Network error, please try again later")
+      }
+      if (res.status === 200 && res.data.statusCode !== 200) {
+        alert(res.data.message)
+      }
+      if (res.status === 200 && res.data.statusCode === 200) {
+        alert("Performance created"); 
+        props.performanceUpdate()
+        reRender()
+        history.go(0)
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   useEffect(() => {
