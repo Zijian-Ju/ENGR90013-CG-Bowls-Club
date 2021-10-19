@@ -75,7 +75,7 @@ public class TeamService {
 
             Map<String, Object> resultMap = new HashMap<>();
             for(int i = 0;i < players.size();i++) {
-                resultMap.put(Long.toString(players.get(i).getId()), players.get(i).getPhotoUrl());
+                resultMap.put(Long.toString(players.get(i).getId()), players.get(i));
             }
             return resultMap;
         }
