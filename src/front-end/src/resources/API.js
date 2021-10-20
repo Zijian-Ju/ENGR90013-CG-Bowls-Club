@@ -136,5 +136,10 @@ export const API = {
     async addMatchPerformance(compId, compName, matchTime, performanceScore, playerId, position, season, accessToken, accessEmail) {
         const response = await axios.post(`http://128.199.253.108:8082/player/addMatchPerformance`, {competitionId: compId, competitionName: compName, matchTime: matchTime, performanceScore: performanceScore, playerId: playerId, position: position, season: season}, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
         return response
-    }
+    },
+
+    async getDetailedTeamById(teamId, accessToken, accessEmail) {
+        const response = await axios.post(`http://128.199.253.108:8082/team/getTeamPlayerDetails`, {id: teamId}, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
+        return response;
+    },
 }
