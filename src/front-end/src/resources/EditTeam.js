@@ -23,6 +23,7 @@ import Cookies from 'universal-cookie'
 import { Close, Details } from '@material-ui/icons';
 import product from "immer"
 import Image from './Image'
+import { API } from './API';
 
 function getDate(playerList, detail) {
   const detailArr = Object.values(detail);
@@ -149,12 +150,17 @@ const EditTeam = () => {
 
   useEffect(() => {
 
-
-    axios.post(`http://128.199.253.108:8082/team/getTeamById`, { id: history.location.state }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
+    // getTeamById
+    console.log("一直执行吗")
+    // cookies.get("token"), "Email": cookies.get("email") } })
+    // axios.post(`http://128.199.253.108:8082/team/getTeamById`, { id: history.location.state }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
+    API.getTeamById(history.location.state,cookies.get("token"),cookies.get("email"))
       .then((res) => {
         const detail = res.data.data;
         setTeamDetail(detail)
-        axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, { searching: { availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: { direction: sortOrder, sortField: sort }, position: favPosition } }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
+    // async getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sortField, favPosition, accessToken, accessEmail) {
+        API.getAllPlayers(availability,maxPerformance,minPerformance,sortOrder,sort,favPosition,cookies.get("token"),cookies.get("email"))
+        // axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, { searching: { availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: { direction: sortOrder, sortField: sort }, position: favPosition } }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
           .then((list) => {
             let playerList = list?.data?.data?.playerList;
             setPayList(getDate(playerList||[], detail))
@@ -162,6 +168,7 @@ const EditTeam = () => {
             setCopyPayerListOne(list?.data?.data?.playerList||[])
           })
       })
+      // history.location.state, random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder, cookies
   }, [history.location.state, random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder])
 
   const getPlayerDetail = (item, i) => {
@@ -173,7 +180,8 @@ const EditTeam = () => {
     }
   }
   const onSave = async () => {
-    await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
+    await API.updateTeam(teamDetail,cookies.get("token"),cookies.get("email"))
+    // await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
     teamsHandleClick()
   }
   const searchUser = (name) => {
@@ -242,7 +250,7 @@ const EditTeam = () => {
                     displayEmpty
                     onChange={(e) => { setSort(e.target.value) }}
                   >
-                    <MenuItem value={'name'}>Name</MenuItem>
+                    {/* <MenuItem value={'name'}>Name</MenuItem> */}
                     <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
                   </Select>
                 </FormControl>
@@ -343,7 +351,7 @@ const EditTeam = () => {
                   Go Back
                 </Button>
                 <Button onClick={() => { handleFilterClickClose(); reRender() }} color="primary">
-                  Submit
+                  Done
                 </Button>
               </DialogActions>
             </Dialog>
@@ -358,6 +366,10 @@ const EditTeam = () => {
         <TextField variant="outlined" size="small" value={teamDetail.teamName} onChange={({ currentTarget }) => {
           setTeamDetail({ ...teamDetail, teamName: currentTarget.value })
         }} />
+        <div className={editTeamsStyles.ButtonTeam}>
+                {/* <Button variant="contained" onClick={teamsHandleClick}>BACK</Button> */}
+                <Button variant="contained" className={editTeamsStyles.saveButton} onClick={onSave}>SAVE</Button>
+        </div>
       </div>
       <div className={editTeamsStyles.edit}>
         <DragDropContext onDragEnd={onDragEnd}>
@@ -407,7 +419,6 @@ const EditTeam = () => {
                 <div className={bodyStyles.userCardImageContainer}>
                   <div className={bodyStyles.userCardImage} style={{ height: 'auto' }}>
                     <Image url={userDetail.photoUrl}/>
-                    {console.log(userDetail.photoUrl)}
                   </div>
                   <div className={bodyStyles.userName}>
                     {userDetail.playerName}
@@ -420,10 +431,7 @@ const EditTeam = () => {
                   <div className={bodyStyles.userCardDescriptionItem}>Preference: {userDetail.playerPreferTeammates}</div>
                 </div>
               </div>)}
-              <div className={editTeamsStyles.ButtonTeam}>
-                <Button variant="contained" onClick={teamsHandleClick}>BACK</Button>
-                <Button variant="contained" className={editTeamsStyles.saveButton} onClick={onSave}>SAVE</Button>
-              </div>
+              
             </div>
           </div>
           <Droppable droppableId="droppable2" type="player" isCombineEnabled={false}>

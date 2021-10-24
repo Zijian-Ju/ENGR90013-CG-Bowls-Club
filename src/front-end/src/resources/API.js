@@ -142,4 +142,8 @@ export const API = {
         const response = await axios.post(`${backendUrl}/team/getTeamPlayerDetails`, {id: teamId}, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
         return response;
     },
+    async updateTeam(teamDetail, accessToken, accessEmail) {
+        const response = await axios.post(`${backendUrl}/team/updateTeam`, teamDetail, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
+        return response;
+    },
 }
