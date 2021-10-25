@@ -97,8 +97,8 @@ function CreateProfile() {
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
             <NavBar/>
             <div className = {bodyStyles.profilePage}>
-              <div style={{width:'70%', height: '100%'}} className = {bodyStyles.profilePageColumn}>
-                <div style ={{height: '93.5%'}} className = {bodyStyles.profilePageColumnContainer}>
+              <div style={{width:'40%', height: '100%'}} className = {bodyStyles.profilePageColumn}>
+                <div style ={{height: '93.5%', backgroundColor:'white'}} className = {bodyStyles.profilePageColumnContainer}>
                   <div className = {bodyStyles.profilePageContainerTitle}>
                     Basic Information
                   </div>
@@ -137,7 +137,7 @@ function CreateProfile() {
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
                       <div className = {bodyStyles.profilePageContainerRowText}>
-                        Preference Position
+                         Preference Position
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
                         <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preference" variant="outlined" defaultValue={playerPreference} onChange={(e) => {setPlayerPreference(e.target.value)}}/>

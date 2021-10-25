@@ -427,7 +427,7 @@ function SelectTeam(props) {
         )
     } else if (cookies.get('role') !== 'admin' && cookies.get('role') !== 'selector') {
         return (
-            <div>No team selected for this competition, please check back later</div>
+            <div style={{flex: 1, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>No team selected for this competition, please check back later</div>
         )
     } else {
         return (
@@ -765,7 +765,6 @@ function Competitions() {
     function renderCompetitionList() {
         return (
             <>  
-                Select:
                 {response.data.data.competitionList.map((comp) => (
                     <div onClick={() => {setSelectedComp(comp); reRender()}} className={competitionStyles.competitionCard} key={`rendercomplist${comp.id}`}>
                         {comp.competitionName}
@@ -869,7 +868,7 @@ function Competitions() {
                         <div className={competitionStyles.displayCompetitionsContainer}>
                             {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam key={`renderTeamfor${selectedComp}`} comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
                             {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam key={`selectTeamfor${selectedComp}`} resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
-                            {isObjectEmpty(selectedComp) && <div>Select a team</div>}
+                            {isObjectEmpty(selectedComp) && <div style={{flex: 1, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Select a team</div>}
                         </div>
                     </div>
                 </>
