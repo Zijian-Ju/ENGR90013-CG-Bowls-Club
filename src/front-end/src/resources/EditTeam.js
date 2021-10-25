@@ -7,7 +7,6 @@ import toolbarStyles from './css/toolbar.module.css';
 import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import profilepic from './img/profile.png';
 import { TextField } from '@material-ui/core';
 import bodyStyles from './css/body.module.css';
 import Dialog from '@material-ui/core/Dialog';
@@ -151,16 +150,13 @@ const EditTeam = () => {
   useEffect(() => {
 
     // getTeamById
-    console.log("一直执行吗")
     // cookies.get("token"), "Email": cookies.get("email") } })
-    // axios.post(`http://128.199.253.108:8082/team/getTeamById`, { id: history.location.state }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
     API.getTeamById(history.location.state,cookies.get("token"),cookies.get("email"))
       .then((res) => {
         const detail = res.data.data;
         setTeamDetail(detail)
     // async getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sortField, favPosition, accessToken, accessEmail) {
         API.getAllPlayers(availability,maxPerformance,minPerformance,sortOrder,sort,favPosition,cookies.get("token"),cookies.get("email"))
-        // axios.post(`http://128.199.253.108:8082/player/getAllPlayer`, { searching: { availability: availability, maxScore: maxPerformance, minScore: minPerformance, order: { direction: sortOrder, sortField: sort }, position: favPosition } }, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
           .then((list) => {
             let playerList = list?.data?.data?.playerList;
             setPayList(getDate(playerList||[], detail))
@@ -168,20 +164,18 @@ const EditTeam = () => {
             setCopyPayerListOne(list?.data?.data?.playerList||[])
           })
       })
-      // history.location.state, random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder, cookies
   }, [history.location.state, random, availability, favPosition, maxPerformance, minPerformance, sort, sortOrder])
 
   const getPlayerDetail = (item, i) => {
     const id = teamDetail[`${item}BowlerId${i}`]
     const detail = copyPayerList.find(item => item.id === id)
-    console.log(id, detail);
+
     if (detail) {
       setUserDetail(detail)
     }
   }
   const onSave = async () => {
     await API.updateTeam(teamDetail,cookies.get("token"),cookies.get("email"))
-    // await axios.post('http://128.199.253.108:8082/team/updateTeam', teamDetail, { headers: { "Access-Token": cookies.get("token"), "Email": cookies.get("email") } })
     teamsHandleClick()
   }
   const searchUser = (name) => {
@@ -228,10 +222,7 @@ const EditTeam = () => {
     <>
       <HomeTitle />
       <div className={toolbarStyles.toolbar} style={{ justifyContent: 'flex-end' }}>
-
-        <div
-          className={toolbarStyles.searchBarContainer}
-        >
+        <div className={toolbarStyles.searchBarContainer}>
           <div className={toolbarStyles.searchBar}>
             <TextField style={{ width: '100%' }} onChange={(e) => { setUserSearchText(e.target.value); searchUser(e.target.value) }} variant="outlined" label="Search User" />
           </div>
