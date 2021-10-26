@@ -85,7 +85,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     source ~/ENGR90013-CG-Bowls-Club-4.0/deployment/BOWLS_CLUB_Initial_Data.sql
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/setupdb.jpg)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/setupDB.jpg)
 - Deploy Backend Server
   - Install [Maven](https://docs.wso2.com/display/IS323/Installing+Apache+Maven+on+Linux) (Click the link to see instructions)
   - Direct to the backend source code folder
