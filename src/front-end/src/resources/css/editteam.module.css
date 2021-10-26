@@ -92,8 +92,9 @@
     color: #fff;
 }
 .ButtonTeam{
-    margin-top: 40px;
     display: flex;
+    align-items: center;
+    margin-left: 40px;
     justify-content: space-around;
 }
 .teamName{
