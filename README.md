@@ -61,22 +61,22 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     mysql -u root -p
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/loginmysql.jpg)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/loginMySQL.jpg)
   - Create new user
     ```
     CREATE USER 'BOWLS_CLUB'@'%' IDENTIFIED BY 'Bowls_club2021';
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/createuser.png)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/createUser.png)
   - Create schema named as BOWLS_CLUB:
     ```
     Create schema BOWLS_CLUB collate utf8_general_ci; 
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/createschema.jpg)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/createSchema.jpg)
   - Grant privilege to the user
     ```
     GRANT ALL on BOWLS_CLUB.* to BOWLS_CLUB;
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/grantprivilege.jpg)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/grantPrivilege.jpg)
   - Then use the database:
     ```
     use BOWLS_CLUB;
@@ -96,7 +96,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     mvn package -Dmaven.test.skip=true
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/compileproject.jpg)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/CompileProject.jpg)
   - Run the proejct by execute below command on Terminal
     ```
     nohup java -jar ~/ENGR90013-CG-Bowls-Club-4.0/src/back-end/target/webbackend-0.0.1-SNAPSHOT.jar 1>/dev/null &
