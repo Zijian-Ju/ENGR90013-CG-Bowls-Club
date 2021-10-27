@@ -116,6 +116,24 @@ This is a guideline for how to deployed the product on another server. Feel free
     to stop the process
     ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/stopServer.jpg)
 - Deploy Front-End Server(TO BE UPDATED)
+  - Install [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Click the link to see instructions)
+  - Navigate to the frontend folder
+    ```
+    cd ~/ENGR90013-CG-Bowls-Club-4.0/src/front-end
+    ```
+  - Install node packages
+    ```
+    npm install
+    ```
+  - Start frontend server (optional)
+    ```
+    npm start
+    ```
+  - A browser window will open with access to the loaded frontend.The site can be manually reached at [http://localhost:3000]
+  - Build frontend for external deployment. 
+    ```
+    npm run build
+    ```
 - Use iptables to allow public accessto the webpage(TO BE UPDATED)
 
 Feel free to contact Zijian Ju (Zijianju98@gmail.com) for furthur assistance
