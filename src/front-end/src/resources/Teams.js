@@ -5,7 +5,6 @@ import teamsStyles from './css/teams.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
-import profilepic from  './img/profile.png';
 import { TextField } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -25,16 +24,12 @@ import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Cookies from 'universal-cookie'
 import { API } from "./API";
-import { __RouterContext } from 'react-router';
-
+import { Auth } from './Auth';
 
 function Player(props) {
     const [response, setResponse] = useState({})
     const history = useHistory();
-    const [status, setStatus] = useState("");
-    const cookies = new Cookies();
 
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
@@ -43,15 +38,14 @@ function Player(props) {
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getPlayerById(props.player, cookies.get("token"), cookies.get("email"))
+                const res = await API.getPlayerById(props.player)
                 if (res.status !== 200) {
-                    setStatus("Network error, please try again later")
+                    alert("Network error, please try again later")
                 }
                 if (res.status === 200 && res.data.statusCode !== 200) {
-                    setStatus(res.data.message)
+                    alert(res.data.message)
                 }
                 if (res.status === 200 && res.data.statusCode === 200) {
-                    setStatus("...Loading")
                     setResponse(res);
                 }
             } catch (e) {
@@ -98,12 +92,11 @@ function Row(props) {
     const [response, setResponse] = useState({})
     const playerIds = calculatePlayerIds(props);
     const history = useHistory();
-    const cookies = new Cookies();
 
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getTeamMembersPhotoURL(props.row, cookies.get("token"), cookies.get("email"))
+                const res = await API.getTeamMembersPhotoURL(props.row)
                 if (res.status !== 200) {
                     alert('Network error')
                 } else if (res.status === 200 && res.data.statusCode === 200) {
@@ -115,7 +108,7 @@ function Row(props) {
                 console.log(e)
             }
         })();
-    }, [])
+    }, [props.row])
 
     function calculatePlayerIds(team) {
         var count = [];
@@ -188,14 +181,14 @@ function Row(props) {
         )
     }
 
-    function editTeamRedirect(teamId, props) {
+    function editTeamRedirect(teamId) {
         history.push({pathname: `/editteam/${teamId}`, state: teamId});
         return (null)
     }
 
     async function deleteTeam(id) {
         try {
-            const res = await API.deleteTeam(id, props.row.teamName, cookies.get("token"), cookies.get("email"))
+            const res = await API.deleteTeam(id, props.row.teamName)
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -253,7 +246,6 @@ function Teams() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newTeamName, setNewTeamName] = useState("");
     const [status, setStatus] = useState("");
-    const cookies = new Cookies();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
 
@@ -271,7 +263,7 @@ function Teams() {
             return;
         }
         try {
-            const res = await API.createTeam(newTeamName, cookies.get("token"), cookies.get("email"))
+            const res = await API.createTeam(newTeamName)
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -349,7 +341,7 @@ function Teams() {
 
     useEffect(() => {
         (async function () {
-            const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
+            const res = await API.getAllTeams()
             if (res.status !== 200) {
                 setStatus("Network error, please try again later")
             }
@@ -372,7 +364,7 @@ function Teams() {
         return (
             <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
                 <NavBar/>
-                {cookies.get('token') !== undefined && cookies.get('email') !== undefined && (cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                {Auth.isLoggedIn() && (Auth.isAdmin() || Auth.isSelector()) &&
                     <div className={toolbarStyles.toolbar}>
                         {renderSearchBarContainer()}
                     </div>

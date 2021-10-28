@@ -13,9 +13,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
-import Cookies from 'universal-cookie'
 import { API } from "./API";
-import Image from './Image'
+import { Auth } from './Auth';
+import Image from './Image';
 
 
 function Members() {
@@ -32,7 +32,6 @@ function Members() {
     const history = useHistory();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
-    const cookies = new Cookies();
 
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
@@ -54,7 +53,7 @@ function Members() {
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sort, favPosition, cookies.get("token"), cookies.get("email"))
+                const res = await API.getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sort, favPosition)
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -69,6 +68,7 @@ function Members() {
                 console.log(e)
             }
         })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [random]);
 
     function handleFilterClickOpen() {
@@ -264,7 +264,7 @@ function Members() {
     return (
         <>
             <NavBar/>
-            {cookies.get('token') !== undefined && cookies.get('email') !== undefined ? body() : <div>Please log in</div>}
+            {Auth.isLoggedIn() ? body() : <div>Please log in</div>}
         </>
     );
 };
