@@ -125,14 +125,20 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     npm install
     ```
-  - Start frontend server (optional)
+  - Configure frontend port in .env (set to 3000 by default)
+  - Congure backend and image server URL/port in config.js
+  - (optional) Start frontend server locally (accessible at [http://localhost:PORT])
     ```
     npm start
     ```
-  - A browser window will open with access to the loaded frontend.The site can be manually reached at [http://localhost:3000]
-  - Build frontend for external deployment. 
+  - Build frontend for deployment
     ```
     npm run build
+    ```
+  - (optional) Serve the build with a static server locally
+    ```
+    npm install -g server
+    serve -s build
     ```
 - Use iptables to allow public accessto the webpage(TO BE UPDATED)
 
