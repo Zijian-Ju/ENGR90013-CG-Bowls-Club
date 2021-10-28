@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import NavBar from './NavBar';
-import Cookies from 'universal-cookie'
-import axios from 'axios';
 import committeeStyles from  './css/committee.module.css';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -29,7 +27,6 @@ function SelectorTable(props) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("")
-    const cookies = new Cookies();
     const history = useHistory();
 
 
@@ -46,7 +43,7 @@ function SelectorTable(props) {
             alert("Please fill all fields");
             return null;
         }
-        const res = await API.createSelector(email, 0, password, name, role, "", "2021-09-12T13:09:05.760Z", username, cookies.get("token"), cookies.get("email"))
+        const res = await API.createSelector(email, 0, password, name, role, "", "2021-09-12T13:09:05.760Z", username)
         if (res.status !== 200) {
             alert("Network error, please try again later")
         }
@@ -125,11 +122,10 @@ function SelectorTable(props) {
 }
 
 function Row(props) {
-    const cookies = new Cookies();
     const history = useHistory();
 
     async function deleteUser(row) {
-        const res = await API.deleteSelector(row, cookies.get("token"), cookies.get("email"))
+        const res = await API.deleteSelector(row)
         if (res.status === 200) {
             alert("Success")
             history.go(0)
@@ -161,13 +157,12 @@ function Row(props) {
 
 function Committee() {
     const [response, setResponse] = useState({});
-    const cookies = new Cookies();
     const [status, setStatus] = useState("");
 
     useEffect(() => {
         (async function() {
             try {
-                const res = await API.getAllUser(cookies.get("token"), cookies.get("email"))
+                const res = await API.getAllUser()
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -182,7 +177,7 @@ function Committee() {
                 console.log(e)
             }
         })();
-    }, [cookies.get("token"), cookies.get("email")]);
+    }, []);
 
     return (
         <>

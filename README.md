@@ -3,8 +3,10 @@
 This project is motived by Mulgrave Country Club Lawn Bowls Section, which aims to perform the digital transmission of the manual process for the weekly team selection of Bowl games. The technical support is provided by the teams from School of Engineering and IT of, University of Melbourne.
 
 
-## 2. Project Documents(Exported from Conluence)
-(TO BE UPDATED)
+## 2. Project Documents: 
+The below document is exported from our Confluence space, which record the details about requirement elicitation, product design, meetings and the outcome of each sprint.
+
+- [Project Document](./deliverable/SWEN900132021CG-281021-1847-1022.pdf)
 ## 3. Deployed Application
 - Application URL: http://128.199.253.108:3000/home
 - Username and Password for Admin privilege
@@ -115,7 +117,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     to stop the process
     ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/stopServer.jpg)
-- Deploy Front-End Server(TO BE UPDATED)
+- Deploy Front-End Server
   - Install [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Click the link to see instructions)
   - Navigate to the frontend folder
     ```
@@ -125,18 +127,25 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     npm install
     ```
-  - Start frontend server (optional)
+  - Configure frontend port in [.env](./src/front-end/.env) (set to 3000 by default)
+  - Congure backend URL/port in [config.js](./src/front-end/src/config.js)
+  - (optional) Start frontend server locally (accessible at [http://localhost:PORT])
     ```
     npm start
     ```
-  - A browser window will open with access to the loaded frontend.The site can be manually reached at [http://localhost:3000]
-  - Build frontend for external deployment. 
+  - Build frontend for deployment
     ```
     npm run build
     ```
-- Use iptables to allow public accessto the webpage(TO BE UPDATED)
 
-Feel free to contact Zijian Ju (Zijianju98@gmail.com) for furthur assistance
+  - (optional) Serve the build with a static server locally
+    ```
+    npm install -g server
+    serve -s build
+    ```
+Now both front-end and back-end server have been deployed. The last thing to do is contacting the server administrator to open the public access to the front-end application (for port 3000 or other if the configuration changes).
+
+Feel free to contact Zijian Ju (Zijianju98@gmail.com) for further assistance about deployment.
 
 ## Contributors
 - Scrum Master: Sin I Von

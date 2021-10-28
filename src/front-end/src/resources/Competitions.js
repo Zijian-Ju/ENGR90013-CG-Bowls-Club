@@ -6,7 +6,6 @@ import teamsStyles from './css/teams.module.css';
 import competitionStyles from './css/competitions.module.css'
 import NavBar from './NavBar';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { TextField } from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -29,9 +28,9 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Collapse from '@material-ui/core/Collapse';
 import Box from '@material-ui/core/Box';
-import Cookies from 'universal-cookie'
 import { API } from "./API";
-import Image from './Image'
+import Image from './Image';
+import { Auth } from "./Auth"
 
 function isObjectEmpty(input) {
     var out = true;
@@ -42,7 +41,6 @@ function isObjectEmpty(input) {
 };
 
 function PlayerCard(props) {
-    const cookies = new Cookies();
     const history = useHistory();
 
     if (props.player === undefined) {
@@ -62,7 +60,7 @@ function PlayerCard(props) {
     }
 
     function handleUserProfileClick(id) {
-        if (cookies.get('role') === 'selector' || cookies.get('role') === 'admin') {
+        if (Auth.isAdmin() || Auth.isSelector()) {
             history.push("/members/" + id);
         };
     }
@@ -93,11 +91,10 @@ function RenderTeam(props) {
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
     const [status, setStatus] = useState("")
-    const cookies = new Cookies();
 
     async function deleteCompetition() {
         try {
-            const res = await API.deleteCompetition(props.comp.id, cookies.get("token"), cookies.get("email"))
+            const res = await API.deleteCompetition(props.comp.id)
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -116,7 +113,7 @@ function RenderTeam(props) {
 
     async function unassociateTeam() {
         try {
-            const res = await API.unassociateTeamFromCompetition(props.comp.id, props.comp.competitionDays, props.comp.competitionName, cookies.get("token"), cookies.get("email"))
+            const res = await API.unassociateTeamFromCompetition(props.comp.id, props.comp.competitionDays, props.comp.competitionName)
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -139,7 +136,7 @@ function RenderTeam(props) {
         setNewCompetitionName(props.comp.competitionName);
         (async function() {
             try {
-                const res = await API.getDetailedTeamById(props.teamId, cookies.get("token"), cookies.get("email"))
+                const res = await API.getDetailedTeamById(props.teamId)
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -261,7 +258,7 @@ function RenderTeam(props) {
             return null
         } else {
             try {
-                const res = await API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName, cookies.get("token"), cookies.get("email"))
+                const res = await API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName)
                 if (res.status !== 200) {
                     alert("Network error, please try again later")
                 }
@@ -293,7 +290,7 @@ function RenderTeam(props) {
                             <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
                                 <TextField
                                     style={{width: '95%'}}
-                                    disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                    disabled={!(Auth.isAdmin() || Auth.isSelector())}
                                     id="standard-basic" 
                                     size="small"
                                     label="Competition Name"
@@ -305,7 +302,7 @@ function RenderTeam(props) {
                                 <FormControl style={{width: '95%'}}>
                                     <InputLabel shrink id="competition day label">Competition Days</InputLabel>
                                     <Select
-                                        disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                        disabled={!(Auth.isAdmin() || Auth.isSelector())}
                                         size = "small"
                                         id="competition days"
                                         label="Competition Days"
@@ -321,10 +318,10 @@ function RenderTeam(props) {
                             </div>
                         </div>
                         <div>
-                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button onClick={() => changeCompetition()}>Save</Button>}
+                            {(Auth.isAdmin() || Auth.isSelector()) && <Button onClick={() => changeCompetition()}>Save</Button>}
                         </div>
                     </div>
-                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                    {(Auth.isAdmin() || Auth.isSelector()) &&
                         <div className={competitionStyles.renderTeamsControlsButtons}>
                             <div style={{width: '100%', textAlign: 'center'}}>
                                 Team Id {props.teamId} and competition id {props.comp.id}
@@ -351,7 +348,6 @@ function SelectTeam(props) {
     const [competitionDays, setCompetitionDays] = useState([]);
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
-    const cookies = new Cookies();
 
     async function changeCompetition() {
         if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
@@ -359,7 +355,7 @@ function SelectTeam(props) {
             return null
         } else {
             try {
-                const res = API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName, cookies.get("token"), cookies.get("email"))
+                const res = API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName)
                 if (res.status !== 200) {
                     alert("Network error, please try again later")
                 }
@@ -380,7 +376,7 @@ function SelectTeam(props) {
 
     async function deleteCompetition() {
         try {
-            const res = await API.deleteCompetition(props.comp.id, cookies.get("token"), cookies.get("email"))
+            const res = await API.deleteCompetition(props.comp.id)
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -404,7 +400,7 @@ function SelectTeam(props) {
         setNewCompetitionName(props.comp.competitionName);
         (async function () {
             try {
-                const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
+                const res = await API.getAllTeams()
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -425,7 +421,7 @@ function SelectTeam(props) {
         return (
             <div>{status}</div>
         )
-    } else if (cookies.get('role') !== 'admin' && cookies.get('role') !== 'selector') {
+    } else if (!(Auth.isAdmin() || Auth.isSelector())) {
         return (
             <div style={{flex: 1, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>No team selected for this competition, please check back later</div>
         )
@@ -437,7 +433,7 @@ function SelectTeam(props) {
                         <div className={competitionStyles.renderTeamControlsTextfieldInput}>
                             <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
                                 <TextField
-                                    disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                    disabled={!(Auth.isAdmin() || Auth.isSelector())}
                                     style={{width: '95%'}}
                                     id="standard-basic" 
                                     size="small"
@@ -450,7 +446,7 @@ function SelectTeam(props) {
                                 <FormControl style={{width: '95%'}}>
                                     <InputLabel shrink id="competition day label">Competition Days</InputLabel>
                                     <Select
-                                        disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                        disabled={!(Auth.isAdmin() || Auth.isSelector())}
                                         size = "small"
                                         id="competition days"
                                         label="Competition Days"
@@ -471,7 +467,7 @@ function SelectTeam(props) {
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
                         <div style={{width: '100%', textAlign: 'center'}}>
-                            Selecting for competition {props.comp.competitionName} (id:{props.comp.id})
+                            Selecting for {props.comp.competitionName} (id:{props.comp.id})
                         </div>
                         <div style={{width: '100%'}}>
                             <Button style={{width: '100%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
@@ -504,12 +500,11 @@ function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props);
     const [response, setResponse] = useState({})
-    const cookies = new Cookies();
 
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getTeamMembersPhotoURL(props.row, cookies.get("token"), cookies.get("email"))
+                const res = await API.getTeamMembersPhotoURL(props.row)
                 if (res.status !== 200) {
                     alert('Network error')
                 } else if (res.status === 200 && res.data.statusCode === 200) {
@@ -521,7 +516,7 @@ function Row(props) {
                 console.log(e)
             }
         })();
-    }, [])
+    }, [props.row])
     
     function calculatePlayerIds(team) {
         var count = [];
@@ -590,20 +585,22 @@ function Row(props) {
         )
     } 
     
-    function selectTeam(teamId) {
-        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
-            .then(res => {
-                if (res.status !== 200) {
-                    alert("Network error, please try again later")
-                }
-                if (res.status === 200 && res.data.statusCode !== 200) {
-                    alert(res.data.message)
-                }
-                if (res.status === 200 && res.data.statusCode === 200) {
-                    alert("Success")
-                    props.parentRefresh()
-                }
-            })
+    async function selectTeam(teamId) {
+        try {
+            const res = await API.updateCompetition(teamId, props.comp.id, props.comp.competitionDays, props.comp.competitionName);
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                props.parentRefresh()
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
     
     return (
@@ -646,7 +643,6 @@ function Player(props) {
     const [loaded, setLoaded] = useState(false)
     const history = useHistory();
     const playerId = props.player
-    const cookies = new Cookies();
 
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
@@ -655,7 +651,7 @@ function Player(props) {
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
+                const res = await API.getPlayerById(playerId)
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -723,7 +719,6 @@ function Player(props) {
 }
 
 function Competitions() {
-    const history = useHistory();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
     const [response, setResponse] = useState({})
@@ -732,7 +727,6 @@ function Competitions() {
     const [newCompName, setNewCompName] = useState("")
     const [newCompDay, setNewCompDay] = useState("")
     const [status, setStatus] = useState("");
-    const cookies = new Cookies();
 
     function handleDialogClickOpen() {
         setDialogOpen(true);
@@ -745,7 +739,7 @@ function Competitions() {
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+                const res = await API.getAllCompetitions()
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -793,7 +787,7 @@ function Competitions() {
             return;
         }
         try {
-            const res = await API.createNewCompetition([newCompDay], [newCompDay], newCompName,cookies.get("token"), cookies.get("email"))
+            const res = await API.createNewCompetition([newCompDay], [newCompDay], newCompName)
             if (res.status !== 200) {
                 alert("Network error, please try again later")
             }
@@ -860,7 +854,7 @@ function Competitions() {
         } else {
             return (
                 <>
-                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && toolbar()}
+                    {(Auth.isAdmin() || Auth.isSelector()) && toolbar()}
                     <div className={competitionStyles.body}>
                         <div className={competitionStyles.selectCompetitionContainer}>
                             {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}

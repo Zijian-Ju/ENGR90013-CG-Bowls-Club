@@ -27,8 +27,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
-import Cookies from 'universal-cookie'
 import { API } from "./API";
+import { Auth } from './Auth'
 import dayjs from 'dayjs'
 
 function CustomTableRow(props) {
@@ -42,12 +42,11 @@ function CustomTableRow(props) {
   const [editing, setEditing] = useState(false);
   const [deleted, setDeleted] = useState(false)
   const history = useHistory()
-  const cookies = new Cookies();
-
 
   function resetFields() {
     setSeason(props.data.season);
-    setDate(props.data.matchTime);
+    setDate(dayjs(props.data.matchTime).format("YYYY-MM-DD"));
+    setTime(dayjs(props.data.matchTime).format("HH:mm"));
     setCompetitionId(props.data.competitionId);
     setCompetitionName(props.data.competitionName)
     setPosition(props.data.position);
@@ -56,7 +55,7 @@ function CustomTableRow(props) {
 
   async function deletePerformance() {
     try {
-      const res = await API.deletePerformanceById(props.data.competitionId, props.data.id, dayjs(date+time).toISOString(), performance, props.data.playerId, cookies.get("token"), cookies.get("email"))
+      const res = await API.deletePerformanceById(props.data.competitionId, props.data.id, dayjs(date+time).toISOString(), performance, props.data.playerId)
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -76,7 +75,7 @@ function CustomTableRow(props) {
 
   async function updatePerformance() {
     try {
-      const res = await API.updatePerformance(competitionId, competitionName, props.data.id, dayjs(date+time).toISOString(), performance, props.data.playerId, position, season, cookies.get("token"), cookies.get("email"))
+      const res = await API.updatePerformance(competitionId, competitionName, props.data.id, dayjs(date+time).toISOString(), performance, props.data.playerId, position, season)
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -143,12 +142,11 @@ function LineChartControl(props) {
   const [status, setStatus] = useState("...Loading");
   const [year, setYear] = useState("");
   const [competition, setCompetition] = useState("");
-  const cookies = new Cookies();
 
   useEffect(() => {
     (async function () {
       try {
-        const res = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+        const res = await API.getAllCompetitions()
         if (res.status !== 200) {
           setStatus("Network error, please try again later")
         }
@@ -224,12 +222,11 @@ function LineChart(props) {
   const [loaded, setLoaded] = useState(false)
   const [yData, setYData] = useState([])
   const [status, setStatus] = useState("...Loading");
-  const cookies = new Cookies();
 
   useEffect(() => {
     (async function () {
       try {
-        const res = await API.getFilteredUserPerformances(props.compId, props.year, props.playerId, cookies.get("token"), cookies.get("email"))
+        const res = await API.getFilteredUserPerformances(props.compId, props.year, props.playerId)
         if (res.status !== 200) {
           setStatus("Network error, please try again later")
         }
@@ -287,8 +284,7 @@ function Details(props) {
   const playerId = props.playerId;
   const [random, setRandom] = useState(Math.random());
   const reRender = () => {setRandom(Math.random())};
-  const cookies = new Cookies();
-  const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile, setSelectedFile] = useState({});
 
   function objectNotEmpty(obj) {
     if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
@@ -301,7 +297,7 @@ function Details(props) {
   async function updatePlayer() {
     try {
       const additionalProps = {id: playerId, photoUrl: response.data.data.photoUrl, playerEmail: response.data.data.playerEmail, playerGender: response.data.data.playerGender, playerPhone: response.data.data.playerPhone, playerName: response.data.data.playerName, playerPreferTeammates: response.data.data.playerPreferTeammates, recentPerformance: response.data.data.recentPerformance}
-      const res = await API.updatePlayer({...editableFields, ...additionalProps}, cookies.get("token"), cookies.get("email"))
+      const res = await API.updatePlayer({...editableFields, ...additionalProps})
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -326,7 +322,7 @@ function Details(props) {
       if (res1.status !== 200) {
         alert("Network error, please try again later")
       } else if (res1.status === 200 && res1.data.code === 200) {
-        const res2 = await API.updatePlayer({...response.data.data, 'photoUrl': res1.data.img}, cookies.get("token"), cookies.get("email"))
+        await API.updatePlayer({...response.data.data, 'photoUrl': res1.data.img})
         alert('Image successfully updated')
         setSelectedFile();
         reRender();
@@ -352,7 +348,7 @@ function Details(props) {
       <div className={profileStyles.playerDetailsUpdateImageButton}>
         <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
           <Button>
-            <label for="fileUpload">Upload Image</label>
+            <label htmlFor="fileUpload">Upload Image</label>
           </Button>
           <input
             id="fileUpload"
@@ -361,10 +357,10 @@ function Details(props) {
             onChange={onFileChange}
             style={{display: 'none'}}
           />        
-          <Button disabled={selectedFile === undefined} onClick={uploadSubmit}>Save image</Button> 
+          <Button disabled={!objectNotEmpty(selectedFile)} onClick={uploadSubmit}>Save image</Button> 
         </div>
         <div style={{display: 'flex', flexDirection: 'row', width: '100%', overflow: 'hidden'}}>
-          {selectedFile !== undefined && <div>File:{selectedFile.name}</div>}
+          {objectNotEmpty(selectedFile) && <div>File:{selectedFile.name}</div>}
         </div>
       </div>
     )
@@ -373,7 +369,7 @@ function Details(props) {
   useEffect(() => {
     (async function () {
       try {
-        const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
+        const res = await API.getPlayerById(playerId)
         if (res.status !== 200) {
           setStatus("Network error, please try again later")
         }
@@ -433,7 +429,7 @@ function Details(props) {
             id="Favourite Position"
             label="Favourite Position"
             variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, playerPosPreference: e.target.value}))}}
+            onChange={(e) => {setEditableFields({...editableFields, playerPosPreference: e.target.value})}}
             disabled={!editing}
             size="small"
             value={editableFields.playerPosPreference}
@@ -446,7 +442,7 @@ function Details(props) {
             id="Not Preferred Teammates"
             label="Not Preferred Teammates"
             variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, playerNotPreferTeammates: e.target.value}))}}
+            onChange={(e) => {setEditableFields({...editableFields, playerNotPreferTeammates: e.target.value})}}
             disabled={!editing}
             size="small"
             value={editableFields.playerNotPreferTeammates}
@@ -459,7 +455,7 @@ function Details(props) {
             id="Notes"
             label="Notes"
             variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, notes: e.target.value}))}}
+            onChange={(e) => {setEditableFields({...editableFields, notes: e.target.value})}}
             disabled={!editing}
             size="small"
             value={editableFields.notes}
@@ -491,7 +487,6 @@ function PerformanceControl(props) {
   const reRender = () => {setRandom(Math.random())};
   const [dialogOpen, setDialogOpen] = useState(false);
   const history = useHistory()
-  const cookies = new Cookies();
   const [status, setStatus] = useState("...Loading");
   const [createPerformance, setCreatePerformance] = useState("");
   const [createDate, setCreateDate] = useState(dayjs().format("YYYY-MM-DD"));
@@ -627,7 +622,7 @@ function PerformanceControl(props) {
     }
 
     try {
-      const res = await API.addMatchPerformance(JSON.parse(createCompetition).id, JSON.parse(createCompetition).name, dayjs(createDate+createTime).toISOString(), createPerformance, playerId, createPosition, createSeason, cookies.get("token"), cookies.get("email"))
+      const res = await API.addMatchPerformance(JSON.parse(createCompetition).id, JSON.parse(createCompetition).name, dayjs(createDate+createTime).toISOString(), createPerformance, playerId, createPosition, createSeason)
 
       if (res.status !== 200) {
         alert("Network error, please try again later")
@@ -649,8 +644,8 @@ function PerformanceControl(props) {
   useEffect(() => {
     (async function () {
       try {
-        const res1 = await API.getAllPlayerPerformances(playerId, cookies.get("token"), cookies.get("email"))
-        const res2 = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+        const res1 = await API.getAllPlayerPerformances(playerId)
+        const res2 = await API.getAllCompetitions()
         if (res1.status !== 200 || res2.status !== 200) {
           setStatus("Network error, please try again later")
         }
@@ -695,13 +690,11 @@ function Performances(props) {
 
 function Profile() {
   const history = useHistory();
-  const [status, setStatus] = useState({});
   const { id } = useParams();
-  const cookies = new Cookies();
 
   async function deletePlayer() {
     try {
-      const res = await API.deletePlayerById(id, cookies.get("token"), cookies.get("email"))
+      const res = await API.deletePlayerById(id)
       if (res.status !== 200) {
         alert("Network error, please try again later")
       }
@@ -718,7 +711,7 @@ function Profile() {
   };
 
   function body() {
-    if (cookies.get("token") === undefined || cookies.get("email") === undefined) {
+    if (!Auth.isLoggedIn()) {
       return (
           <div>Please log in</div>
       )

@@ -3,17 +3,15 @@ import loginStyles from './css/login.module.css';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
-import axios from 'axios';
-import Cookies from 'universal-cookie'
 import { useHistory } from "react-router-dom";
 import { API } from "./API";
+import { Auth } from "./Auth"
 
 function Login() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [text, setText] = useState("Hello! Please login");
-    const cookies = new Cookies();
     const history = useHistory();
 
     
@@ -21,19 +19,17 @@ function Login() {
     useEffect(() => {
         (async function() {
             try {
-                if (cookies.get("token") !== undefined && cookies.get("email") !== undefined) {
-                    const res = await API.getPermissions(cookies.get("token"), cookies.get("email"));
+                if (Auth.isLoggedIn()) {
+                    const res = await API.getPermissions();
                     if (res.data.data.role === "guest") {
-                        cookies.remove("token", { path: '/' });
-                        cookies.remove("email", { path: '/' });
-                        cookies.remove("role", { path: '/' });
+                        Auth.logout()
                     }
                 }
             } catch (e) {
                 console.log(e)
             }
         })();
-    }, [cookies.get("token"), cookies.get("email")]);
+    }, []);
 
     async function login() {
         try {
@@ -41,12 +37,10 @@ function Login() {
             if (res.status !== 200) {
                         alert("Network error");
             }
-            if (res.status === 200 && res.data.statusCode == 20006) {
+            if (res.status === 200 && res.data.statusCode === 20006) {
                 setText("Wrong login")
-            } else if (res.status === 200 && res.data.statusCode == 200) {
-                cookies.set("token", res.data.data.token, {path: '/'})
-                cookies.set("email", res.data.data.user.email, {path: '/'})
-                cookies.set("role", res.data.data.user.role, {path: '/'})
+            } else if (res.status === 200 && res.data.statusCode === 200) {
+                Auth.login(res.data.data.token, res.data.data.user.email, res.data.data.user.role)
                 setText("Success!")
                 history.go(0)
             }
@@ -56,10 +50,8 @@ function Login() {
     }
 
     function logout() {
-        cookies.remove("token", { path: '/' });
-        cookies.remove("email", { path: '/' });
-        cookies.remove("role", { path: '/' });
-        setText("Hello! Please login")
+        Auth.logout();
+        setText("Hello! Please login");
         history.push("/home");
         return null
     }
@@ -107,7 +99,7 @@ function Login() {
         )
     }
 
-    if (cookies.get("token") !== undefined && cookies.get("email") !== undefined) {
+    if (Auth.isLoggedIn()) {
         return ( 
             logoutButton()
         )
