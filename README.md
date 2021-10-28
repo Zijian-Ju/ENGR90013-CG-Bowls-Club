@@ -3,8 +3,10 @@
 This project is motived by Mulgrave Country Club Lawn Bowls Section, which aims to perform the digital transmission of the manual process for the weekly team selection of Bowl games. The technical support is provided by the teams from School of Engineering and IT of, University of Melbourne.
 
 
-## 2. Project Documents(Exported from Conluence)
-(TO BE UPDATED)
+## 2. Project Documents: 
+The below document is exported from our Confluence space, which record the details about requirement elicitation, product design, meetings and the outcome of each sprint.
+
+- [Project Document](./deliverable/SWEN900132021CG-281021-1847-1022.pdf)
 ## 3. Deployed Application
 - Application URL: http://128.199.253.108:3000/home
 - Username and Password for Admin privilege
@@ -134,9 +136,9 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     npm run build
     ```
-- Use iptables to allow public accessto the webpage(TO BE UPDATED)
+Now both front-end and back-end server have been deployed. The last thing to do is contacting the server administrator to open the public access to the front-end application (for port 3000 or other if the configuration changes).
 
-Feel free to contact Zijian Ju (Zijianju98@gmail.com) for furthur assistance
+Feel free to contact Zijian Ju (Zijianju98@gmail.com) for further assistance about deployment.
 
 ## Contributors
 - Scrum Master: Sin I Von
