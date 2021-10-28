@@ -115,7 +115,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     to stop the process
     ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/stopServer.jpg)
-- Deploy Front-End Server(TO BE UPDATED)
+- Deploy Front-End Server
   - Install [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Click the link to see instructions)
   - Navigate to the frontend folder
     ```
