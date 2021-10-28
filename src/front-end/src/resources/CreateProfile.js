@@ -3,9 +3,7 @@ import bodyStyles from './css/body.module.css';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
 import NavBar from './NavBar';
-import Cookies from 'universal-cookie'
 import { API } from "./API";
 
 function CreateProfile() {
@@ -19,9 +17,7 @@ function CreateProfile() {
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
     const [notes, setNotes] = useState("");
     const [selectedFile, setSelectedFile] = useState();
-
     const history = useHistory();
-    const cookies = new Cookies();
 
     async function onSubmit() {
       try {
@@ -45,7 +41,7 @@ function CreateProfile() {
           }
         }
 
-        const res2 = await API.createBowler(imgUrl, playerAvailability, playerEmail, playerGender, playerName, playerNotPreferredTM, playerPhone, playerPreference, playerPreferredTM, notes, cookies.get("token"), cookies.get("email"))
+        const res2 = await API.createBowler(imgUrl, playerAvailability, playerEmail, playerGender, playerName, playerNotPreferredTM, playerPhone, playerPreference, playerPreferredTM, notes)
         if (res2.status !== 200) {
           alert("Network error, please try again later")
         }
@@ -75,7 +71,7 @@ function CreateProfile() {
         <div style={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center'}}>
           <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
             <Button>
-              <label for="fileUpload">Upload Image</label>
+              <label htmlFor="fileUpload">Upload Image</label>
             </Button>
             <input
               id="fileUpload"
