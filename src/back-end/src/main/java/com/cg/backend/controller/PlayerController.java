@@ -2,9 +2,13 @@ package com.cg.backend.controller;
 
 import com.cg.backend.common.enums.ResponseCode;
 import com.cg.backend.common.exceptions.BusinessException;
+import com.cg.backend.common.utils.Paging;
 import com.cg.backend.common.utils.SearchRequest;
+import com.cg.backend.model.Performance;
 import com.cg.backend.model.Player;
 import com.cg.backend.model.PlayerFilter;
+import com.cg.backend.service.PerformanceService;
+import com.cg.backend.service.PermissionService;
 import com.cg.backend.service.PlayerService;
 import java.util.HashMap;
 import java.util.List;
@@ -12,11 +16,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @EnableAutoConfiguration
 @Slf4j
@@ -24,6 +26,7 @@ public class PlayerController {
 
   @Resource
   private PlayerService playerService;
+
 
 
   @RequestMapping(value="/player/getAllPlayer", method= RequestMethod.POST, produces="application/json")
@@ -63,6 +66,7 @@ public class PlayerController {
     Player player=new Player();
     player.setId(param.get("id"));
     this.playerService.deletePlayerById(player);
+
     return true;
   }
 

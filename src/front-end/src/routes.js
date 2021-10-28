@@ -1,5 +1,6 @@
 import React from 'react';
 import Members from './resources/Members';
+import Committee from './resources/Committee';
 import Home from './resources/Home';
 import Profile from './resources/Profile';
 import Teams from './resources/Teams';
@@ -19,6 +20,7 @@ export const Routes = () => {
         <Route exact path="/editteam/:id" component={EditTeam} />
         <Route exact path="/members/create" component={CreateProfile} />
         <Route exact path="/members/:id" component={Profile} />
+        <Route exact path="/committee" component={Committee}/>
         <Route exact path="/">
           <Redirect to="/home" />
         </Route>

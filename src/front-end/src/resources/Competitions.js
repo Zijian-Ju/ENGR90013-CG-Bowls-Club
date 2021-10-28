@@ -1,11 +1,10 @@
 import { useHistory } from "react-router-dom";
-import styles from './css/navbar.module.css';
 import Button from '@material-ui/core/Button';
-import mcclogo from './img/mcc-logo.png';
 import toolbarStyles from  './css/toolbar.module.css';
+import bodyStyles from './css/body.module.css';
 import teamsStyles from './css/teams.module.css';
 import competitionStyles from './css/competitions.module.css'
-
+import NavBar from './NavBar';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { TextField } from '@material-ui/core';
@@ -25,17 +24,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
-import profilepic from  './img/profile.png';
 import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Collapse from '@material-ui/core/Collapse';
 import Box from '@material-ui/core/Box';
-
-
-function placeholderAlert() {
-    return alert("Unsupported");
-};
+import Cookies from 'universal-cookie'
+import { API } from "./API";
+import Image from './Image'
 
 function isObjectEmpty(input) {
     var out = true;
@@ -45,241 +41,440 @@ function isObjectEmpty(input) {
     return out;
 };
 
+function PlayerCard(props) {
+    const cookies = new Cookies();
+    const history = useHistory();
+
+    if (props.player === undefined) {
+        return (
+            <div style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
+                Not available
+            </div>
+        )
+    }
+
+    if (props.player === null) {
+        return (
+            <div style={{width: '100%', height: '110px', justifyContent: 'center', alignItems: 'center'}} className={bodyStyles.userCard}>
+                Position Open
+            </div>
+        )
+    }
+
+    function handleUserProfileClick(id) {
+        if (cookies.get('role') === 'selector' || cookies.get('role') === 'admin') {
+            history.push("/members/" + id);
+        };
+    }
+    
+    return (
+        <div onClick={() => handleUserProfileClick(props.playerId)} style={{width: '100%', height: '110px'}} className={bodyStyles.userCard}>
+            <div className={bodyStyles.userCardImageContainer}>
+                <div className={bodyStyles.userCardImage}>
+                    <Image url={props.player.photoUrl}/>
+                </div>
+                <div className={bodyStyles.userName}>
+                    {props.player.playerName}
+                </div>
+            </div>
+            <div className={bodyStyles.userCardDescriptionContainer}>
+                <div className={bodyStyles.userCardDescriptionItem}>Performance: {props.player.recentPerformance}</div>
+                <div className={bodyStyles.userCardDescriptionItem}>Availability: {props.player.playerAvailability}</div>
+                <div className={bodyStyles.userCardDescriptionItem}>Favourite Position: {props.player.playerPosPreference}</div>
+            </div>
+        </div>
+    )
+}
+
 function RenderTeam(props) {
     const [response, setResponse] = useState({})
     const [competitionName, setCompetitionName] = useState("");
     const [competitionDays, setCompetitionDays] = useState([]);
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
+    const [status, setStatus] = useState("")
+    const cookies = new Cookies();
 
-    function deleteCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id})
-        .then(res => {
-            alert("Success")
-            props.parentRefresh();
-            props.resetSelectedComp({})
-        })
-    }
-
-    function unassociateTeam() {
-        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: 0, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName})
-        .then(res => {
-            alert("Success")
-            props.parentRefresh();
-        })
-    }
-
-    useEffect(() => {
-        setCompetitionName(props.comp.competitionName)
-        setCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionName(props.comp.competitionName)
-        axios.post(`http://128.199.253.108:8082/team/getTeamById`, {id: props.teamId})
-            .then(res => {
-                if (res.status === 200 && res.data.statusCode === 200) {
-                    setResponse(res)
-                }
-            })
-    }, [props]);
-
-    function renderPlayerDetailed(player) {
-        var x = []
-        Object.entries(player).map(([key, value]) => { 
-            if (key.includes("BowlerId") && value > 0) {
-                x.push(value)
+    async function deleteCompetition() {
+        try {
+            const res = await API.deleteCompetition(props.comp.id, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
             }
-            return null
-        })
-        return (
-            <>
-                {x.map((playerId) => (
-                    <Player id={playerId} player={playerId}></Player>
-                ))}
-            </>
-       )
-    }
-
-    function changeCompetition(changeField) {
-        if (changeField === "Name" && competitionName === newCompetitionName) {
-            alert("No name change detected")
-            return null
-        } else if (changeField === "Days" && competitionDays === newCompetitionDays) {
-            alert("No days change detected")
-            return null
-        } else if (changeField === "Name") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: newCompetitionName})
-            .then(res => {
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
                 alert("Success")
-                setCompetitionName(newCompetitionName)
-                props.parentRefresh()
-            })
-        } else if (changeField === "Days") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: props.comp.competitionName})
-            .then(res => {
-                alert("Success")
-                setCompetitionDays(newCompetitionDays)
-                props.parentRefresh()
-            })
+                props.parentRefresh();
+                props.resetSelectedComp({})
+            }
+        } catch (e) {
+            console.log(e);
         }
     }
 
-    return (
-        <div className={competitionStyles.renderTeamContainer}>
-            <div className={competitionStyles.renderTeamControlsContainer}>
-                <div className={competitionStyles.renderTeamsControlsTextfield}>
-                    <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                        <TextField
-                            style={{width: '95%'}}
-                            id="standard-basic" 
-                            size="small"
-                            label="Edit Competition Name"
-                            defaultValue={newCompetitionName}
-                            onChange={(e) => setNewCompetitionName(e.target.value)}
-                        />
-                        <Button onClick={() => changeCompetition("Name")}>Save</Button>
+    async function unassociateTeam() {
+        try {
+            const res = await API.unassociateTeamFromCompetition(props.comp.id, props.comp.competitionDays, props.comp.competitionName, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                props.parentRefresh();
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    useEffect(() => {
+        setCompetitionName(props.comp.competitionName);
+        setCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionName(props.comp.competitionName);
+        (async function() {
+            try {
+                const res = await API.getDetailedTeamById(props.teamId, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();  
+    }, [props.comp, props.teamId]);
+
+    function renderPlayerDetailed(player) {
+  
+        if (isObjectEmpty(player)) {
+            return (
+                null
+            )
+        }
+
+        return (
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column'}}>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row', marginTop: '10px'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        
                     </div>
-                    <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                        <FormControl style={{width: '95%'}}>
-                            <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
-                            <Select
-                                size = "small"
-                                id="competition days"
-                                label="Edit Competition Days"
-                                multiple
-                                defaultValue={newCompetitionDays}
-                                onChange={(e) => {setNewCompetitionDays(e.target.value)}}
-                            >
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <Button onClick={() => changeCompetition("Days")}>Save</Button>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Lead
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Second
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Skip
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Third
                     </div>
                 </div>
-                <div className={competitionStyles.renderTeamsControlsButtons}>
-                    <div style={{width: '100%', textAlign: 'center'}}>
-                        Team Id {props.teamId} and competition id {props.comp.id}
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 1
                     </div>
-                    <div style={{width: '100%'}}>
-                        <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
-                        <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.leadBowlerId1}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.secondBowlerId1}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.skipBowlerId1}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId1}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 2
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.leadBowlerId2}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.secondBowlerId2}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.skipBowlerId2}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId2}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 3
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.leadBowlerId3}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.secondBowlerId3}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.skipBowlerId3}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId3}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Pos 4
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.leadBowlerId4}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.secondBowlerId4}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.skipBowlerId4}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId4}/> 
                     </div>
                 </div>
             </div>
-            <div style={{width: '100%'}}>
-                <Table style={{width: '100%'}} size="small">
-                    <TableHead style={{width: '100%'}}>
-                        <TableCell>Player Name</TableCell>
-                        <TableCell>Performance</TableCell>
-                        <TableCell>Availability</TableCell>
-                        <TableCell>Fav. Position</TableCell>
-                        <TableCell>Pref. Teammates</TableCell>
-                        <TableCell/>
-                    </TableHead>
-                    <TableBody style={{width: '100%'}}>
-                        {!isObjectEmpty(response) && renderPlayerDetailed(response.data.data)}
-                    </TableBody>
-                </Table>
-            </div> 
-        </div>
-    )
+       )
+    }
+
+    async function changeCompetition() {
+        if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
+            alert("No changes detected")
+            return null
+        } else {
+            try {
+                const res = await API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    alert("Success")
+                    setCompetitionName(newCompetitionName)
+                    setCompetitionDays(newCompetitionDays)
+                    props.parentRefresh()
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
+
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            <div>{status}</div>
+        )
+    } else {
+        return (
+            <div className={competitionStyles.renderTeamContainer}>
+                <div className={competitionStyles.renderTeamControlsContainer}>
+                    <div className={competitionStyles.renderTeamsControlsTextfield}>
+                        <div className={competitionStyles.renderTeamControlsTextfieldInput}>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <TextField
+                                    style={{width: '95%'}}
+                                    disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                    id="standard-basic" 
+                                    size="small"
+                                    label="Competition Name"
+                                    value={newCompetitionName}
+                                    onChange={(e) => setNewCompetitionName(e.target.value)}
+                                />
+                            </div>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <FormControl style={{width: '95%'}}>
+                                    <InputLabel shrink id="competition day label">Competition Days</InputLabel>
+                                    <Select
+                                        disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                        size = "small"
+                                        id="competition days"
+                                        label="Competition Days"
+                                        multiple
+                                        value={newCompetitionDays}
+                                        onChange={(e) => {setNewCompetitionDays(e.target.value)}}
+                                    >
+                                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                            <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        </div>
+                        <div>
+                            {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && <Button onClick={() => changeCompetition()}>Save</Button>}
+                        </div>
+                    </div>
+                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                        <div className={competitionStyles.renderTeamsControlsButtons}>
+                            <div style={{width: '100%', textAlign: 'center'}}>
+                                Team Id {props.teamId} and competition id {props.comp.id}
+                            </div>
+                            <div style={{width: '100%'}}>
+                                <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>
+                                <Button style={{width: '50%'}}onClick={() => unassociateTeam()}>Unassociate team</Button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div style={{width: '100%', height: '100%'}}>
+                    {!isObjectEmpty(response) && response.data.data !== null && renderPlayerDetailed(response.data.data)}
+                </div> 
+            </div>
+        )
+    }
 }
 
 function SelectTeam(props) {
     const [response, setResponse] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState("");
     const [competitionName, setCompetitionName] = useState("");
     const [competitionDays, setCompetitionDays] = useState([]);
     const [newCompetitionName, setNewCompetitionName] = useState("");
     const [newCompetitionDays, setNewCompetitionDays] = useState([]);
+    const cookies = new Cookies();
 
-    function changeCompetition(changeField) {
-        if (changeField === "Name" && competitionName === newCompetitionName) {
-            alert("No name change detected")
+    async function changeCompetition() {
+        if (competitionName === newCompetitionName && competitionDays === newCompetitionDays) {
+            alert("No changes detected")
             return null
-        } else if (changeField === "Days" && competitionDays === newCompetitionDays) {
-            alert("No days change detected")
-            return null
-        } else if (changeField === "Name") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: newCompetitionName})
-            .then(res => {
-                alert("Success")
-                setCompetitionName(newCompetitionName)
-                props.parentRefresh()
-            })
-        } else if (changeField === "Days") {
-            axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: props.comp.teamId, id: props.comp.id, competitionDays: newCompetitionDays, competitionName: props.comp.competitionName})
-            .then(res => {
-                alert("Success")
-                setCompetitionDays(newCompetitionDays)
-                props.parentRefresh()
-            })
+        } else {
+            try {
+                const res = API.updateCompetition(props.comp.teamId, props.comp.id, newCompetitionDays, newCompetitionName, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    alert("Success")
+                    setCompetitionName(newCompetitionName)
+                    setCompetitionDays(newCompetitionDays)
+                    props.parentRefresh()
+                }
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 
-    function deleteCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/deleteCompetitionById`, {id: props.comp.id})
-        .then(res => {
-            alert("Success")
-            props.parentRefresh()
-            props.resetSelectedComp({})
-        })
+    async function deleteCompetition() {
+        try {
+            const res = await API.deleteCompetition(props.comp.id, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
+                props.parentRefresh()
+                props.resetSelectedComp({})
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     useEffect(() => {
-        setCompetitionName(props.comp.competitionName)
-        setCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionDays(props.comp.competitionDays)
-        setNewCompetitionName(props.comp.competitionName)
-        axios.get(`http://128.199.253.108:8082/team/getAllTeam`)
-            .then(res => {
-                setResponse(res);
-                setLoading(false)
-            })
-    }, [props]);
+        setCompetitionName(props.comp.competitionName);
+        setCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionDays(props.comp.competitionDays);
+        setNewCompetitionName(props.comp.competitionName);
+        (async function () {
+            try {
+                const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
+    }, [props.comp]);
 
-    if (loading === false) {
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            <div>{status}</div>
+        )
+    } else if (cookies.get('role') !== 'admin' && cookies.get('role') !== 'selector') {
+        return (
+            <div style={{flex: 1, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>No team selected for this competition, please check back later</div>
+        )
+    } else {
         return (
             <div style={{width: '100%'}}>
                 <div className={competitionStyles.renderTeamControlsContainer}>
                     <div className={competitionStyles.renderTeamsControlsTextfield}>
-                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                            <TextField
-                                style={{width: '95%'}}
-                                id="standard-basic" 
-                                size="small"
-                                label="Edit Competition Name"
-                                defaultValue={newCompetitionName}
-                                onChange={(e) => setNewCompetitionName(e.target.value)}
-                            />
-                            <Button onClick={() => changeCompetition("Name")}>Save</Button>
+                        <div className={competitionStyles.renderTeamControlsTextfieldInput}>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <TextField
+                                    disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                    style={{width: '95%'}}
+                                    id="standard-basic" 
+                                    size="small"
+                                    label="Competition Name"
+                                    value={newCompetitionName}
+                                    onChange={(e) => setNewCompetitionName(e.target.value)}
+                                />
+                            </div>
+                            <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
+                                <FormControl style={{width: '95%'}}>
+                                    <InputLabel shrink id="competition day label">Competition Days</InputLabel>
+                                    <Select
+                                        disabled={!(cookies.get('role') === 'admin' || cookies.get('role') === 'selector')}
+                                        size = "small"
+                                        id="competition days"
+                                        label="Competition Days"
+                                        multiple
+                                        value={newCompetitionDays}
+                                        onChange={(e) => {setNewCompetitionDays(e.target.value)}}
+                                    >
+                                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                                            <MenuItem id={`competitiondays${day}`} key={day} value={day}>{day}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
                         </div>
-                        <div className={competitionStyles.renderTeamsControlsTextfieldBox}>
-                            <FormControl style={{width: '95%'}}>
-                                <InputLabel shrink id="competition day label">Edit Competition Days</InputLabel>
-                                <Select
-                                    size = "small"
-                                    id="competition days"
-                                    label="Edit Competition Days"
-                                    multiple
-                                    defaultValue={newCompetitionDays}
-                                    onChange={(e) => {setNewCompetitionDays(e.target.value)}}
-                                >
-                                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                        <MenuItem key={`weeklist${day}`} id={`competitiondays${day}`} value={day}>{day}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <Button onClick={() => changeCompetition("Days")}>Save</Button>
+                        <div>
+                            <Button onClick={() => changeCompetition()}>Save</Button>
                         </div>
                     </div>
                     <div className={competitionStyles.renderTeamsControlsButtons}>
                         <div style={{width: '100%', textAlign: 'center'}}>
-                            Selecting a team for competition ${props.comp.competitionName} which has id:${props.comp.id}:
+                            Selecting for competition {props.comp.competitionName} (id:{props.comp.id})
                         </div>
                         <div style={{width: '100%'}}>
-                            <Button style={{width: '50%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
+                            <Button style={{width: '100%'}} onClick={() => deleteCompetition()}>Delete this competition</Button>                        </div>
                     </div>
                 </div>
                 <TableContainer style={{width: '100%'}} component={Paper}>
@@ -295,31 +490,44 @@ function SelectTeam(props) {
                         </TableHead>
                         <TableBody>
                             {response.data.data.teamList.map((team) => {
-                                if (true) {
-                                    return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={`selectTeamRender${team.teamName}`} row={team}/>)
-                                } else {
-                                    return null;
-                                }
+                                return (<Row parentRefresh={props.parentRefresh} comp={props.comp} id={team.id} key={`selectTeamRender${team.teamName}`} row={team}/>)
                             })}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </div>
         )
-    } else {
-        return null
     }
 }
 
 function Row(props) {
     const [open, setOpen] = useState(false);
     const playerIds = calculatePlayerIds(props);
+    const [response, setResponse] = useState({})
+    const cookies = new Cookies();
+
+    useEffect(() => {
+        (async function () {
+            try {
+                const res = await API.getTeamMembersPhotoURL(props.row, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert('Network error')
+                } else if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                } else {
+                    alert('Server error')
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
+    }, [])
     
     function calculatePlayerIds(team) {
         var count = [];
         Object.entries(team.row).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                count.push([key, key.replace("Id", "Name")])
+                count.push([key, key.replace("Id", "Name"), value])
             }
             return null;
         })
@@ -327,18 +535,24 @@ function Row(props) {
     }
 
     function renderPlayerIcons(team) {
+        if (Object.entries(response).length === 0 || response.constructor !== Object) {
+            return null;
+        }
         return (
-            <div style={{width: '100%', overflowX: 'scroll'}} className={teamsStyles.collapsedPlayerIconRow}>
-                {playerIds.map(([playerId, playerName]) => {
+            <div className={teamsStyles.collapsedPlayerIconRow}>
+                {playerIds.map(function([positionName, playerName, playerId], index) {
                     return (
-                        <Tooltip key={`${playerId}${playerName}`} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
-                            <img style={{objectFit: 'contain', maxHeight: '40px'}} src={profilepic} alt="Logo" />
-                        </Tooltip>
+                        <div key={`playerIcons${positionName}${index}`} className={teamsStyles.collapsedPlayerIcon}>
+                            <Tooltip placement="top" title={team[playerName]}>
+                                <div>
+                                    <Image url={response.data.data[playerId]}/>
+                                </div>
+                            </Tooltip>
+                        </div>
                     )
                 })}
             </div>
         )
-
     }
 
     function renderPlayerDetailed(player) {
@@ -377,9 +591,15 @@ function Row(props) {
     } 
     
     function selectTeam(teamId) {
-        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName})
+        axios.post(`http://128.199.253.108:8082/competition/updateCompetition`, {teamId: teamId, id: props.comp.id, competitionDays: props.comp.competitionDays, competitionName: props.comp.competitionName}, {headers: {"Access-Token": cookies.get("token"), "Email": cookies.get("email")}})
             .then(res => {
-                if (res.status === 200) {
+                if (res.status !== 200) {
+                    alert("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    alert(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
                     alert("Success")
                     props.parentRefresh()
                 }
@@ -422,23 +642,38 @@ function Row(props) {
 
 function Player(props) {
     const [response, setResponse] = useState({})
+    const [status, setStatus] = useState("");
+    const [loaded, setLoaded] = useState(false)
     const history = useHistory();
     const playerId = props.player
-    
+    const cookies = new Cookies();
+
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: playerId})
-            .then(res => {
+        (async function () {
+            try {
+                const res = await API.getPlayerById(playerId, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
                 if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
                     setResponse(res);
                 }
-            })
+                setLoaded(true)
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [playerId]);
 
-    if (!isObjectEmpty(response) && response.data.data !== null) {
+    if (loaded && !isObjectEmpty(response) && response.data.data !== null) {
         return (
             <TableRow key={response.data.data.id}>
                 <TableCell component="th" scope="row">
@@ -461,8 +696,29 @@ function Player(props) {
                 </TableCell>
             </TableRow>
         )
+    } else if (loaded) {
+        return (
+            <TableRow>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    N/A
+                </TableCell>
+                <TableCell>
+                    {`${status}`}
+                </TableCell>
+                <TableCell/>
+            </TableRow>
+        )
     } else {
-        return null
+        return null;
     }
 }
 
@@ -475,6 +731,8 @@ function Competitions() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newCompName, setNewCompName] = useState("")
     const [newCompDay, setNewCompDay] = useState("")
+    const [status, setStatus] = useState("");
+    const cookies = new Cookies();
 
     function handleDialogClickOpen() {
         setDialogOpen(true);
@@ -484,33 +742,29 @@ function Competitions() {
         setDialogOpen(false);
     }
 
-    function membersHandleClick() {
-        history.push("/members");
-    };
-
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    }
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
-    }
-
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/competition/getAllCompetition`, {})
-            .then(res => {
-                setResponse(res);
-            })
+        (async function () {
+            try {
+                const res = await API.getAllCompetitions(cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
+                if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
+                    setResponse(res);
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
     }, [random]);
 
     function renderCompetitionList() {
         return (
             <>  
-                Select:
                 {response.data.data.competitionList.map((comp) => (
                     <div onClick={() => {setSelectedComp(comp); reRender()}} className={competitionStyles.competitionCard} key={`rendercomplist${comp.id}`}>
                         {comp.competitionName}
@@ -533,31 +787,31 @@ function Competitions() {
         return x;
     }
 
-    function createNewCompetition() {
-        axios.post(`http://128.199.253.108:8082/competition/addCompetition`, {competitionDay: [newCompDay], competitionDays: [newCompDay], competitionName: newCompName, teamId: 0})
-            .then(res => {
-                alert("success")
+    async function createNewCompetition() {
+        if (newCompName==="" || newCompDay==="") {
+            alert("Please fill all fields")
+            return;
+        }
+        try {
+            const res = await API.createNewCompetition([newCompDay], [newCompDay], newCompName,cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Success")
                 reRender()
                 setSelectedComp({})
-            })
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
 
-    return (
-        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-            <div className={styles.body}>
-                <div className={styles.logotext} >
-                    <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
-                </div>
-                <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
-                </div>
-                <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
-                </div>
-            </div>
+    function toolbar() {
+        return (
             <div className={toolbarStyles.toolbar}>
                 <div className={toolbarStyles.newUserContainer}>
                     <Button variant="contained" color="primary" onClick={handleDialogClickOpen}>New Competition</Button>
@@ -595,16 +849,37 @@ function Competitions() {
                     </Dialog>
                 </div>
             </div>
-            <div className={competitionStyles.body}>
-                <div className={competitionStyles.selectCompetitionContainer}>
-                    {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
-                </div>
-                <div className={competitionStyles.displayCompetitionsContainer}>
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
-                    {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
-                    {isObjectEmpty(selectedComp) && <div>Select a team</div>}
-                </div>
-            </div>
+        )
+    }
+
+    function body() {
+        if (Object.keys(response).length === 0 || response.constructor !== Object) {
+            return (
+                <div>{status}</div>
+            )
+        } else {
+            return (
+                <>
+                    {(cookies.get('role') === 'admin' || cookies.get('role') === 'selector') && toolbar()}
+                    <div className={competitionStyles.body}>
+                        <div className={competitionStyles.selectCompetitionContainer}>
+                            {response.status === 200 && response.data.statusCode === 200 && renderCompetitionList()}
+                        </div>
+                        <div className={competitionStyles.displayCompetitionsContainer}>
+                            {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) > 0 && <RenderTeam key={`renderTeamfor${selectedComp}`} comp={selectedComp} teamId={getTeamByCompId(selectedComp.id)} resetSelectedComp={setSelectedComp} parentRefresh={reRender}/>}
+                            {!isObjectEmpty(selectedComp) && getTeamByCompId(selectedComp.id) === 0 && <SelectTeam key={`selectTeamfor${selectedComp}`} resetSelectedComp={setSelectedComp} comp={selectedComp} parentRefresh={reRender}/>}
+                            {isObjectEmpty(selectedComp) && <div style={{flex: 1, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>Select a team</div>}
+                        </div>
+                    </div>
+                </>
+            )
+        }
+    }
+
+    return (
+        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
+            <NavBar/>
+            {body()}
         </div>
     )
 }

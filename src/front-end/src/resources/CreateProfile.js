@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import styles from './css/navbar.module.css';
+import React, { useState } from 'react';
 import bodyStyles from './css/body.module.css';
-import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
 import axios from 'axios';
-import { useParams } from "react-router-dom";
+import NavBar from './NavBar';
+import Cookies from 'universal-cookie'
+import { API } from "./API";
 
 function CreateProfile() {
-    const [response, setResponse] = useState({});
-    const [loaded, setLoaded] = useState(false);
     const [playerName, setPlayerName] = useState("");
     const [playerEmail, setPlayerEmail] = useState("");
     const [playerPhone, setPlayerPhone] = useState("");
@@ -20,56 +17,88 @@ function CreateProfile() {
     const [playerGender, setPlayerGender] = useState("");
     const [playerNotPreferredTM, setPlayerNotPreferredTM] = useState("");
     const [playerPreferredTM, setPlayerPreferredTM] = useState("");
+    const [notes, setNotes] = useState("");
+    const [selectedFile, setSelectedFile] = useState();
+
     const history = useHistory();
+    const cookies = new Cookies();
 
-    function placeholderAlert() {
-        return alert("Unsupported");
-    }; 
+    async function onSubmit() {
+      try {
 
-    function onSubmit() {
-      axios.post(`http://128.199.253.108:8082/player/addPlayer`, {photoUrl: "", playerAvailability: playerAvailability, playerEmail: playerEmail, playerGender: playerGender, playerName : playerName, playerNotPreferTeammates: playerNotPreferredTM, playerPhone: playerPhone, playerPosPreference: playerPreference, playerPreferTeammates: playerPreferredTM, recentPerformance: 0, id: 0})
-      .then(res => {
-        alert("Player Created"); 
-        history.push("/members");
-      })
+        if (playerName === "" || playerEmail === "" || playerPhone==="" || playerAvailability ==="" || playerGender === "") {
+          alert("Please fill name, email, phone, availability and gender");
+          return null;
+        }
+        var imgUrl = ""
+
+        if (selectedFile !== undefined) {
+          const formData = new FormData();
+          formData.append("file", selectedFile, selectedFile.name);
+          const res1 = await API.uploadImage(formData);
+          if (res1.status !== 200) {
+            alert("Network error, please try again later")
+          } else if (res1.status === 200 && res1.data.code === 200) {
+            imgUrl = res1.data.img
+          } else {
+            alert("Image server error")
+          }
+        }
+
+        const res2 = await API.createBowler(imgUrl, playerAvailability, playerEmail, playerGender, playerName, playerNotPreferredTM, playerPhone, playerPreference, playerPreferredTM, notes, cookies.get("token"), cookies.get("email"))
+        if (res2.status !== 200) {
+          alert("Network error, please try again later")
+        }
+        if (res2.status === 200 && res2.data.statusCode !== 200) {
+          alert(res2.data.message)
+        }
+        if (res2.status === 200 && res2.data.statusCode === 200) {
+          alert("Player Created"); 
+          history.push("/members");
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
 
-    function membersHandleClick() {
-      history.push("/members");
-    };
-
-    function homeHandleClick() {
-      history.push("/home");
+    const onFileChange = (event) => {
+      const validTypes = ["image/jpg", "image/jpeg", "image/png"]
+      if (validTypes.includes(event.target.files[0].type)) {
+        setSelectedFile(event.target.files[0])
+      } else {
+        alert("Invalid file type uploaded")
+      }
     }
 
-    function teamsHandleClick() {
-      history.push("/teams")
-    };
-
-    function competitionsHandleClick() {
-      history.push("/competitions")
+    function imageUpload() {
+      return (
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center'}}>
+          <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
+            <Button>
+              <label for="fileUpload">Upload Image</label>
+            </Button>
+            <input
+              id="fileUpload"
+              type="file"
+              name="file"
+              onChange={onFileChange}
+              style={{display: 'none'}}
+            />
+            <Button disabled={selectedFile === undefined} onClick={() => setSelectedFile()}>Deselect Image</Button>        
+          </div>
+          <div style={{display: 'flex', flexDirection: 'row', width: '100%', overflow: 'hidden'}}>
+            {selectedFile !== undefined && <div style={{textAlign: 'center'}}>File:{selectedFile.name}</div>}
+          </div>
+        </div>
+      )
     }
 
     return (
         <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-            <div className={styles.body}>
-                <div className={styles.logotext} >
-                    <img className={styles.mcclogo} src={mcclogo} onClick={homeHandleClick} alt="Logo" />
-                </div>
-                <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
-                </div>
-                <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
-                </div>
-            </div>
-      
+            <NavBar/>
             <div className = {bodyStyles.profilePage}>
-              <div style={{width:'70%', height: '100%'}} className = {bodyStyles.profilePageColumn}>
-                <div style ={{height: '93.5%'}} className = {bodyStyles.profilePageColumnContainer}>
+              <div style={{width:'40%', height: '100%'}} className = {bodyStyles.profilePageColumn}>
+                <div style ={{height: '93.5%', backgroundColor:'white'}} className = {bodyStyles.profilePageColumnContainer}>
                   <div className = {bodyStyles.profilePageContainerTitle}>
                     Basic Information
                   </div>
@@ -108,7 +137,7 @@ function CreateProfile() {
                     </div>
                     <div className = {bodyStyles.profilePageInfoContainerRow}>
                       <div className = {bodyStyles.profilePageContainerRowText}>
-                        Preference Position
+                         Preference Position
                       </div>
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
                         <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Preference" variant="outlined" defaultValue={playerPreference} onChange={(e) => {setPlayerPreference(e.target.value)}}/>
@@ -137,6 +166,17 @@ function CreateProfile() {
                       <div className = {bodyStyles.profilePageContainerRowTextfield}>
                         <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Gender" variant="outlined" defaultValue={playerGender} onChange={(e) => {setPlayerGender(e.target.value)}}/>
                       </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      <div className = {bodyStyles.profilePageContainerRowText}>
+                        Notes
+                      </div>
+                      <div className = {bodyStyles.profilePageContainerRowTextfield}>
+                        <TextField size='small' style={{width:'100%'}} id="filled-basic" label="Enter Notes" variant="outlined" defaultValue={notes} onChange={(e) => {setNotes(e.target.value)}}/>
+                      </div>
+                    </div>
+                    <div className = {bodyStyles.profilePageInfoContainerRow}>
+                      {imageUpload()}
                     </div>
                   </div>
                   <div className = {bodyStyles.profilePageBasicInfoSubmit}>

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-import styles from './css/navbar.module.css';
+import Image from './Image'
+import NavBar from './NavBar';
 import teamsStyles from './css/teams.module.css';
 import toolbarStyles from  './css/toolbar.module.css';
-import mcclogo from './img/mcc-logo.png';
 import { useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import profilepic from  './img/profile.png';
@@ -14,7 +12,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
-
 import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
@@ -26,37 +23,55 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-
-
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Cookies from 'universal-cookie'
+import { API } from "./API";
+import { __RouterContext } from 'react-router';
 
-function placeholderAlert() {
-    return alert("Unsupported");
-}
 
 function Player(props) {
     const [response, setResponse] = useState({})
     const history = useHistory();
-    
+    const [status, setStatus] = useState("");
+    const cookies = new Cookies();
+
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
     }
 
     useEffect(() => {
-        axios.post(`http://128.199.253.108:8082/player/getPlayerById`, {id: props.player})
-            .then(res => {
+        (async function () {
+            try {
+                const res = await API.getPlayerById(props.player, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    setStatus("Network error, please try again later")
+                }
+                if (res.status === 200 && res.data.statusCode !== 200) {
+                    setStatus(res.data.message)
+                }
                 if (res.status === 200 && res.data.statusCode === 200) {
+                    setStatus("...Loading")
                     setResponse(res);
                 }
-            })
-    }, []);
+            } catch (e) {
+                console.log(e)
+            }
+        })();
+    }, [props.player]);
 
-    if (Object.keys(response).length !== 0 && response.constructor === Object && response.data.data !== null) {
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            null
+        )
+    } else {
         return (
             <TableRow key={response.data.data.id}>
                 <TableCell component="th" scope="row">
                     {response.data.data.playerName}
+                </TableCell>
+                <TableCell>
+                    {props.position}
                 </TableCell>
                 <TableCell>
                     {response.data.data.recentPerformance}
@@ -75,34 +90,61 @@ function Player(props) {
                 </TableCell>
             </TableRow>
         )
-    } else {
-        return null
     }
 }
 
 function Row(props) {
     const [open, setOpen] = useState(false);
+    const [response, setResponse] = useState({})
     const playerIds = calculatePlayerIds(props);
     const history = useHistory();
-    
+    const cookies = new Cookies();
+
+    useEffect(() => {
+        (async function () {
+            try {
+                const res = await API.getTeamMembersPhotoURL(props.row, cookies.get("token"), cookies.get("email"))
+                if (res.status !== 200) {
+                    alert('Network error')
+                } else if (res.status === 200 && res.data.statusCode === 200) {
+                    setResponse(res)
+                } else {
+                    alert('Server error')
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        })();
+    }, [])
+
     function calculatePlayerIds(team) {
         var count = [];
         Object.entries(team.row).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                count.push([key, key.replace("Id", "Name")])
+                count.push([key, key.replace("Id", "Name"), value])
             }
+            return null;
         })
         return count
     }
 
     function renderPlayerIcons(team) {
+        if (Object.entries(response).length === 0 || response.constructor !== Object) {
+            return null;
+        }
         return (
             <div className={teamsStyles.collapsedPlayerIconRow}>
-                {playerIds.map(([playerId, playerName]) => (
-                    <Tooltip id={playerId} className={teamsStyles.collapsedPlayerIcon} placement="top" title={team[playerName]}>
-                        <img style={{objectFit: 'contain', maxHeight: '50px'}} src={profilepic} alt="Logo" />
-                    </Tooltip>
-                ))}
+                {playerIds.map(function([positionName, playerName, playerId], index) {
+                    return (
+                        <div key={`playerIcons${positionName}${index}`} className={teamsStyles.collapsedPlayerIcon}>
+                            <Tooltip placement="top" title={team[playerName]}>
+                                <div>
+                                    <Image url={response.data.data[playerId]}/>
+                                </div>
+                            </Tooltip>
+                        </div>
+                    )
+                })}
             </div>
         )
 
@@ -112,14 +154,17 @@ function Row(props) {
         var x = []
         Object.entries(player).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                x.push(value)
+                x.push([`${key.split("B")[0]} ${key.slice(-1)}`, value])
             }
+            return null;
         })
         return (
             <>
-                {x.map((playerId) => (
-                    <Player player={playerId}></Player>
-                ))}
+                {x.map(function(player, index) {
+                    return (
+                        <Player key={`${player[1]}${index}`} position={player[0]} player={player[1]}></Player>
+                    )
+                })}
             </>
        )
     }
@@ -129,6 +174,7 @@ function Row(props) {
             <Table size="small">
                 <TableHead>
                     <TableCell>Player Name</TableCell>
+                    <TableCell>Position</TableCell>
                     <TableCell>Performance</TableCell>
                     <TableCell>Availability</TableCell>
                     <TableCell>Fav. Position</TableCell>
@@ -143,21 +189,29 @@ function Row(props) {
     }
 
     function editTeamRedirect(teamId, props) {
-        // history.push({pathname: `/editteam/${teamId}`});
+        history.push({pathname: `/editteam/${teamId}`, state: teamId});
         return (null)
     }
 
-    function deleteTeam(id) {
-        axios.post(`http://128.199.253.108:8082/team/deleteTeam`, {id: id, teamName: props.row.teamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
-            .then(res => {
-                if (res.status === 200) {
-                    alert("Team deleted")
-                    history.push("/teams");
-                }
-            })
+    async function deleteTeam(id) {
+        try {
+            const res = await API.deleteTeam(id, props.row.teamName, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Team deleted")
+                history.push("/teams");
+                props.parentRefresh()
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
-    
-    
+     
     return (
         <>
             <TableRow className={teamsStyles.root}>
@@ -165,14 +219,14 @@ function Row(props) {
                     <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
-                </TableCell>
+                </TableCell >
                 <TableCell component="th" scope="row">
                     {props.row.teamName}
                 </TableCell>
-                <TableCell>
+                <TableCell >
                     {playerIds.length}/16
                 </TableCell>
-                <TableCell style={{Width: '50%'}}>
+                <TableCell>
                     {renderPlayerIcons(props.row)}
                 </TableCell>
                 <TableCell>
@@ -181,7 +235,7 @@ function Row(props) {
                 </TableCell>
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box margin={1}>
                             {renderTeamBreakdown(props.row)}
@@ -191,7 +245,6 @@ function Row(props) {
             </TableRow>
         </>
     )
-
 }
 
 function Teams() {
@@ -199,31 +252,10 @@ function Teams() {
     const [teamSearchText, setTeamSearchText] = useState("");
     const [dialogOpen, setDialogOpen] = useState(false);
     const [newTeamName, setNewTeamName] = useState("");
-    // const [minPerformance, setMinPerformance] = useState(0);
-    // const [maxPerformance, setMaxPerformance] = useState(10);
-    // const [availability, setAvailability] = useState([]);
-    // const [favPosition, setFavPosition] = useState([]);
-    // const [sort, setSort] = useState("");
-    // const [sortOrder, setSortOrder] = useState("");
-    const history = useHistory();
+    const [status, setStatus] = useState("");
+    const cookies = new Cookies();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
-
-    function membersHandleClick() {
-        history.push("/members");
-    };
-
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    } 
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
-    }
 
     function handleDialogClickOpen() {
         setDialogOpen(true);
@@ -233,14 +265,27 @@ function Teams() {
         setDialogOpen(false);
     }
 
-    function createTeam() {
-        axios.post(`http://128.199.253.108:8082/team/addTeam`, {teamName: newTeamName, leadBowlerId1: 0, leadBowlerId2: 0, leadBowlerId3:0, leadBowlerId4:0, leadBowlerName1: "", leadBowlerName2: "", leadBowlerName3: "", leadBowlerName4:"", secondBowlerId1:0, secondBowlerId2: 0, secondBowlerId3: 0, secondBowlerId4: 0, secondBowlerName1:"", secondBowlerName2:"", secondBowlerName3:"", secondBowlerName4: "", skipBowlerId1:0, skipBowlerId2: 0, skipBowlerId3: 0, skipBowlerId4:0, skipBowlerName1: "", skipBowlerName2: "", skipBowlerName3: "", skipBowlerName4:"", thirdBowlerId1:0, thirdBowlerId2:0, thirdBowlerId3:0, thirdBowlerId4:0, thirdBowlerName1:"", thirdBowlerName2:"", thirdBowlerName3: "", thirdBowlerName4:""})
-            .then(res => {
-                if (res.status === 200) {
-                    alert("Team created")
-                }
-            })
-            .then(x => reRender())
+    async function createTeam() {
+        if (newTeamName === "") {
+            alert("Enter a valid team name");
+            return;
+        }
+        try {
+            const res = await API.createTeam(newTeamName, cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                alert("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                alert(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                alert("Team created")
+            }
+            handleDialogClickClose()
+            reRender()
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     function renderSearchBarContainer() {
@@ -259,7 +304,7 @@ function Teams() {
                             <Button onClick={handleDialogClickClose} color="primary">
                                 Cancel
                             </Button>
-                            <Button onClick={() => {createTeam(); handleDialogClickClose()}} color="primary">
+                            <Button onClick={(e) => {createTeam()}} color="primary">
                                 Submit
                             </Button>
                         </DialogActions>
@@ -271,122 +316,6 @@ function Teams() {
                     </div>
                 </div>
             </>
-            
-                /* <div className={toolbarStyles.filter}>
-                    <Button variant="contained" colour="primary" onClick={handleFilterClickOpen}>Filter</Button>
-                    <Dialog className={toolbarStyles.filterDialog} open={dialogOpen} onClose={handleFilterClickClose}>
-                        <DialogTitle>Filters Results</DialogTitle>
-                        <DialogContent className={toolbarStyles.filterDialogContent}>
-                            <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                            <InputLabel shrink id="sort label">Sort</InputLabel>
-                                <Select
-                                    label="Sort"
-                                    id="sort"
-                                    value={sort}
-                                    displayEmpty
-                                    onChange={(e) => {setSort(e.target.value)}}
-                                >
-                                    <MenuItem value={'name'}>Name</MenuItem>
-                                    <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl className={toolbarStyles.filterFormControl}>
-                            <InputLabel shrink id="sort order label">Sort Order</InputLabel>
-                                <Select
-                                    label="Sort order"
-                                    id="sort-order"
-                                    value={sortOrder}
-                                    displayEmpty
-                                    onChange={(e) => {setSortOrder(e.target.value)}}
-                                >
-                                    <MenuItem value={'asc'}>Ascending</MenuItem>
-                                    <MenuItem value={'desc'}>Descending</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.filterDialogContent}>
-                            <FormControl className={toolbarStyles.filterFormControl} style={{marginRight: "10%"}}>
-                            <InputLabel shrink id="min performance label">Min Performance</InputLabel>
-                                <Select
-                                    label="Minimum"
-                                    id="performance-min"
-                                    value={minPerformance}
-                                    displayEmpty
-                                    onChange={(e) => {setMinPerformance(e.target.value)}}
-                                >
-                                    <MenuItem value={0}>0</MenuItem>
-                                    <MenuItem value={1}>1</MenuItem>
-                                    <MenuItem value={2}>2</MenuItem>
-                                    <MenuItem value={3}>3</MenuItem>
-                                    <MenuItem value={4}>4</MenuItem>
-                                    <MenuItem value={5}>5</MenuItem>
-                                    <MenuItem value={6}>6</MenuItem>
-                                    <MenuItem value={7}>7</MenuItem>
-                                    <MenuItem value={8}>8</MenuItem>
-                                    <MenuItem value={9}>9</MenuItem>
-                                    <MenuItem value={10}>10</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
-                                <InputLabel shrink id="availability label">Max Performance</InputLabel>
-                                <Select
-                                    id="availability select"
-                                    value={maxPerformance}
-                                    onChange={(e) => {setMaxPerformance(e.target.value)}}
-                                    displayEmpty
-                                >
-                                    {(() => {
-                                        const options = [];
-                                        for (let i = minPerformance; i<=10; i++) {
-                                            options.push(<MenuItem value={i}>{i}</MenuItem>)
-                                        }
-                                        return options;
-                                    }
-                                    )()}
-                                </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.fullDialogContent}>
-                            <FormControl className={toolbarStyles.availabilityFormControl}>
-                            <InputLabel shrink id="availability label">Availabilities</InputLabel>
-                            <Select
-                                labelId="availability label"
-                                id="availability"
-                                multiple
-                                value={availability}
-                                onChange={(e) => {setAvailability(e.target.value)}}
-                            >
-                                {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
-                                    <MenuItem key={day} value={day}>{day}</MenuItem>
-                                ))}
-                            </Select>
-                            </FormControl>
-                        </DialogContent>
-                        <DialogContent className={toolbarStyles.fullDialogContent}>
-                            <FormControl className={toolbarStyles.favPositionFormControl}>
-                            <InputLabel shrink id="fav position label">Favourite Position</InputLabel>
-                            <Select
-                                labelId=" fav position label"
-                                id="favourite position"
-                                multiple
-                                value={favPosition}
-                                onChange={(e) => {setFavPosition(e.target.value)}}
-                            >
-                                {["Skip","Second","Third","Lead"].map((position) => (
-                                    <MenuItem key={position} value={position}>{position}</MenuItem>
-                                ))}
-                            </Select>
-                            </FormControl>
-                        <DialogActions>
-                            <Button onClick={handleFilterClickClose} color="primary">
-                                Go Back
-                            </Button>
-                            <Button onClick={() => {handleFilterClickClose(); reRender()}} color="primary">
-                                Submit
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </div> */
         )
     }
 
@@ -407,8 +336,9 @@ function Teams() {
                         <TableBody>
                             {response.data.data.teamList.map((team) => {
                                 if (team.teamName.toLowerCase().includes(teamSearchText.toLowerCase())) {
-                                    return (<Row key={team.teamName} row={team}/>)
+                                    return (<Row parentRefresh={reRender} key={team.teamName} row={team}/>)
                                 }
+                                return null;
                             })}
                         </TableBody>
                     </Table>
@@ -418,37 +348,42 @@ function Teams() {
     }
 
     useEffect(() => {
-        axios.get(`http://128.199.253.108:8082/team/getAllTeam`)
-            .then(res => {
+        (async function () {
+            const res = await API.getAllTeams(cookies.get("token"), cookies.get("email"))
+            if (res.status !== 200) {
+                setStatus("Network error, please try again later")
+            }
+            if (res.status === 200 && res.data.statusCode !== 200) {
+                setStatus(res.data.message)
+            }
+            if (res.status === 200 && res.data.statusCode === 200) {
+                setStatus("...Loading")
                 setResponse(res);
-            })
+            }
+        })();
     }, [random]);
 
-    return (
-        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
-            <div className={styles.body}>
-                <div className={styles.logotext} >
-                    <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
-                </div>
-                <div className={styles.linktabs}>
-                    <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                    <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                    <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                    <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
-                </div>
-                <div className={styles.logout}>
-                    <Button onClick={placeholderAlert}>LOG OUT</Button>
+
+    if (Object.keys(response).length === 0 || response.constructor !== Object) {
+        return (
+            <div>{status}</div>
+        )
+    } else {
+        return (
+            <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
+                <NavBar/>
+                {cookies.get('token') !== undefined && cookies.get('email') !== undefined && (cookies.get('role') === 'admin' || cookies.get('role') === 'selector') &&
+                    <div className={toolbarStyles.toolbar}>
+                        {renderSearchBarContainer()}
+                    </div>
+                }
+                <div className={teamsStyles.body}>
+                    {Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && renderTable()}
+                    {Object.keys(response).length === 0 && response.constructor === Object && <div>...Loading</div>}
                 </div>
             </div>
-            <div className={toolbarStyles.toolbar}>
-                {renderSearchBarContainer()}
-            </div>
-            <div className={teamsStyles.body}>
-                {Object.keys(response).length !== 0 && response.constructor === Object && response.status === 200 && renderTable()}
-                {Object.keys(response).length === 0 && response.constructor === Object && <div>...Loading</div>}
-            </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default Teams;

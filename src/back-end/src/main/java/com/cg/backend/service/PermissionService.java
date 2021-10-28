@@ -20,6 +20,11 @@ public class PermissionService {
 
     @Resource
     private APIPermissionMapper permissionMapper;
+    public final static String ADMIN_ROLE = "admin";
+    public final static String GUEST = "guest";
+    public final static String SELECTOR = "selector";
+
+
 
 
     public boolean checkPermission(String uri, User user) {
@@ -30,17 +35,31 @@ public class PermissionService {
         criteria.andEqualTo("uri", uri);
         List<APIPermission> permissionList = permissionMapper.selectByExample(example);
 
-        if(permissionList.size() < 1)
+        if (permissionList.size() < 1)
             return true;
 
-        //
-        if(user == null)
-            throw new BusinessException(ResponseCode.PERMISSION_DENIED);
+        if (user == null)
+            return false;
 
         APIPermission permission = permissionList.get(0);
-        if(!permission.getRole().contains(user.getRole()))
-            throw new BusinessException(ResponseCode.PERMISSION_DENIED);
+        if (user.getRole().contains(ADMIN_ROLE)) {
+            return true;
+        }
+        if (!permission.getRole().contains(user.getRole()))
+            return false;
 
         return true;
+    }
+
+    public APIPermission getRequiredPermission(String uri) {
+        Example example = new Example(APIPermission.class);
+        Example.Criteria criteria = example.createCriteria();
+        // check uri
+        criteria.andEqualTo("uri", uri);
+        List<APIPermission> permissionList = permissionMapper.selectByExample(example);
+
+        if (permissionList.size() < 1)
+            return null;
+        return permissionList.get(0);
     }
 }

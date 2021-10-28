@@ -2,16 +2,18 @@ package com.cg.backend.service;
 
 import com.cg.backend.common.enums.ResponseCode;
 import com.cg.backend.common.exceptions.BusinessException;
+import com.cg.backend.common.utils.Paging;
+import com.cg.backend.dao.PerformanceMapper;
 import com.cg.backend.dao.PlayerMapper;
-import com.cg.backend.model.Order;
-import com.cg.backend.model.Player;
+import com.cg.backend.dao.TeamMapper;
+import com.cg.backend.model.*;
 
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.cg.backend.model.PlayerFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 
 @Service("playerService")
@@ -20,6 +22,12 @@ public class PlayerService {
 
   @Resource
   private PlayerMapper playerMapper;
+
+  @Resource
+  private PerformanceMapper performanceMapper;
+
+  @Resource
+  private TeamMapper teamMapper;
 
   // Get all players by filtering conditions
   public List<Player> getPlayersByFilter(PlayerFilter filter) {
@@ -46,6 +54,9 @@ public class PlayerService {
   }
 
   private void sortPlayers(List<Player> resultPlayers, Order order) {
+    if (order == null || order.getDirection() == null || order.getSortField() == null) {
+      return;
+    }
     if (order.getSortField().equals("recentPerformance")) {
       sortByRecenetPerformance(resultPlayers, order);
     }
@@ -84,6 +95,120 @@ public class PlayerService {
 
   public void deletePlayerById(Player player) {
     this.playerMapper.deleteByPrimaryKey(player);
+
+    if (player != null && player.getId() > 0) {
+      Example example = new Example(Performance.class);
+      Example.Criteria criteria = example.createCriteria();
+      criteria.andEqualTo("playerId", player.getId());
+      performanceMapper.deleteByExample(example);
+
+      // Delete player from team
+      List<Team> teams = teamMapper.selectAll();
+
+      for (int i = 0;i < teams.size();i++) {
+        Team team = teams.get(i);
+        if (team.getLeadBowlerId1().equals(player.getId())) {
+          team.setLeadBowlerId1(new Long(0));
+          team.setLeadBowlerName1("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getLeadBowlerId2().equals(player.getId())) {
+          team.setLeadBowlerId2(new Long(0));
+          team.setLeadBowlerName2("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getLeadBowlerId3().equals(player.getId())) {
+          team.setLeadBowlerId3(new Long(0));
+          team.setLeadBowlerName3("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getLeadBowlerId4().equals(player.getId())) {
+          team.setLeadBowlerId4(new Long(0));
+          team.setLeadBowlerName4("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+
+
+        if (team.getSecondBowlerId1().equals(player.getId())) {
+          team.setSecondBowlerId1(new Long(0));
+          team.setSecondBowlerName1("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getSecondBowlerId2().equals(player.getId())) {
+          team.setSecondBowlerId2(new Long(0));
+          team.setSecondBowlerName2("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getSecondBowlerId3().equals(player.getId())) {
+          team.setSecondBowlerId3(new Long(0));
+          team.setSecondBowlerName3("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getSecondBowlerId4().equals(player.getId())) {
+          team.setSecondBowlerId4(new Long(0));
+          team.setSecondBowlerName4("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+
+        if (team.getThirdBowlerId1().equals(player.getId())) {
+          team.setThirdBowlerId1(new Long(0));
+          team.setThirdBowlerName1("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getThirdBowlerId2().equals(player.getId())) {
+          team.setThirdBowlerId2(new Long(0));
+          team.setThirdBowlerName2("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getThirdBowlerId3().equals(player.getId())) {
+          team.setThirdBowlerId3(new Long(0));
+          team.setThirdBowlerName3("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getThirdBowlerId4().equals(player.getId())) {
+          team.setThirdBowlerId4(new Long(0));
+          team.setThirdBowlerName4("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+
+        if (team.getSkipBowlerId1().equals(player.getId())) {
+          team.setSkipBowlerId1(new Long(0));
+          team.setSkipBowlerName1("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getSkipBowlerId2().equals(player.getId())) {
+          team.setSkipBowlerId2(new Long(0));
+          team.setSkipBowlerName2("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getSkipBowlerId3().equals(player.getId())) {
+          team.setSkipBowlerId3(new Long(0));
+          team.setSkipBowlerName3("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+        if (team.getSkipBowlerId4().equals(player.getId())) {
+          team.setSkipBowlerId4(new Long(0));
+          team.setSkipBowlerName4("");
+          teamMapper.updateByPrimaryKey(team);
+          continue;
+        }
+      }
+    }
   }
 
   public Player selectPlayerById(Player player) {

@@ -54,4 +54,14 @@ public class TeamController {
     public Team getTeamById(@RequestBody Team team){
         return this.teamService.getTeam(team);
     }
+
+    @RequestMapping(value="/team/getTeamPlayerPhotos", method= RequestMethod.POST, produces="application/json")
+    public Map<String, Object> getTeamPlayerPhotos(@RequestBody Team team){
+        return this.teamService.getTeamPlayerPhotos(team);
+    }
+
+    @RequestMapping(value="/team/getTeamPlayerDetails", method= RequestMethod.POST, produces="application/json")
+    public Map<String, Object> getTeamPlayerDetails(@RequestBody Team team){
+        return this.teamService.getTeamPlayerDetail(team);
+    }
 }

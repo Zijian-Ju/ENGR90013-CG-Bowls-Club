@@ -1,46 +1,18 @@
 import React from 'react';
-import styles from './css/navbar.module.css';
-import mcclogo from './img/mcc-logo.png';
-import { useHistory } from "react-router-dom";
-import Button from '@material-ui/core/Button';
-
-function placeholderAlert() {
-    return alert("Unsupported");
-}
+import NavBar from './NavBar';
+import homeStyles from './css/home.module.css';
 
 function Home() {
 
-    const history = useHistory();
-
-    function membersHandleClick() {
-        history.push("/members");
-    };
-
-    function homeHandleClick() {
-        history.push("/home");
-    };
-
-    function teamsHandleClick() {
-        history.push("/teams")
-    };
-
-    function competitionsHandleClick() {
-        history.push("/competitions")
-    }
-
     return (
-        <div className={styles.body}>
-            <div className={styles.logotext} >
-                <img className={styles.mcclogo} onClick={homeHandleClick} src={mcclogo} alt="Logo" />
-            </div>
-            <div className={styles.linktabs}>
-                <Button className={styles.linkbuttons} onClick={competitionsHandleClick}>COMPETITION</Button>
-                <Button className={styles.linkbuttons} onClick={teamsHandleClick}>TEAMS</Button>
-                <Button className={styles.linkbuttons} onClick={membersHandleClick}>MEMBERS</Button>
-                <Button className={styles.linkbuttons} onClick={placeholderAlert}>SELECTION COMMITTEE</Button>
-            </div>
-            <div className={styles.logout}>
-                <Button onClick={placeholderAlert}>LOG OUT</Button>
+        <div style={{height: '100vh', display: 'flex', flexFlow: 'column'}}>
+            <NavBar/>
+            <div className={homeStyles.body}>
+                <div style={{height: '70%'}}>
+                </div>
+                <div className={homeStyles.welcome}>
+                    Welcome to MCC
+                </div>
             </div>
         </div>
     );

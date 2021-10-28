@@ -6,6 +6,8 @@ import com.cg.backend.model.User;
 import com.cg.backend.service.PermissionService;
 import com.cg.backend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -33,7 +35,11 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT");
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, " +
-                                "Access-Token, Email");
+                                "Access-Token, Email, Referer, *");
+        if (reqs.getMethod().equals("OPTIONS")) {
+            response.setStatus(response.SC_OK);
+            return;
+        }
         chain.doFilter(req, res);
     }
 

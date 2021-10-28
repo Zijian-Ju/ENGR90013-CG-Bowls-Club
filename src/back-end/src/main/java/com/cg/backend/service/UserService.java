@@ -70,7 +70,11 @@ public class UserService {
     }
 
     public List<User> getAllUser(){
-        return userMapper.selectAll();
+        List<User> allUsers = userMapper.selectAll();
+        for (int i = 0;i < allUsers.size();i++) {
+            allUsers.get(i).setPassword("");
+        }
+        return allUsers;
     }
 
 
@@ -82,10 +86,7 @@ public class UserService {
         List<User> userList = userMapper.selectByExample(example);
         if(userList.size() > 0)
             throw new BusinessException(ResponseCode.EMAIL_ALREADY_EXISTED);
-
-        userMapper.insert(user);
-
-
+        userMapper.insertSelective(user);
         return true;
     }
 
@@ -120,6 +121,5 @@ public class UserService {
 
         return true;
     }
-
 
 }

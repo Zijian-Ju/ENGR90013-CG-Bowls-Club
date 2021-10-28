@@ -11,6 +11,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.util.*;
 
+import static com.cg.backend.service.PermissionService.GUEST;
+
 @Service("ssoService")
 @Slf4j
 public class SSOService {
@@ -74,6 +76,38 @@ public class SSOService {
 
         return user;
     }
+
+    public User checkUserAuthInfo(String email, String token) {
+        User guest = new User();
+        guest.setUserName(GUEST);
+        guest.setRole(GUEST);
+
+        if (email == null || token == null) {
+            return guest;
+        }
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("email", email);
+        criteria.andEqualTo("token", token);
+
+        List<User> userList = userMapper.selectByExample(example);
+        if(userList.size() < 1){
+            return guest;
+        }
+        User user = userList.get(0);
+        Date createDate = user.getTokenCreateDate();
+        Date currDate = new Date(); //Current DateTime
+
+        Calendar createCalendar = new GregorianCalendar();
+        createCalendar.setTime(createDate);
+        createCalendar.add(createCalendar.DATE, 1);
+        createDate = createCalendar.getTime();
+        if(createDate.compareTo(currDate) < 0)
+            return guest;
+        user.setPassword("");
+        return user;
+    }
+
 
 
 

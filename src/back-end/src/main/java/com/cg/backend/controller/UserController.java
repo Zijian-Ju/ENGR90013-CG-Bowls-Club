@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 
-@RestController
 @EnableAutoConfiguration
 @Slf4j
 public class UserController {

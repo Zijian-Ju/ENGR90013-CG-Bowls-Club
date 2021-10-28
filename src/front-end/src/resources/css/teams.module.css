@@ -1,21 +1,25 @@
 .body {
     width: 100%;
-    height: 100%;
     overflow-y: scroll;
     margin-top: 5px;
+    display: flex;
+    flex-direction: row;
 }
 
 .collapsedPlayerIconRow {
     display: flex;
     flex-direction: row;
-    max-height: 50px;
-    width: 100%
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: scroll;
 }
 
 .collapsedPlayerIcon {
     display: flex;
     flex-direction: row;
-    height: 100%;
+    height: 50px;
+    width: 5%;
+    min-width: 40px;
     margin-right: 1%;
 }
 
