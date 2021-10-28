@@ -71,7 +71,7 @@ function CreateProfile() {
         <div style={{display: 'flex', flexDirection: 'column', width: '100%', justifyContent: 'center'}}>
           <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
             <Button>
-              <label for="fileUpload">Upload Image</label>
+              <label htmlFor="fileUpload">Upload Image</label>
             </Button>
             <input
               id="fileUpload"

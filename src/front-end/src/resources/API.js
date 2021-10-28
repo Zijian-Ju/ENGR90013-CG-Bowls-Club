@@ -37,7 +37,7 @@ export const API = {
     },
 
     async deleteCompetition(compId) {
-        const response = await axios.post(`h${backendUrl}/competition/deleteCompetitionById`, {id: compId}, {headers: {"Access-Token": Auth.getToken(), "Email": Auth.getEmail()}})
+        const response = await axios.post(`${backendUrl}/competition/deleteCompetitionById`, {id: compId}, {headers: {"Access-Token": Auth.getToken(), "Email": Auth.getEmail()}})
         return response;
     },
 
@@ -50,8 +50,8 @@ export const API = {
         return response;
     },
 
-    async getTeamById(teamId, accessToken, accessEmail) {
-        const response = await axios.post(`${backendUrl}/team/getTeamById`, {id: teamId}, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
+    async getTeamById(teamId) {
+        const response = await axios.post(`${backendUrl}/team/getTeamById`, {id: teamId}, {headers: {"Access-Token": Auth.getToken(), "Email": Auth.getToken()}})
         return response;
     },
 
@@ -101,7 +101,7 @@ export const API = {
     },
 
     async updatePlayer(playerDetails) {
-        const response = await axios.post(`${backendUrl}/player/updatePlayer`, playerDetails, {headers: {"Access-Token": Auth.accessToken(), "Email": Auth.accessEmail()}})
+        const response = await axios.post(`${backendUrl}/player/updatePlayer`, playerDetails, {headers: {"Access-Token": Auth.getToken(), "Email": Auth.getEmail()}})
         return response;
     },
 
@@ -144,8 +144,8 @@ export const API = {
         const response = await axios.post(`${backendUrl}/team/getTeamPlayerDetails`, {id: teamId}, {headers: {"Access-Token": Auth.getToken(), "Email": Auth.getEmail()}})
         return response;
     },
-    async updateTeam(teamDetail, accessToken, accessEmail) {
-        const response = await axios.post(`${backendUrl}/team/updateTeam`, teamDetail, {headers: {"Access-Token": accessToken, "Email": accessEmail}})
+    async updateTeam(teamDetail) {
+        const response = await axios.post(`${backendUrl}/team/updateTeam`, teamDetail, {headers: {"Access-Token": Auth.getToken(), "Email": Auth.getEmail()}})
         return response;
     },
 }

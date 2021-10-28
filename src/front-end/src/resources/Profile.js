@@ -45,7 +45,8 @@ function CustomTableRow(props) {
 
   function resetFields() {
     setSeason(props.data.season);
-    setDate(props.data.matchTime);
+    setDate(dayjs(props.data.matchTime).format("YYYY-MM-DD"));
+    setTime(dayjs(props.data.matchTime).format("HH:mm"));
     setCompetitionId(props.data.competitionId);
     setCompetitionName(props.data.competitionName)
     setPosition(props.data.position);
@@ -283,7 +284,7 @@ function Details(props) {
   const playerId = props.playerId;
   const [random, setRandom] = useState(Math.random());
   const reRender = () => {setRandom(Math.random())};
-  const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile, setSelectedFile] = useState({});
 
   function objectNotEmpty(obj) {
     if (Object.keys(obj).length !== 0 && obj.constructor === Object) {
@@ -347,7 +348,7 @@ function Details(props) {
       <div className={profileStyles.playerDetailsUpdateImageButton}>
         <div style={{display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'center'}}>
           <Button>
-            <label for="fileUpload">Upload Image</label>
+            <label htmlFor="fileUpload">Upload Image</label>
           </Button>
           <input
             id="fileUpload"
@@ -356,10 +357,10 @@ function Details(props) {
             onChange={onFileChange}
             style={{display: 'none'}}
           />        
-          <Button disabled={selectedFile === undefined} onClick={uploadSubmit}>Save image</Button> 
+          <Button disabled={!objectNotEmpty(selectedFile)} onClick={uploadSubmit}>Save image</Button> 
         </div>
         <div style={{display: 'flex', flexDirection: 'row', width: '100%', overflow: 'hidden'}}>
-          {selectedFile !== undefined && <div>File:{selectedFile.name}</div>}
+          {objectNotEmpty(selectedFile) && <div>File:{selectedFile.name}</div>}
         </div>
       </div>
     )
@@ -428,7 +429,7 @@ function Details(props) {
             id="Favourite Position"
             label="Favourite Position"
             variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, playerPosPreference: e.target.value}))}}
+            onChange={(e) => {setEditableFields({...editableFields, playerPosPreference: e.target.value})}}
             disabled={!editing}
             size="small"
             value={editableFields.playerPosPreference}
@@ -441,7 +442,7 @@ function Details(props) {
             id="Not Preferred Teammates"
             label="Not Preferred Teammates"
             variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, playerNotPreferTeammates: e.target.value}))}}
+            onChange={(e) => {setEditableFields({...editableFields, playerNotPreferTeammates: e.target.value})}}
             disabled={!editing}
             size="small"
             value={editableFields.playerNotPreferTeammates}
@@ -454,7 +455,7 @@ function Details(props) {
             id="Notes"
             label="Notes"
             variant="outlined"
-            onChange={(e) => {setEditableFields(prevState => ({...editableFields, notes: e.target.value}))}}
+            onChange={(e) => {setEditableFields({...editableFields, notes: e.target.value})}}
             disabled={!editing}
             size="small"
             value={editableFields.notes}

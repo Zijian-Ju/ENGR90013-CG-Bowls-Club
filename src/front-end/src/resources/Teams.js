@@ -61,7 +61,7 @@ function Player(props) {
     } else {
         return (
             <TableRow key={response.data.data.id}>
-                <TableCell component="th" scope="row">
+                <TableCell scope="row">
                     {response.data.data.playerName}
                 </TableCell>
                 <TableCell>
@@ -166,13 +166,15 @@ function Row(props) {
         return(
             <Table size="small">
                 <TableHead>
-                    <TableCell>Player Name</TableCell>
-                    <TableCell>Position</TableCell>
-                    <TableCell>Performance</TableCell>
-                    <TableCell>Availability</TableCell>
-                    <TableCell>Fav. Position</TableCell>
-                    <TableCell>Pref. Teammates</TableCell>
-                    <TableCell/>
+                    <TableRow>
+                        <TableCell>Player Name</TableCell>
+                        <TableCell>Position</TableCell>
+                        <TableCell>Performance</TableCell>
+                        <TableCell>Availability</TableCell>
+                        <TableCell>Fav. Position</TableCell>
+                        <TableCell>Pref. Teammates</TableCell>
+                        <TableCell/>
+                    </TableRow>
                 </TableHead>
                 <TableBody>
                     {renderPlayerDetailed(team)}
@@ -206,7 +208,7 @@ function Row(props) {
     }
      
     return (
-        <>
+        <React.Fragment>
             <TableRow className={teamsStyles.root}>
                 <TableCell>
                     <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
@@ -236,7 +238,7 @@ function Row(props) {
                     </Collapse>
                 </TableCell>
             </TableRow>
-        </>
+        </React.Fragment>
     )
 }
 
