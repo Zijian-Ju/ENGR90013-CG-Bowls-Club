@@ -61,22 +61,22 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     mysql -u root -p
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/loginMySQL.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/loginMySQL.jpg)
   - Create new user
     ```
     CREATE USER 'BOWLS_CLUB'@'%' IDENTIFIED BY 'Bowls_club2021';
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/createUser.png)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/createUser.png)
   - Create schema named as BOWLS_CLUB:
     ```
     Create schema BOWLS_CLUB collate utf8_general_ci; 
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/createSchema.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImagescreateSchema.jpg)
   - Grant privilege to the user
     ```
     GRANT ALL on BOWLS_CLUB.* to BOWLS_CLUB;
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/grantPrivilege.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/grantPrivilege.jpg)
   - Then use the database:
     ```
     use BOWLS_CLUB;
@@ -85,7 +85,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     source ~/ENGR90013-CG-Bowls-Club-4.0/deployment/BOWLS_CLUB_Initial_Data.sql
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/setupDB.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/setupDB.jpg)
 - Deploy Backend Server
   - Install [Maven](https://docs.wso2.com/display/IS323/Installing+Apache+Maven+on+Linux) (Click the link to see instructions)
   - Direct to the backend source code folder
@@ -96,15 +96,15 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     mvn package -Dmaven.test.skip=true
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/CompileProject.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/CompileProject.jpg)
   - Run the proejct by execute below command on Terminal
     ```
     nohup java -jar ~/ENGR90013-CG-Bowls-Club-4.0/src/back-end/target/webbackend-0.0.1-SNAPSHOT.jar 1>/dev/null &
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/startServer.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/startServer.jpg)
     When the server is started, the process ID will return.
     Now you have successfully setup the backend server. Access [localhost:8082/swagger-ui.html](localhost:8082/swagger-ui.html) can have a look with the API documentation.
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/swagger.jpg) 
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/swagger.jpg) 
   - To stop the server, firstly execute
     ```
     ps -ef | grep backend
@@ -114,7 +114,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     kill -9 {processID}
     ```
     to stop the process
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/stopServer.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/stopServer.jpg)
 - Deploy Front-End Server
   - Install [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Click the link to see instructions)
   - Navigate to the frontend folder
