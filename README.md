@@ -114,7 +114,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     kill -9 {processID}
     ```
     to stop the process
-    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/tree/master/deployment/DeploymentGuideImages/stopServer.jpg)
+    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/stopServer.jpg)
 - Deploy Front-End Server
   - Install [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Click the link to see instructions)
   - Navigate to the frontend folder
