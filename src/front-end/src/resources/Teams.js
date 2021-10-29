@@ -147,7 +147,7 @@ function Row(props) {
         var x = []
         Object.entries(player).map(([key, value]) => { 
             if (key.includes("BowlerId") && value > 0) {
-                x.push([`${key.split("B")[0]} ${key.slice(-1)}`, value])
+                x.push([`Team ${key.slice(-1)} / ${key.split("B")[0]}`, value])
             }
             return null;
         })

@@ -168,84 +168,84 @@ function RenderTeam(props) {
                         
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-                        Lead
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
-                        Second
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                         Skip
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
                         Third
                     </div>
-                </div>
-                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        Pos 1
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Second
                     </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.leadBowlerId1}/>
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.secondBowlerId1}/>
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.skipBowlerId1}/> 
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.thirdBowlerId1}/> 
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'center'}}>
+                        Lead
                     </div>
                 </div>
                 <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
                     <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        Pos 2
+                        Team 1
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.leadBowlerId2}/>
+                        <PlayerCard player={player.skipBowlerId1}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId1}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.secondBowlerId1}/> 
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.leadBowlerId1}/> 
+                    </div>
+                </div>
+                <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                    <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        Team 2
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.skipBowlerId2}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId2}/> 
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
                         <PlayerCard player={player.secondBowlerId2}/> 
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.skipBowlerId2}/> 
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.thirdBowlerId2}/> 
+                        <PlayerCard player={player.leadBowlerId2}/> 
                     </div>
                 </div>
                 <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
                     <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        Pos 3
+                        Team 3
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.leadBowlerId3}/>
+                        <PlayerCard player={player.skipBowlerId3}/>
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.secondBowlerId3}/>
+                        <PlayerCard player={player.thirdBowlerId3}/>
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.skipBowlerId3}/> 
+                        <PlayerCard player={player.secondBowlerId3}/> 
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.thirdBowlerId3}/> 
+                        <PlayerCard player={player.leadBowlerId3}/> 
                     </div>
                 </div>
                 <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
                     <div style={{width: '10%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        Pos 4
+                        Team 4
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.leadBowlerId4}/>
+                        <PlayerCard player={player.skipBowlerId4}/>
+                    </div>
+                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                        <PlayerCard player={player.thirdBowlerId4}/> 
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
                         <PlayerCard player={player.secondBowlerId4}/> 
                     </div>
                     <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.skipBowlerId4}/> 
-                    </div>
-                    <div style={{width: '22.5%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                        <PlayerCard player={player.thirdBowlerId4}/> 
+                        <PlayerCard player={player.leadBowlerId4}/> 
                     </div>
                 </div>
             </div>
