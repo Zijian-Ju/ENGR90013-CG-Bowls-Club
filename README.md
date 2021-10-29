@@ -63,7 +63,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     mysql -u root -p
     ```
-    ![BOWLS_CLUB_Initial_Data](./deployment/DeploymentGuideImages/loginMySQL.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/deployment/DeploymentGuideImages/loginMySQL.jpg)
   - Create new user
     ```
     CREATE USER 'BOWLS_CLUB'@'%' IDENTIFIED BY 'Bowls_club2021';
