@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Login from './Login'
 import styles from './css/navbar.module.css';
 import editTeamsStyles from './css/editteam.module.css';
@@ -19,7 +18,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Cookies from 'universal-cookie'
-import { Close, Details } from '@material-ui/icons';
+import { Close } from '@material-ui/icons';
 import product from "immer"
 import Image from './Image'
 import { API } from './API';
@@ -54,9 +53,7 @@ const HomeTitle = () => {
   function teamsHandleClick() {
     history.push("/teams")
   }
-  function placeholderAlert() {
-    return alert("Unsupported");
-  }
+ 
 
   function committeeHandleClick() {
     history.push("/committee")
@@ -83,8 +80,8 @@ const HomeTitle = () => {
 }
 
 const EditTeam = () => {
-  const [response, setResponse] = useState({});
-  const [userSearchText, setUserSearchText] = useState("");
+  //const [response, setResponse] = useState({});
+  const [, setUserSearchText] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [minPerformance, setMinPerformance] = useState(0);
   const [maxPerformance, setMaxPerformance] = useState(10);
@@ -109,10 +106,10 @@ const EditTeam = () => {
     if (data) {
       const id = `${destination.droppableId}BowlerId${destination.index > 4 ? 4 : destination.index}`
       const name = `${destination.droppableId}BowlerName${destination.index > 4 ? 4 : destination.index}`
-      const editData=copyPayerList.find(item=>item.id==teamDetail[id]);
+      const editData=copyPayerList.find(item=>item.id===teamDetail[id]);
       const isFind=payerList.findIndex(item=>item.id===editData?.id);
       setPayList(product(payerList,draft=>{
-        if(isFind==-1){
+        if(isFind===-1){
           console.error(1111);
           if(editData){
             draft.splice(dataIndex,1,editData)
@@ -151,12 +148,12 @@ const EditTeam = () => {
 
     // getTeamById
     // cookies.get("token"), "Email": cookies.get("email") } })
-    API.getTeamById(history.location.state,cookies.get("token"),cookies.get("email"))
+    API.getTeamById(history.location.state)
       .then((res) => {
         const detail = res.data.data;
         setTeamDetail(detail)
     // async getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sortField, favPosition, accessToken, accessEmail) {
-        API.getAllPlayers(availability,maxPerformance,minPerformance,sortOrder,sort,favPosition,cookies.get("token"),cookies.get("email"))
+        API.getAllPlayers(availability,maxPerformance,minPerformance,sortOrder,sort,favPosition)
           .then((list) => {
             let playerList = list?.data?.data?.playerList;
             setPayList(getDate(playerList||[], detail))
@@ -201,7 +198,7 @@ const EditTeam = () => {
     const isFind = payerList.findIndex(item => item.id === data.id);
 
     setPayList(product(payerList, draft => {
-      if (isFind == -1) {
+      if (isFind === -1) {
         console.error(1111);
         draft.push(data)
       }
@@ -215,9 +212,9 @@ const EditTeam = () => {
   function handleFilterClickOpen() {
     setDialogOpen(true);
   }
-  function handleFilterClickClose() {
-    setDialogOpen(false);
-  }
+  //function handleFilterClickClose() {
+  //  setDialogOpen(false);
+  //}
   return (
     <>
       <HomeTitle />

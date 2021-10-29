@@ -13,9 +13,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import NavBar from './NavBar';
-import Cookies from 'universal-cookie'
 import { API } from "./API";
-import Image from './Image'
+import { Auth } from './Auth';
+import Image from './Image';
 
 
 function Members() {
@@ -32,7 +32,6 @@ function Members() {
     const history = useHistory();
     const [random, setRandom] = useState(Math.random());
     const reRender = () => setRandom(Math.random());
-    const cookies = new Cookies();
 
     function handleUserProfileClick(id) {
         history.push("/members/" + id);
@@ -54,7 +53,7 @@ function Members() {
     useEffect(() => {
         (async function () {
             try {
-                const res = await API.getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sort, favPosition, cookies.get("token"), cookies.get("email"))
+                const res = await API.getAllPlayers(availability, maxPerformance, minPerformance, sortOrder, sort, favPosition)
                 if (res.status !== 200) {
                     setStatus("Network error, please try again later")
                 }
@@ -69,6 +68,7 @@ function Members() {
                 console.log(e)
             }
         })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [random]);
 
     function handleFilterClickOpen() {
@@ -86,7 +86,7 @@ function Members() {
                 {userArray.map(function(user, index) { 
                     if (user.playerName.toLowerCase().includes(userSearchText.toLowerCase())) { 
                         return (
-                            <div key={`userarray${user}${index}`} id={user.playerName} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
+                            <div key={`userarray${user}${index}`} className={bodyStyles.userCard} onClick={() => handleUserProfileClick(user.id)}>
                                 <div className={bodyStyles.userCardImageContainer}>
                                     <div className={bodyStyles.userCardImage}>
                                         <Image url={user.photoUrl}/>
@@ -143,7 +143,7 @@ function Members() {
                                             onChange={(e) => {setSort(e.target.value)}}
                                         >
                                             
-                                            <MenuItem value={'recentPerformance'}>Recent Performance</MenuItem>
+                                            <MenuItem key={`recentPerformance`} value={'recentPerformance'}>Recent Performance</MenuItem>
                                         </Select>
                                         </FormControl>
                                         <FormControl className={toolbarStyles.filterFormControl} style={{marginTop: "5%"}}>
@@ -155,8 +155,8 @@ function Members() {
                                                 displayEmpty
                                                 onChange={(e) => {setSortOrder(e.target.value)}}
                                             >
-                                                <MenuItem value={'asc'}>Ascending</MenuItem>
-                                                <MenuItem value={'desc'}>Descending</MenuItem>
+                                                <MenuItem key="asc" value={'asc'}>Ascending</MenuItem>
+                                                <MenuItem key="desc" value={'desc'}>Descending</MenuItem>
                                             </Select>
                                         </FormControl>
                                     </DialogContent>
@@ -170,17 +170,17 @@ function Members() {
                                                 displayEmpty
                                                 onChange={(e) => {setMinPerformance(e.target.value)}}
                                             >
-                                                <MenuItem value={0}>0</MenuItem>
-                                                <MenuItem value={1}>1</MenuItem>
-                                                <MenuItem value={2}>2</MenuItem>
-                                                <MenuItem value={3}>3</MenuItem>
-                                                <MenuItem value={4}>4</MenuItem>
-                                                <MenuItem value={5}>5</MenuItem>
-                                                <MenuItem value={6}>6</MenuItem>
-                                                <MenuItem value={7}>7</MenuItem>
-                                                <MenuItem value={8}>8</MenuItem>
-                                                <MenuItem value={9}>9</MenuItem>
-                                                <MenuItem value={10}>10</MenuItem>
+                                                <MenuItem key="minperformance0" value={0}>0</MenuItem>
+                                                <MenuItem key="minperformance1" value={1}>1</MenuItem>
+                                                <MenuItem key="minperformance2" value={2}>2</MenuItem>
+                                                <MenuItem key="minperformance3" value={3}>3</MenuItem>
+                                                <MenuItem key="minperformance4" value={4}>4</MenuItem>
+                                                <MenuItem key="minperformance5" value={5}>5</MenuItem>
+                                                <MenuItem key="minperformance6" value={6}>6</MenuItem>
+                                                <MenuItem key="minperformance7" value={7}>7</MenuItem>
+                                                <MenuItem key="minperformance8" value={8}>8</MenuItem>
+                                                <MenuItem key="minperformance9" value={9}>9</MenuItem>
+                                                <MenuItem key="minperformance10" value={10}>10</MenuItem>
                                             </Select>
                                         </FormControl>
                                         <FormControl className={toolbarStyles.filterFormControl} disabled={minPerformance===""} >
@@ -195,7 +195,7 @@ function Members() {
                                                 {(() => {
                                                     const options = [];
                                                     for (let i = minPerformance; i<=10; i++) {
-                                                        options.push(<MenuItem value={i}>{i}</MenuItem>)
+                                                        options.push(<MenuItem key={`maxPerformance${i}`} value={i}>{i}</MenuItem>)
                                                     }
                                                     return options;
                                                 }
@@ -214,8 +214,8 @@ function Members() {
                                             value={availability}
                                             onChange={(e) => {setAvailability(e.target.value)}}
                                         >
-                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(function(day, index) {
-                                                return (<MenuItem key={`${index}${day}`} value={day}>{day}</MenuItem>)
+                                            {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => {
+                                                return <MenuItem key={day} value={day}>{day}</MenuItem>
                                             }
                                             )}
                                         </Select>
@@ -232,8 +232,8 @@ function Members() {
                                             value={favPosition}
                                             onChange={(e) => {setFavPosition(e.target.value)}}
                                         >
-                                            {["Skip","Second","Third","Lead"].map(function(position, index) {
-                                                return(<MenuItem key={`${position}${index}`} value={position}>{position}</MenuItem>)
+                                            {["Skip","Second","Third","Lead"].map((position) => {
+                                                return <MenuItem key={position} value={position}>{position}</MenuItem>
                                             })}
                                         </Select>
                                         </FormControl>
@@ -264,7 +264,7 @@ function Members() {
     return (
         <>
             <NavBar/>
-            {cookies.get('token') !== undefined && cookies.get('email') !== undefined ? body() : <div>Please log in</div>}
+            {Auth.isLoggedIn() ? body() : <div>Please log in</div>}
         </>
     );
 };
