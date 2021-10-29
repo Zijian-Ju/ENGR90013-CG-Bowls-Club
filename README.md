@@ -73,7 +73,7 @@ This is a guideline for how to deployed the product on another server. Feel free
     ```
     Create schema BOWLS_CLUB collate utf8_general_ci; 
     ```
-    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/blob/master/deployment/DeploymentGuideImagescreateSchema.jpg)
+    ![BOWLS_CLUB_Initial_Data](https://github.com/Zijian-Ju/ENGR90013-CG-Bowls-Club/blob/master/deployment/DeploymentGuideImages/createSchema.jpg)
   - Grant privilege to the user
     ```
     GRANT ALL on BOWLS_CLUB.* to BOWLS_CLUB;
